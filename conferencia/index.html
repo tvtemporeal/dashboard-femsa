@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Conferência de Concentrados · FEMSA</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
 <style>
   :root{
     --vermelho:#E2231A;
@@ -561,7 +562,7 @@
     <section class="screen" id="screen-analyzing">
       <div class="analyzing">
         <div class="spinner"></div>
-        <p>Lendo a folha de lote...<br>identificando produtos e quantidades</p>
+        <p id="analyzingText">Lendo a folha de lote...<br>identificando produtos e quantidades</p>
       </div>
     </section>
 
@@ -803,55 +804,90 @@
     reader.readAsDataURL(file);
   });
 
-  // ---------- chamada API: leitura da folha ----------
+  // ---------- leitura da folha via OCR local (sem servidor, sem chave de API) ----------
   async function processarFoto(){
     showScreen('screen-analyzing');
+    $('analyzingText').innerHTML = 'Lendo a folha de lote...<br>isso pode levar alguns segundos';
     try{
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          messages: [{
-            role: "user",
-            content: [
-              { type: "image", source: { type: "base64", media_type: "image/jpeg", data: capturedImageBase64 } },
-              { type: "text", text: "Esta é uma folha de romaneio/lote de concentrados de uma fábrica. Extraia a lista de produtos com suas quantidades esperadas. Responda APENAS com um JSON válido (sem markdown, sem texto antes ou depois), no formato: {\"produtos\":[{\"produto\":\"nome do produto\",\"lote\":\"numero do lote ou vazio se nao encontrado\",\"quantidade_esperada\":numero,\"unidade\":\"galões ou caixas, conforme a folha\"}]}. Se não conseguir identificar nenhum produto com clareza, responda {\"produtos\":[]}." }
-            ]
-          }]
-        })
+      const dataUrl = 'data:image/jpeg;base64,' + capturedImageBase64;
+      const { data: { text } } = await Tesseract.recognize(dataUrl, 'por', {
+        logger: (m) => {
+          if(m.status === 'recognizing text'){
+            const pct = Math.round(m.progress * 100);
+            $('analyzingText').innerHTML = `Lendo a folha de lote...<br>${pct}%`;
+          }
+        }
       });
-      const data = await response.json();
-      const textBlock = data.content.find(b => b.type === 'text');
-      let parsed = { produtos: [] };
-      if(textBlock){
-        const clean = textBlock.text.replace(/```json|```/g,'').trim();
-        parsed = JSON.parse(clean);
-      }
-      if(!parsed.produtos || parsed.produtos.length === 0){
-        toast('Não foi possível identificar produtos na folha. Tente novamente com mais luz.');
+
+      const itens = extrairProdutosDoTexto(text);
+
+      if(itens.length === 0){
+        toast('Não foi possível ler texto na folha. Tente novamente com mais luz e foco.');
         showScreen('screen-scan');
         startCamera();
         return;
       }
-      produtos = parsed.produtos.map((p, i) => ({
+
+      produtos = itens.map((p, i) => ({
         id: 'p' + Date.now() + '_' + i,
-        produto: p.produto || 'Produto não identificado',
-        lote: p.lote || '—',
-        quantidade_esperada: Number(p.quantidade_esperada) || 0,
-        unidade: p.unidade || 'unid.',
+        produto: p.produto,
+        lote: p.lote,
+        quantidade_esperada: p.quantidade_esperada,
+        unidade: p.unidade,
         quantidade_guardada: null,
         status: null
       }));
+      toast('Leitura concluída — confira e corrija os dados se necessário');
       renderConfirmacao();
       showScreen('screen-confirm');
     }catch(err){
       console.error(err);
-      toast('Erro ao processar a foto. Tente novamente.');
+      toast('Erro ao ler a foto. Tente novamente.');
       showScreen('screen-scan');
       startCamera();
     }
+  }
+
+  // tenta separar cada linha de texto reconhecida em produto / lote / quantidade / unidade
+  function extrairProdutosDoTexto(texto){
+    const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 2);
+    const itens = [];
+    const regexLote = /lote\s*[:\-]?\s*([a-z0-9\-\/]+)/i;
+    const regexUnidade = /(gal[õo]es?|galões|caixas?|cx|un(id)?\.?)/i;
+    const regexNumero = /(\d{1,6}(?:[.,]\d{1,3})?)/g;
+
+    linhas.forEach(linha => {
+      const numeros = linha.match(regexNumero);
+      if(!numeros) return; // ignora linhas sem nenhum número (provável cabeçalho/ruído)
+
+      const loteMatch = linha.match(regexLote);
+      const unidadeMatch = linha.match(regexUnidade);
+
+      // maior número da linha = provável quantidade (evita pegar código de lote curto)
+      const maiorNumero = numeros
+        .map(n => parseFloat(n.replace(',', '.')))
+        .sort((a,b) => b - a)[0];
+
+      // remove números e palavras-chave do texto pra sobrar o nome do produto
+      let nomeProduto = linha
+        .replace(regexLote, '')
+        .replace(regexUnidade, '')
+        .replace(regexNumero, '')
+        .replace(/[:\-_|]+/g, ' ')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+
+      if(nomeProduto.length < 2) nomeProduto = 'Produto não identificado';
+
+      itens.push({
+        produto: nomeProduto,
+        lote: loteMatch ? loteMatch[1].toUpperCase() : '—',
+        quantidade_esperada: isNaN(maiorNumero) ? 0 : Math.round(maiorNumero),
+        unidade: unidadeMatch ? unidadeMatch[0].toLowerCase() : 'unid.'
+      });
+    });
+
+    return itens;
   }
 
   // ---------- confirmação ----------
