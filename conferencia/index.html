@@ -524,6 +524,19 @@
   }
   .tipo-badge.entrada{background:rgba(226,35,26,0.15); color:#F08176;}
   .tipo-badge.saida{background:rgba(217,142,4,0.15); color:#F0B33E;}
+
+  /* ---- LISTA DE USUÁRIOS (CONFIGURAÇÕES) ---- */
+  .user-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:10px;
+    padding:14px; margin-bottom:10px;
+  }
+  .user-row .ur-info .ur-nome{font-size:14.5px; font-weight:800;}
+  .user-row .ur-info .ur-br{font-size:11.5px; color:var(--cinza); margin-top:2px;}
+  .user-row .ur-reset{
+    flex-shrink:0; background:transparent; border:1px solid var(--erro); color:#F08176;
+    font-size:11px; font-weight:800; text-transform:uppercase; padding:8px 12px; border-radius:7px; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -592,10 +605,13 @@
     <section class="screen active" id="screen-login">
       <div class="hero-num">CONFERÊNCIA · CÂMARAS 1–7</div>
       <h1 class="title">Guarda de<br>concentrados</h1>
-      <p class="lead">Escaneie a folha de lote, confirme as quantidades guardadas e registre qualquer divergência na hora.</p>
+      <p class="lead">Faça login com seu BR e senha para iniciar o registro.</p>
 
-      <label class="field-label">Seu nome</label>
-      <input type="text" id="inputNome" placeholder="Ex: João Silva" autocomplete="off">
+      <label class="field-label">BR</label>
+      <input type="text" id="inputBr" placeholder="Ex: 1234567" autocomplete="off" inputmode="numeric">
+
+      <label class="field-label" style="margin-top:16px;">Senha</label>
+      <input type="password" id="inputSenha" placeholder="••••••" autocomplete="off">
 
       <label class="field-label" style="margin-top:22px;">Tipo de registro</label>
       <div class="tipo-toggle">
@@ -613,6 +629,30 @@
 
       <div class="stack">
         <button class="btn btn-primary" id="btnEntrar">Entrar e iniciar registro</button>
+      </div>
+    </section>
+
+    <!-- ===== TELA PRIMEIRO ACESSO ===== -->
+    <section class="screen" id="screen-primeiro-acesso">
+      <div class="hero-num">BR NÃO CADASTRADO</div>
+      <h1 class="title" style="font-size:26px;">Primeiro acesso</h1>
+      <p class="lead">Esse BR ainda não tem cadastro. Preencha seus dados para criar seu acesso.</p>
+
+      <label class="field-label">BR</label>
+      <input type="text" id="paBr" disabled style="opacity:0.6;">
+
+      <label class="field-label" style="margin-top:16px;">Nome completo</label>
+      <input type="text" id="paNome" placeholder="Ex: João Silva" autocomplete="off">
+
+      <label class="field-label" style="margin-top:16px;">Criar senha</label>
+      <input type="password" id="paSenha" placeholder="••••••" autocomplete="off">
+
+      <label class="field-label" style="margin-top:16px;">Confirmar senha</label>
+      <input type="password" id="paSenhaConfirma" placeholder="••••••" autocomplete="off">
+
+      <div class="stack">
+        <button class="btn btn-primary" id="btnCadastrarAcesso">Cadastrar e entrar</button>
+        <button class="btn btn-ghost" id="btnCancelarPrimeiroAcesso">← Voltar ao login</button>
       </div>
     </section>
 
@@ -678,6 +718,20 @@
       </div>
     </section>
 
+    <!-- ===== TELA CONFIGURAÇÕES (somente admin) ===== -->
+    <section class="screen" id="screen-config">
+      <div class="section-label">Acesso restrito</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Configurações</h1>
+      <p class="lead" style="margin-bottom:22px;">Gerencie os usuários cadastrados no aplicativo.</p>
+
+      <div class="drawer-label" style="margin-bottom:10px;">Usuários cadastrados</div>
+      <div id="configUserList"></div>
+
+      <div class="stack" style="margin-top:24px;">
+        <button class="btn btn-ghost" id="btnVoltarInicioConfig">← Voltar ao início</button>
+      </div>
+    </section>
+
   </main>
 
   <!-- barra inferior fixa (somente na tela de confirmação) -->
@@ -718,7 +772,8 @@
     { id:'screen-scan',     num:1, label:'Lançar produtos',  hint:'Tabela manual' },
     { id:'screen-confirm',  num:2, label:'Conferir quantidades', hint:'Registrar o guardado', requires:'produtos' },
     { id:'screen-result',   num:3, label:'Resultado',       hint:'Resumo do registro', requires:'finalizado' },
-    { id:'screen-log',      num:4, label:'Histórico',       hint:'Todos os registros' }
+    { id:'screen-log',      num:4, label:'Histórico',       hint:'Todos os registros' },
+    { id:'screen-config',   num:5, label:'Configurações',   hint:'Gerenciar usuários', adminOnly:true }
   ];
   let finalizadoFlag = false;
 
@@ -726,6 +781,7 @@
     const nav = $('stepNav');
     nav.innerHTML = '';
     STEPS.forEach(step => {
+      if(step.adminOnly && (!usuarioAtual || !usuarioAtual.isAdmin)) return; // some só aparece pro admin
       const blocked = (step.requires === 'produtos' && produtos.length === 0) ||
                       (step.requires === 'finalizado' && !finalizadoFlag);
       const div = document.createElement('div');
@@ -738,6 +794,7 @@
         div.addEventListener('click', () => {
           if(step.id === 'screen-scan'){ iniciarTabelaManual(); }
           if(step.id === 'screen-log'){ carregarLog(); }
+          if(step.id === 'screen-config'){ renderConfiguracoes(); }
           showScreen(step.id);
         });
       }
@@ -828,7 +885,50 @@
     setTimeout(()=> t.classList.remove('show'), 2800);
   }
 
-  // ---------- login ----------
+  // ---------- autenticação ----------
+  const BR_ADMIN = '5758236';
+  const SENHA_ADMIN = '291201';
+  let usuarioAtual = null; // { br, nome, isAdmin }
+  let brEmPrimeiroAcesso = null;
+
+  async function sha256(texto){
+    const enc = new TextEncoder().encode(texto);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function carregarUsuarios(){
+    try{
+      const raw = localStorage.getItem('femsa_usuarios');
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function salvarUsuarios(lista){
+    localStorage.setItem('femsa_usuarios', JSON.stringify(lista));
+  }
+
+  // garante que o usuário administrador sempre exista, mesmo na primeira vez que o app roda neste navegador
+  async function garantirAdmin(){
+    let usuarios = carregarUsuarios();
+    if(!usuarios.find(u => u.br === BR_ADMIN)){
+      const senhaHash = await sha256(SENHA_ADMIN);
+      usuarios.push({ br: BR_ADMIN, nome: 'Administrador', senhaHash, isAdmin: true });
+      salvarUsuarios(usuarios);
+    }
+  }
+  garantirAdmin();
+
+  function entrarNoApp(usuario){
+    usuarioAtual = usuario;
+    operador = usuario.nome;
+    $('opName').textContent = operador;
+    $('topbar').style.display = 'flex';
+    iniciarTabelaManual();
+    aplicarTextosPorTipo();
+    showScreen('screen-scan');
+    carregarLog();
+  }
+
   // ---------- toggle entrada / saída ----------
   $('btnTipoEntrada').addEventListener('click', () => {
     tipoOperacao = 'entrada';
@@ -854,16 +954,64 @@
     renderTabelaManual();
   }
 
-  $('btnEntrar').addEventListener('click', () => {
-    const nome = $('inputNome').value.trim();
-    if(!nome){ toast('Digite seu nome para continuar'); return; }
-    operador = nome;
-    $('opName').textContent = operador;
-    $('topbar').style.display = 'flex';
-    iniciarTabelaManual();
-    aplicarTextosPorTipo();
-    showScreen('screen-scan');
-    carregarLog();
+  $('btnEntrar').addEventListener('click', async () => {
+    const br = $('inputBr').value.trim();
+    const senha = $('inputSenha').value;
+    if(!br){ toast('Digite seu BR'); return; }
+    if(!senha){ toast('Digite sua senha'); return; }
+
+    const usuarios = carregarUsuarios();
+    const usuario = usuarios.find(u => u.br === br);
+
+    if(!usuario){
+      // BR não cadastrado -> abre primeiro acesso
+      brEmPrimeiroAcesso = br;
+      $('paBr').value = br;
+      $('paNome').value = '';
+      $('paSenha').value = '';
+      $('paSenhaConfirma').value = '';
+      showScreen('screen-primeiro-acesso');
+      return;
+    }
+
+    const senhaHash = await sha256(senha);
+    if(senhaHash !== usuario.senhaHash){
+      toast('Senha incorreta');
+      return;
+    }
+
+    entrarNoApp(usuario);
+  });
+
+  // ---------- primeiro acesso ----------
+  $('btnCancelarPrimeiroAcesso').addEventListener('click', () => {
+    brEmPrimeiroAcesso = null;
+    showScreen('screen-login');
+  });
+
+  $('btnCadastrarAcesso').addEventListener('click', async () => {
+    const nome = $('paNome').value.trim();
+    const senha = $('paSenha').value;
+    const senhaConfirma = $('paSenhaConfirma').value;
+
+    if(!nome){ toast('Digite seu nome completo'); return; }
+    if(!senha || senha.length < 4){ toast('A senha deve ter pelo menos 4 caracteres'); return; }
+    if(senha !== senhaConfirma){ toast('As senhas não coincidem'); return; }
+
+    const usuarios = carregarUsuarios();
+    if(usuarios.find(u => u.br === brEmPrimeiroAcesso)){
+      toast('Esse BR já foi cadastrado, faça login normalmente');
+      showScreen('screen-login');
+      return;
+    }
+
+    const senhaHash = await sha256(senha);
+    const novoUsuario = { br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false };
+    usuarios.push(novoUsuario);
+    salvarUsuarios(usuarios);
+
+    toast('Cadastro criado com sucesso');
+    entrarNoApp(novoUsuario);
   });
 
   // ---------- tabela manual de produtos ----------
@@ -1158,6 +1306,47 @@
     showScreen('screen-log');
   });
   $('btnVoltarInicio').addEventListener('click', () => {
+    iniciarTabelaManual();
+    showScreen('screen-scan');
+  });
+
+  // ---------- configurações (admin) ----------
+  function renderConfiguracoes(){
+    const container = $('configUserList');
+    const usuarios = carregarUsuarios().filter(u => !u.isAdmin); // não lista a conta admin
+
+    if(usuarios.length === 0){
+      container.innerHTML = `<div class="empty-state"><div class="ic">👤</div>Nenhum usuário cadastrado ainda</div>`;
+      return;
+    }
+
+    container.innerHTML = '';
+    usuarios.forEach(u => {
+      const row = document.createElement('div');
+      row.className = 'user-row';
+      row.innerHTML = `
+        <div class="ur-info">
+          <div class="ur-nome">${escapeHtml(u.nome)}</div>
+          <div class="ur-br">BR ${escapeHtml(u.br)}</div>
+        </div>
+        <button class="ur-reset" data-br="${escapeHtml(u.br)}">Resetar cadastro</button>
+      `;
+      container.appendChild(row);
+    });
+
+    container.querySelectorAll('.ur-reset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const br = btn.dataset.br;
+        const usuariosAtuais = carregarUsuarios();
+        const restantes = usuariosAtuais.filter(u => u.br !== br);
+        salvarUsuarios(restantes);
+        toast('Cadastro resetado — esse BR vai pedir primeiro acesso novamente');
+        renderConfiguracoes();
+      });
+    });
+  }
+
+  $('btnVoltarInicioConfig').addEventListener('click', () => {
     iniciarTabelaManual();
     showScreen('screen-scan');
   });
