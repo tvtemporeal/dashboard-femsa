@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Conferência de Concentrados · FEMSA</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
   :root{
     --vermelho:#E2231A;
@@ -562,7 +562,21 @@
     <section class="screen" id="screen-analyzing">
       <div class="analyzing">
         <div class="spinner"></div>
-        <p id="analyzingText">Lendo a folha de lote...<br>identificando produtos e quantidades</p>
+        <p id="analyzingText">Lendo o texto da imagem...</p>
+      </div>
+    </section>
+
+    <!-- ===== TELA 2c: TEXTO LIDO (REVISÃO) ===== -->
+    <section class="screen" id="screen-ocrtext">
+      <div class="section-label">Texto identificado na foto</div>
+      <h1 class="title" style="font-size:24px;">Revisar texto lido</h1>
+      <p class="lead" style="margin-bottom:16px;">Confira e corrija o texto abaixo se a leitura veio errada. Cada linha vai virar um item para conferência — você pode editar tudo aqui antes de continuar.</p>
+
+      <textarea id="ocrTextArea" rows="14" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:14px; padding:14px; border-radius:8px; font-family:inherit; resize:vertical; line-height:1.5;"></textarea>
+
+      <div class="stack">
+        <button class="btn btn-primary" id="btnGerarLista">Continuar com este texto</button>
+        <button class="btn btn-outline" id="btnRefazerFoto">Tirar foto novamente</button>
       </div>
     </section>
 
@@ -804,90 +818,75 @@
     reader.readAsDataURL(file);
   });
 
+  $('btnGerarLista').addEventListener('click', gerarProdutosDoTexto);
+  $('btnRefazerFoto').addEventListener('click', () => {
+    showScreen('screen-scan');
+    startCamera();
+  });
+
   // ---------- leitura da folha via OCR local (sem servidor, sem chave de API) ----------
   async function processarFoto(){
     showScreen('screen-analyzing');
-    $('analyzingText').innerHTML = 'Lendo a folha de lote...<br>isso pode levar alguns segundos';
+    $('analyzingText').innerHTML = 'Lendo o texto da imagem...<br>isso pode levar alguns segundos';
     try{
+      if(typeof Tesseract === 'undefined'){
+        throw new Error('Biblioteca de leitura não carregou. Verifique sua conexão com a internet.');
+      }
       const dataUrl = 'data:image/jpeg;base64,' + capturedImageBase64;
       const { data: { text } } = await Tesseract.recognize(dataUrl, 'por', {
         logger: (m) => {
           if(m.status === 'recognizing text'){
             const pct = Math.round(m.progress * 100);
-            $('analyzingText').innerHTML = `Lendo a folha de lote...<br>${pct}%`;
+            $('analyzingText').innerHTML = `Lendo o texto da imagem...<br>${pct}%`;
+          } else if(m.status){
+            $('analyzingText').innerHTML = `${m.status}...`;
           }
         }
       });
 
-      const itens = extrairProdutosDoTexto(text);
-
-      if(itens.length === 0){
-        toast('Não foi possível ler texto na folha. Tente novamente com mais luz e foco.');
+      if(!text || text.trim().length === 0){
+        toast('Nenhum texto foi encontrado na foto. Tente com mais luz e foco.');
         showScreen('screen-scan');
         startCamera();
         return;
       }
 
-      produtos = itens.map((p, i) => ({
-        id: 'p' + Date.now() + '_' + i,
-        produto: p.produto,
-        lote: p.lote,
-        quantidade_esperada: p.quantidade_esperada,
-        unidade: p.unidade,
-        quantidade_guardada: null,
-        status: null
-      }));
-      toast('Leitura concluída — confira e corrija os dados se necessário');
-      renderConfirmacao();
-      showScreen('screen-confirm');
+      $('ocrTextArea').value = text.trim();
+      showScreen('screen-ocrtext');
     }catch(err){
       console.error(err);
-      toast('Erro ao ler a foto. Tente novamente.');
+      toast('Erro ao ler a foto: ' + (err && err.message ? err.message : 'tente novamente'));
       showScreen('screen-scan');
       startCamera();
     }
   }
 
-  // tenta separar cada linha de texto reconhecida em produto / lote / quantidade / unidade
-  function extrairProdutosDoTexto(texto){
-    const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 2);
-    const itens = [];
-    const regexLote = /lote\s*[:\-]?\s*([a-z0-9\-\/]+)/i;
-    const regexUnidade = /(gal[õo]es?|galões|caixas?|cx|un(id)?\.?)/i;
-    const regexNumero = /(\d{1,6}(?:[.,]\d{1,3})?)/g;
+  // monta a lista de produtos a partir do texto bruto (uma linha = um produto, tudo editável depois)
+  function gerarProdutosDoTexto(){
+    const texto = $('ocrTextArea').value;
+    const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 1);
 
-    linhas.forEach(linha => {
-      const numeros = linha.match(regexNumero);
-      if(!numeros) return; // ignora linhas sem nenhum número (provável cabeçalho/ruído)
+    if(linhas.length === 0){
+      toast('O texto está vazio. Edite ou tire a foto novamente.');
+      return;
+    }
 
-      const loteMatch = linha.match(regexLote);
-      const unidadeMatch = linha.match(regexUnidade);
-
-      // maior número da linha = provável quantidade (evita pegar código de lote curto)
-      const maiorNumero = numeros
-        .map(n => parseFloat(n.replace(',', '.')))
-        .sort((a,b) => b - a)[0];
-
-      // remove números e palavras-chave do texto pra sobrar o nome do produto
-      let nomeProduto = linha
-        .replace(regexLote, '')
-        .replace(regexUnidade, '')
-        .replace(regexNumero, '')
-        .replace(/[:\-_|]+/g, ' ')
-        .replace(/\s{2,}/g, ' ')
-        .trim();
-
-      if(nomeProduto.length < 2) nomeProduto = 'Produto não identificado';
-
-      itens.push({
-        produto: nomeProduto,
-        lote: loteMatch ? loteMatch[1].toUpperCase() : '—',
+    produtos = linhas.map((linha, i) => {
+      // tenta achar um número na linha pra já sugerir como quantidade esperada
+      const numeros = linha.match(/\d{1,6}(?:[.,]\d{1,3})?/g);
+      const maiorNumero = numeros ? numeros.map(n => parseFloat(n.replace(',', '.'))).sort((a,b)=>b-a)[0] : 0;
+      return {
+        id: 'p' + Date.now() + '_' + i,
+        produto: linha,
+        lote: '—',
         quantidade_esperada: isNaN(maiorNumero) ? 0 : Math.round(maiorNumero),
-        unidade: unidadeMatch ? unidadeMatch[0].toLowerCase() : 'unid.'
-      });
+        unidade: 'unid.',
+        quantidade_guardada: null,
+        status: null
+      };
     });
-
-    return itens;
+    renderConfirmacao();
+    showScreen('screen-confirm');
   }
 
   // ---------- confirmação ----------
