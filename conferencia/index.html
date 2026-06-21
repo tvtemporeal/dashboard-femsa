@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Conferência de Concentrados · FEMSA</title>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
   :root{
     --vermelho:#E2231A;
@@ -461,6 +460,33 @@
   .modal-field input{font-size:15px; padding:11px 14px;}
   .modal-actions{display:flex; gap:10px; margin-top:18px;}
   .modal-actions .btn{padding:13px;}
+
+  /* ---- TABELA MANUAL DE PRODUTOS ---- */
+  .manual-row{
+    display:flex; gap:8px; align-items:center;
+    background:var(--carvao);
+    border:1.5px solid var(--linha);
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:10px;
+  }
+  .manual-row .mr-num{
+    width:22px; height:22px; border-radius:50%; background:var(--preto); border:1px solid var(--linha);
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--cinza); flex-shrink:0;
+  }
+  .manual-row input[type="text"]{flex:3; font-size:14px; padding:11px 12px;}
+  .manual-row input[type="number"]{flex:1; font-size:14px; padding:11px 8px; text-align:center; min-width:64px;}
+  .manual-row .mr-remove{
+    flex-shrink:0; width:34px; height:34px; border-radius:8px;
+    background:transparent; border:1px solid var(--linha); color:var(--erro);
+    font-size:16px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .manual-col-labels{
+    display:flex; gap:8px; padding:0 12px 6px 42px;
+    font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); font-weight:700;
+  }
+  .manual-col-labels span:first-child{flex:3;}
+  .manual-col-labels span:last-child{flex:1; text-align:center; min-width:64px; margin-right:34px;}
 </style>
 </head>
 <body>
@@ -539,44 +565,18 @@
       </div>
     </section>
 
-    <!-- ===== TELA 2: SCAN ===== -->
+    <!-- ===== TELA 2: ENTRADA MANUAL DE PRODUTOS ===== -->
     <section class="screen" id="screen-scan">
       <div class="section-label">Passo 1 de 2</div>
-      <h1 class="title" style="font-size:24px;">Escanear folha de lote</h1>
-      <p class="lead" style="margin-bottom:18px;">Posicione a folha dentro da moldura, com boa luz e sem reflexo.</p>
+      <h1 class="title" style="font-size:24px;">Lançar produtos do lote</h1>
+      <p class="lead" style="margin-bottom:18px;">Digite o material e a quantidade esperada de cada item da folha.</p>
 
-      <div class="cam-wrap" id="camWrap">
-        <video id="video" autoplay playsinline muted></video>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <div class="cam-frame"></div>
-      </div>
+      <div id="manualTable"></div>
 
-      <button class="shutter" id="btnShutter" title="Capturar"></button>
-      <div class="upload-alt">
-        <label for="fileInput">ou enviar foto da galeria</label>
-        <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
-      </div>
-    </section>
-
-    <!-- ===== TELA 2b: ANALISANDO ===== -->
-    <section class="screen" id="screen-analyzing">
-      <div class="analyzing">
-        <div class="spinner"></div>
-        <p id="analyzingText">Lendo o texto da imagem...</p>
-      </div>
-    </section>
-
-    <!-- ===== TELA 2c: TEXTO LIDO (REVISÃO) ===== -->
-    <section class="screen" id="screen-ocrtext">
-      <div class="section-label">Texto identificado na foto</div>
-      <h1 class="title" style="font-size:24px;">Revisar texto lido</h1>
-      <p class="lead" style="margin-bottom:16px;">Confira e corrija o texto abaixo se a leitura veio errada. O app vai extrair automaticamente o <b>material</b> e a <b>quantidade</b> de cada linha (lote e datas são ignorados).</p>
-
-      <textarea id="ocrTextArea" rows="14" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:14px; padding:14px; border-radius:8px; font-family:inherit; resize:vertical; line-height:1.5;"></textarea>
+      <button class="btn btn-outline" id="btnAddRow" style="margin-top:6px;">+ Adicionar produto</button>
 
       <div class="stack">
-        <button class="btn btn-primary" id="btnGerarLista">Continuar com este texto</button>
-        <button class="btn btn-outline" id="btnRefazerFoto">Tirar foto novamente</button>
+        <button class="btn btn-primary" id="btnContinuarManual">Continuar para conferência</button>
       </div>
     </section>
 
@@ -642,8 +642,6 @@
 (function(){
   // ---------- estado ----------
   let operador = "";
-  let stream = null;
-  let capturedImageBase64 = null;
   let produtos = []; // {id, produto, lote, quantidade_esperada, unidade, quantidade_guardada, status}
   let logCompleto = [];
 
@@ -659,7 +657,7 @@
 
   // ---------- drawer lateral: etapas + produtos ----------
   const STEPS = [
-    { id:'screen-scan',     num:1, label:'Escanear folha',  hint:'Foto ou galeria' },
+    { id:'screen-scan',     num:1, label:'Lançar produtos',  hint:'Tabela manual' },
     { id:'screen-confirm',  num:2, label:'Conferir quantidades', hint:'Registrar o guardado', requires:'produtos' },
     { id:'screen-result',   num:3, label:'Resultado',       hint:'Resumo do registro', requires:'finalizado' },
     { id:'screen-log',      num:4, label:'Histórico',       hint:'Todos os registros' }
@@ -680,7 +678,7 @@
       `;
       if(!blocked){
         div.addEventListener('click', () => {
-          if(step.id === 'screen-scan'){ startCamera(); }
+          if(step.id === 'screen-scan'){ iniciarTabelaManual(); }
           if(step.id === 'screen-log'){ carregarLog(); }
           showScreen(step.id);
         });
@@ -779,198 +777,97 @@
     operador = nome;
     $('opName').textContent = operador;
     $('topbar').style.display = 'flex';
-    startCamera();
+    iniciarTabelaManual();
     showScreen('screen-scan');
     carregarLog();
   });
 
-  // ---------- câmera ----------
-  async function startCamera(){
-    try{
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      $('video').srcObject = stream;
-    }catch(e){
-      toast('Câmera indisponível — use "enviar foto da galeria"');
-    }
+  // ---------- tabela manual de produtos ----------
+  let manualRows = [];
+  let manualRowCounter = 0;
+
+  function iniciarTabelaManual(){
+    if(manualRows && manualRows.length > 0) { renderTabelaManual(); return; }
+    manualRows = [];
+    manualRowCounter = 0;
+    adicionarLinhaManual();
+    adicionarLinhaManual();
+    renderTabelaManual();
   }
 
-  $('btnShutter').addEventListener('click', () => {
-    const video = $('video');
-    if(!video.videoWidth){ toast('Aguarde a câmera carregar'); return; }
-    const canvas = $('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-    if(stream){ stream.getTracks().forEach(t => t.stop()); }
-    processarFoto();
-  });
+  function adicionarLinhaManual(){
+    manualRowCounter++;
+    manualRows.push({ id: 'm' + manualRowCounter, produto: '', quantidade: '' });
+  }
 
-  $('fileInput').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      capturedImageBase64 = reader.result.split(',')[1];
-      if(stream){ stream.getTracks().forEach(t => t.stop()); }
-      processarFoto();
-    };
-    reader.readAsDataURL(file);
-  });
+  function renderTabelaManual(){
+    const wrap = $('manualTable');
+    wrap.innerHTML = '';
 
-  $('btnGerarLista').addEventListener('click', gerarProdutosDoTexto);
-  $('btnRefazerFoto').addEventListener('click', () => {
-    showScreen('screen-scan');
-    startCamera();
-  });
+    if(manualRows.length > 0){
+      const labels = document.createElement('div');
+      labels.className = 'manual-col-labels';
+      labels.innerHTML = '<span>Produto</span><span>Qtd.</span>';
+      wrap.appendChild(labels);
+    }
 
-  // ---------- leitura da folha via OCR local (sem servidor, sem chave de API) ----------
+    manualRows.forEach((row, i) => {
+      const div = document.createElement('div');
+      div.className = 'manual-row';
+      div.innerHTML = `
+        <div class="mr-num">${i + 1}</div>
+        <input type="text" placeholder="Nome do produto" data-field="produto" data-id="${row.id}" value="${escapeHtml(row.produto)}">
+        <input type="number" placeholder="0" data-field="quantidade" data-id="${row.id}" value="${escapeHtml(String(row.quantidade))}">
+        <button class="mr-remove" data-id="${row.id}" title="Remover">×</button>
+      `;
+      wrap.appendChild(div);
+    });
 
-  // melhora a imagem antes do OCR: converte pra preto e branco com contraste alto.
-  // texto impresso em papel lê MUITO melhor assim do que em foto colorida normal.
-  function prepararImagemParaOCR(base64Original){
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        // aumenta a escala se a imagem for pequena, ajuda o OCR a enxergar letras pequenas
-        const escala = img.width < 1600 ? 2 : 1;
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width * escala;
-        canvas.height = img.height * escala;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const d = imgData.data;
-        const limiar = 150; // ajusta o quão "forte" precisa ser pra virar preto
-        for(let i = 0; i < d.length; i += 4){
-          const cinza = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
-          const valor = cinza > limiar ? 255 : 0;
-          d[i] = d[i+1] = d[i+2] = valor;
-        }
-        ctx.putImageData(imgData, 0, 0);
-        resolve(canvas.toDataURL('image/png').split(',')[1]);
-      };
-      img.onerror = () => resolve(base64Original); // se der erro, usa a imagem original
-      img.src = 'data:image/jpeg;base64,' + base64Original;
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', (e) => {
+        const row = manualRows.find(r => r.id === e.target.dataset.id);
+        if(!row) return;
+        row[e.target.dataset.field] = e.target.value;
+      });
+    });
+    wrap.querySelectorAll('.mr-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        manualRows = manualRows.filter(r => r.id !== btn.dataset.id);
+        if(manualRows.length === 0) adicionarLinhaManual();
+        renderTabelaManual();
+      });
     });
   }
 
-  async function processarFoto(){
-    showScreen('screen-analyzing');
-    $('analyzingText').innerHTML = 'Preparando imagem...';
-    try{
-      if(typeof Tesseract === 'undefined'){
-        throw new Error('Biblioteca de leitura não carregou. Verifique sua conexão com a internet.');
-      }
-      const imagemTratada = await prepararImagemParaOCR(capturedImageBase64);
-      $('analyzingText').innerHTML = 'Lendo o texto da imagem...';
-      const dataUrl = 'data:image/png;base64,' + imagemTratada;
-      const { data } = await Tesseract.recognize(dataUrl, 'por', {
-        logger: (m) => {
-          if(m.status === 'recognizing text'){
-            const pct = Math.round(m.progress * 100);
-            $('analyzingText').innerHTML = `Lendo o texto da imagem...<br>${pct}%`;
-          } else if(m.status){
-            $('analyzingText').innerHTML = `${m.status}...`;
-          }
-        }
-      });
+  $('btnAddRow').addEventListener('click', () => {
+    adicionarLinhaManual();
+    renderTabelaManual();
+  });
 
-      const text = data.text;
-      const confianca = data.confidence; // 0-100
+  $('btnContinuarManual').addEventListener('click', () => {
+    const validas = manualRows.filter(r => r.produto.trim().length > 0 && String(r.quantidade).trim().length > 0);
 
-      if(!text || text.trim().length === 0){
-        toast('Nenhum texto foi encontrado na foto. Tente com mais luz, foco e a folha bem reta.');
-        showScreen('screen-scan');
-        startCamera();
-        return;
-      }
-
-      if(confianca < 55){
-        toast('Leitura com baixa confiança (' + Math.round(confianca) + '%). Revise o texto com atenção antes de continuar.');
-      }
-
-      $('ocrTextArea').value = text.trim();
-      showScreen('screen-ocrtext');
-    }catch(err){
-      console.error(err);
-      toast('Erro ao ler a foto: ' + (err && err.message ? err.message : 'tente novamente'));
-      showScreen('screen-scan');
-      startCamera();
-    }
-  }
-
-  // monta a lista de produtos a partir do texto bruto (uma linha = um produto, tudo editável depois)
-  // palavras de cabeçalho de tabela que devem ser ignoradas (não são produtos)
-  const PALAVRAS_CABECALHO = /descri[cç][aã]o|material|quantidade|lote|data de manufactura|data de validade|embarcado|pedido do cliente|documento de entrega|orderm de venda|data de embarque|page \d+ of \d+|recofarma|ind[uú]stria/i;
-
-  // interpreta uma linha de tabela: remove datas (dd.mm.aaaa) e número de lote (sequência longa de dígitos),
-  // o que sobrar de número curto é a quantidade; o texto restante é o nome do produto.
-  function parseLinhaTabela(linhaOriginal){
-    let linha = linhaOriginal;
-
-    // remove datas no formato dd.mm.aaaa ou dd/mm/aaaa
-    linha = linha.replace(/\d{1,2}[.\/]\d{1,2}[.\/]\d{2,4}/g, ' ');
-
-    // captura e remove número de lote: sequência de 6+ dígitos (geralmente colado a letras, ex: 0021429024)
-    let lote = '—';
-    const loteMatch = linha.match(/\b\d{6,}\b/);
-    if(loteMatch){
-      lote = loteMatch[0];
-      linha = linha.replace(loteMatch[0], ' ');
-    }
-
-    // o que sobrar de número curto (1 a 5 dígitos) é a quantidade — usa o ÚLTIMO número da linha,
-    // pois números que fazem parte do nome do produto (ex: "P1G,3") aparecem antes da quantidade real
-    let quantidade = 0;
-    const qtdMatches = linha.match(/\b\d{1,5}\b/g);
-    if(qtdMatches && qtdMatches.length > 0){
-      const ultimo = qtdMatches[qtdMatches.length - 1];
-      quantidade = parseInt(ultimo, 10);
-      const idx = linha.lastIndexOf(ultimo);
-      linha = linha.slice(0, idx) + ' ' + linha.slice(idx + ultimo.length);
-    }
-
-    // limpa o que sobrou pra virar o nome do produto (preserva vírgulas, comuns em códigos de produto)
-    const produto = linha.replace(/[.\/\-_:]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
-
-    return { produto: produto || linhaOriginal.trim(), lote, quantidade };
-  }
-
-  function gerarProdutosDoTexto(){
-    const texto = $('ocrTextArea').value;
-    const linhas = texto.split('\n')
-      .map(l => l.trim())
-      .filter(l => l.length > 2)
-      .filter(l => !PALAVRAS_CABECALHO.test(l))
-      .filter(l => /\d/.test(l)) // descarta linhas sem nenhum número (não são linhas de produto)
-      .filter(l => /[a-zA-ZÀ-ÿ]{3,}/.test(l)) // exige ao menos 3 letras seguidas (descarta ruído tipo "Q"«Évcf?» &")
-      .filter(l => { // descarta linhas com proporção alta de símbolos estranhos (provável erro de leitura)
-        const letras = (l.match(/[a-zA-ZÀ-ÿ0-9]/g) || []).length;
-        return letras / l.length >= 0.6;
-      });
-
-    if(linhas.length === 0){
-      toast('Não foi possível identificar produtos válidos no texto. Edite manualmente ou tire a foto novamente com mais luz e foco.');
+    if(validas.length === 0){
+      toast('Preencha pelo menos um produto com quantidade');
       return;
     }
+    if(validas.length < manualRows.length){
+      toast('Algumas linhas vazias foram ignoradas');
+    }
 
-    produtos = linhas.map((linha, i) => {
-      const { produto, lote, quantidade } = parseLinhaTabela(linha);
-      return {
-        id: 'p' + Date.now() + '_' + i,
-        produto: produto,
-        lote: lote,
-        quantidade_esperada: quantidade,
-        unidade: 'unid.',
-        quantidade_guardada: null,
-        status: null
-      };
-    });
+    produtos = validas.map((r, i) => ({
+      id: 'p' + Date.now() + '_' + i,
+      produto: r.produto.trim(),
+      lote: '—',
+      quantidade_esperada: Number(r.quantidade) || 0,
+      unidade: 'unid.',
+      quantidade_guardada: null,
+      status: null
+    }));
+
     renderConfirmacao();
     showScreen('screen-confirm');
-  }
+  });
 
   // ---------- confirmação ----------
   function renderConfirmacao(){
@@ -1125,10 +1022,10 @@
 
   $('btnNovaConferencia').addEventListener('click', () => {
     produtos = [];
-    capturedImageBase64 = null;
     finalizadoFlag = false;
+    manualRows = [];
+    iniciarTabelaManual();
     showScreen('screen-scan');
-    startCamera();
   });
 
   // ---------- histórico ----------
@@ -1137,8 +1034,8 @@
     showScreen('screen-log');
   });
   $('btnVoltarInicio').addEventListener('click', () => {
+    iniciarTabelaManual();
     showScreen('screen-scan');
-    startCamera();
   });
 
   async function carregarLog(){
