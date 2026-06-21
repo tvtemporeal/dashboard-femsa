@@ -825,15 +825,48 @@
   });
 
   // ---------- leitura da folha via OCR local (sem servidor, sem chave de API) ----------
+
+  // melhora a imagem antes do OCR: converte pra preto e branco com contraste alto.
+  // texto impresso em papel lê MUITO melhor assim do que em foto colorida normal.
+  function prepararImagemParaOCR(base64Original){
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        // aumenta a escala se a imagem for pequena, ajuda o OCR a enxergar letras pequenas
+        const escala = img.width < 1600 ? 2 : 1;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * escala;
+        canvas.height = img.height * escala;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const d = imgData.data;
+        const limiar = 150; // ajusta o quão "forte" precisa ser pra virar preto
+        for(let i = 0; i < d.length; i += 4){
+          const cinza = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+          const valor = cinza > limiar ? 255 : 0;
+          d[i] = d[i+1] = d[i+2] = valor;
+        }
+        ctx.putImageData(imgData, 0, 0);
+        resolve(canvas.toDataURL('image/png').split(',')[1]);
+      };
+      img.onerror = () => resolve(base64Original); // se der erro, usa a imagem original
+      img.src = 'data:image/jpeg;base64,' + base64Original;
+    });
+  }
+
   async function processarFoto(){
     showScreen('screen-analyzing');
-    $('analyzingText').innerHTML = 'Lendo o texto da imagem...<br>isso pode levar alguns segundos';
+    $('analyzingText').innerHTML = 'Preparando imagem...';
     try{
       if(typeof Tesseract === 'undefined'){
         throw new Error('Biblioteca de leitura não carregou. Verifique sua conexão com a internet.');
       }
-      const dataUrl = 'data:image/jpeg;base64,' + capturedImageBase64;
-      const { data: { text } } = await Tesseract.recognize(dataUrl, 'por', {
+      const imagemTratada = await prepararImagemParaOCR(capturedImageBase64);
+      $('analyzingText').innerHTML = 'Lendo o texto da imagem...';
+      const dataUrl = 'data:image/png;base64,' + imagemTratada;
+      const { data } = await Tesseract.recognize(dataUrl, 'por', {
         logger: (m) => {
           if(m.status === 'recognizing text'){
             const pct = Math.round(m.progress * 100);
@@ -844,11 +877,18 @@
         }
       });
 
+      const text = data.text;
+      const confianca = data.confidence; // 0-100
+
       if(!text || text.trim().length === 0){
-        toast('Nenhum texto foi encontrado na foto. Tente com mais luz e foco.');
+        toast('Nenhum texto foi encontrado na foto. Tente com mais luz, foco e a folha bem reta.');
         showScreen('screen-scan');
         startCamera();
         return;
+      }
+
+      if(confianca < 55){
+        toast('Leitura com baixa confiança (' + Math.round(confianca) + '%). Revise o texto com atenção antes de continuar.');
       }
 
       $('ocrTextArea').value = text.trim();
@@ -904,10 +944,15 @@
       .map(l => l.trim())
       .filter(l => l.length > 2)
       .filter(l => !PALAVRAS_CABECALHO.test(l))
-      .filter(l => /\d/.test(l)); // descarta linhas sem nenhum número (não são linhas de produto)
+      .filter(l => /\d/.test(l)) // descarta linhas sem nenhum número (não são linhas de produto)
+      .filter(l => /[a-zA-ZÀ-ÿ]{3,}/.test(l)) // exige ao menos 3 letras seguidas (descarta ruído tipo "Q"«Évcf?» &")
+      .filter(l => { // descarta linhas com proporção alta de símbolos estranhos (provável erro de leitura)
+        const letras = (l.match(/[a-zA-ZÀ-ÿ0-9]/g) || []).length;
+        return letras / l.length >= 0.6;
+      });
 
     if(linhas.length === 0){
-      toast('Nenhuma linha de produto encontrada. Edite o texto ou tire a foto novamente.');
+      toast('Não foi possível identificar produtos válidos no texto. Edite manualmente ou tire a foto novamente com mais luz e foco.');
       return;
     }
 
