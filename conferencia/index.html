@@ -488,6 +488,29 @@
   .manual-col-labels span:first-child{flex:3;}
   .manual-col-labels span:last-child{flex:1; text-align:center; min-width:64px; margin-right:34px;}
 
+  /* ---- LINHA 2: VALIDADE + SINAL ---- */
+  .manual-row-2lines{flex-direction:column; align-items:stretch; gap:10px;}
+  .manual-row-2lines .mr-line1{display:flex; gap:8px; align-items:center;}
+  .manual-row-2lines .mr-line2{
+    display:flex; align-items:center; gap:10px;
+    padding-left:30px;
+  }
+  .manual-row-2lines .mr-line2 label{
+    font-size:10.5px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); font-weight:700; flex-shrink:0;
+  }
+  .manual-row-2lines .mr-line2 input[type="date"]{
+    flex:1; font-size:13px; padding:9px 10px; color-scheme:dark;
+  }
+
+  .sinal-badge{
+    flex-shrink:0;
+    font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;
+    padding:5px 9px; border-radius:6px; white-space:nowrap;
+  }
+  .sinal-badge.sinal-laranja{background:rgba(217,142,4,0.18); color:#F0B33E;}
+  .sinal-badge.sinal-amarelo{background:rgba(230,200,30,0.18); color:#E8D24A;}
+  .sinal-badge.sinal-vermelho{background:rgba(217,54,42,0.2); color:#F08176;}
+
   /* ---- TOGGLE ENTRADA / SAÍDA ---- */
   .tipo-toggle{
     display:flex; gap:10px; margin-top:10px;
@@ -575,7 +598,7 @@
   <div class="modal-overlay" id="editModalOverlay">
     <div class="modal-box">
       <div class="modal-title">Corrigir dados do produto</div>
-      <div class="modal-sub">Ajuste o que o escaneamento identificou errado.</div>
+      <div class="modal-sub">Ajuste os dados deste produto.</div>
       <div class="modal-field">
         <label>Produto</label>
         <input type="text" id="editProduto">
@@ -587,6 +610,10 @@
       <div class="modal-field">
         <label>Quantidade esperada</label>
         <input type="number" id="editQtdEsperada">
+      </div>
+      <div class="modal-field">
+        <label>Validade</label>
+        <input type="date" id="editValidade" style="color-scheme:dark;">
       </div>
       <div class="modal-field">
         <label>Unidade</label>
@@ -847,6 +874,7 @@
     $('editProduto').value = p.produto;
     $('editLote').value = p.lote;
     $('editQtdEsperada').value = p.quantidade_esperada;
+    $('editValidade').value = p.validade || '';
     $('editUnidade').value = p.unidade;
     $('editModalOverlay').classList.add('show');
   }
@@ -864,6 +892,7 @@
     p.produto = $('editProduto').value.trim() || p.produto;
     p.lote = $('editLote').value.trim() || p.lote;
     p.quantidade_esperada = Number($('editQtdEsperada').value) || 0;
+    p.validade = $('editValidade').value || '';
     p.unidade = $('editUnidade').value.trim() || p.unidade;
     // recalcula status caso já tenha quantidade guardada digitada
     if(p.quantidade_guardada !== null){
@@ -904,7 +933,34 @@
     }catch(e){ return []; }
   }
   function salvarUsuarios(lista){
-    localStorage.setItem('femsa_usuarios', JSON.stringify(lista));
+    try{
+      localStorage.setItem('femsa_usuarios', JSON.stringify(lista));
+      // confirma que realmente gravou (alguns navegadores embutidos de outros apps bloqueiam silenciosamente)
+      const releitura = localStorage.getItem('femsa_usuarios');
+      return releitura === JSON.stringify(lista);
+    }catch(e){
+      console.error('Falha ao salvar usuários', e);
+      return false;
+    }
+  }
+
+  // testa se o armazenamento do navegador realmente persiste — alguns apps (Whatsapp, Instagram, etc)
+  // abrem links num navegador embutido que apaga tudo ao fechar, e isso causa "cadastro sumindo"
+  function testarArmazenamentoDisponivel(){
+    try{
+      localStorage.setItem('femsa_teste_storage', '1');
+      const ok = localStorage.getItem('femsa_teste_storage') === '1';
+      localStorage.removeItem('femsa_teste_storage');
+      return ok;
+    }catch(e){
+      return false;
+    }
+  }
+  if(!testarArmazenamentoDisponivel()){
+    const aviso = document.createElement('div');
+    aviso.style.cssText = 'background:#D9362A; color:#fff; font-size:12px; font-weight:700; text-align:center; padding:10px 16px; position:relative; z-index:200;';
+    aviso.innerHTML = '⚠ Este navegador não está salvando dados. Abra este link direto no Chrome/Edge (não dentro do WhatsApp/Instagram) para os cadastros e registros funcionarem.';
+    document.body.insertBefore(aviso, document.body.firstChild);
   }
 
   // garante que o usuário administrador sempre exista, mesmo na primeira vez que o app roda neste navegador
@@ -1008,7 +1064,12 @@
     const senhaHash = await sha256(senha);
     const novoUsuario = { br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false };
     usuarios.push(novoUsuario);
-    salvarUsuarios(usuarios);
+    const salvouComSucesso = salvarUsuarios(usuarios);
+
+    if(!salvouComSucesso){
+      toast('Não foi possível salvar o cadastro neste navegador. Abra o link direto no Chrome/Edge (não dentro de outro app) e tente novamente.');
+      return;
+    }
 
     toast('Cadastro criado com sucesso');
     entrarNoApp(novoUsuario);
@@ -1029,7 +1090,7 @@
 
   function adicionarLinhaManual(){
     manualRowCounter++;
-    manualRows.push({ id: 'm' + manualRowCounter, produto: '', quantidade: '' });
+    manualRows.push({ id: 'm' + manualRowCounter, produto: '', quantidade: '', validade: '' });
   }
 
   function renderTabelaManual(){
@@ -1046,12 +1107,21 @@
 
     manualRows.forEach((row, i) => {
       const div = document.createElement('div');
-      div.className = 'manual-row';
+      div.className = 'manual-row manual-row-2lines';
+      const sinal = calcularSinalValidade(row.validade);
+      const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
       div.innerHTML = `
-        <div class="mr-num">${i + 1}</div>
-        <input type="text" placeholder="Nome do produto" data-field="produto" data-id="${row.id}" value="${escapeHtml(row.produto)}">
-        <input type="number" placeholder="0" data-field="quantidade" data-id="${row.id}" value="${escapeHtml(String(row.quantidade))}">
-        <button class="mr-remove" data-id="${row.id}" title="Remover">×</button>
+        <div class="mr-line1">
+          <div class="mr-num">${i + 1}</div>
+          <input type="text" placeholder="Nome do produto" data-field="produto" data-id="${row.id}" value="${escapeHtml(row.produto)}">
+          <input type="number" placeholder="0" data-field="quantidade" data-id="${row.id}" value="${escapeHtml(String(row.quantidade))}">
+          <button class="mr-remove" data-id="${row.id}" title="Remover">×</button>
+        </div>
+        <div class="mr-line2">
+          <label>Validade</label>
+          <input type="date" data-field="validade" data-id="${row.id}" value="${escapeHtml(row.validade)}">
+          ${badge}
+        </div>
       `;
       wrap.appendChild(div);
     });
@@ -1061,6 +1131,7 @@
         const row = manualRows.find(r => r.id === e.target.dataset.id);
         if(!row) return;
         row[e.target.dataset.field] = e.target.value;
+        if(e.target.dataset.field === 'validade') renderTabelaManual();
       });
     });
     wrap.querySelectorAll('.mr-remove').forEach(btn => {
@@ -1076,6 +1147,31 @@
     adicionarLinhaManual();
     renderTabelaManual();
   });
+
+  // verifica se existem lotes do mesmo produto (entradas registradas) com validade mais próxima
+  // do que a que está sendo retirada agora — alerta de FEFO (primeiro que vence, primeiro que sai)
+  function verificarFEFO(registrosSaida){
+    let entradas = [];
+    try{
+      const raw = localStorage.getItem('femsa_log_conferencias');
+      entradas = raw ? JSON.parse(raw).filter(r => r.tipo === 'entrada' && r.validade) : [];
+    }catch(e){ entradas = []; }
+
+    const avisos = [];
+    registrosSaida.forEach(saida => {
+      if(!saida.validade) return;
+      const nomeNormalizado = saida.produto.trim().toLowerCase();
+      const conflitantes = entradas.filter(e =>
+        e.produto.trim().toLowerCase() === nomeNormalizado &&
+        e.validade && e.validade < saida.validade
+      );
+      if(conflitantes.length > 0){
+        const maisCritica = conflitantes.sort((a,b) => a.validade.localeCompare(b.validade))[0];
+        avisos.push(`${saida.produto}: existe lote com validade ${formatarDataBR(maisCritica.validade)} (mais próxima) que ainda não saiu`);
+      }
+    });
+    return avisos;
+  }
 
   $('btnContinuarManual').addEventListener('click', () => {
     const validas = manualRows.filter(r => r.produto.trim().length > 0 && String(r.quantidade).trim().length > 0);
@@ -1093,6 +1189,7 @@
         id: 'p' + Date.now() + '_' + i,
         produto: r.produto.trim(),
         lote: '—',
+        validade: r.validade || '',
         quantidade_esperada: Number(r.quantidade) || 0,
         unidade: 'unid.',
         quantidade_guardada: null,
@@ -1106,12 +1203,19 @@
       const registros = validas.map(r => ({
         operador, timestamp, tipo: 'saida',
         produto: r.produto.trim(), lote: '—',
+        validade: r.validade || '',
         quantidade_esperada: Number(r.quantidade) || 0,
         quantidade_guardada: Number(r.quantidade) || 0,
         unidade: 'unid.',
         status: 'saida'
       }));
-      salvarERegistrar(registros);
+
+      const avisosFEFO = verificarFEFO(registros);
+      if(avisosFEFO.length > 0){
+        toast('⚠ ' + avisosFEFO[0] + (avisosFEFO.length > 1 ? ` (+${avisosFEFO.length - 1} outro alerta)` : ''));
+      }
+
+      salvarERegistrar(registros, avisosFEFO);
     }
   });
 
@@ -1123,11 +1227,16 @@
       const card = document.createElement('div');
       card.className = 'product-card';
       card.id = 'card-' + p.id;
+      const sinal = calcularSinalValidade(p.validade);
+      const sinalHtml = sinal
+        ? `<span class="sinal-badge sinal-${sinal.cor}" style="margin-top:6px; display:inline-block;">Val. ${formatarDataBR(p.validade)} · ${sinal.label}</span>`
+        : (p.validade ? `<div class="pc-lote" style="margin-top:2px;">Val. ${formatarDataBR(p.validade)}</div>` : '');
       card.innerHTML = `
         <div class="pc-head">
           <div>
             <div class="pc-name">${escapeHtml(p.produto)}</div>
             <div class="pc-lote">Lote ${escapeHtml(p.lote)}</div>
+            ${sinalHtml}
           </div>
           <div class="pc-expected">
             <div class="num">${p.quantidade_esperada}</div>
@@ -1202,7 +1311,7 @@
 
   // ---------- finalizar / log ----------
   // salva registros no log local e mostra a tela de resultado (usado por entrada e saída)
-  function salvarERegistrar(registros){
+  function salvarERegistrar(registros, avisosFEFO){
     try{
       let lista = [];
       const existente = localStorage.getItem('femsa_log_conferencias');
@@ -1216,7 +1325,7 @@
       toast('Atenção: não foi possível salvar o registro neste navegador');
     }
 
-    renderResultado(registros);
+    renderResultado(registros, avisosFEFO);
     finalizadoFlag = true;
     showScreen('screen-result');
   }
@@ -1229,6 +1338,7 @@
     const registros = produtos.map(p => ({
       operador, timestamp, tipo: 'entrada',
       produto: p.produto, lote: p.lote,
+      validade: p.validade || '',
       quantidade_esperada: p.quantidade_esperada,
       quantidade_guardada: p.quantidade_guardada,
       unidade: p.unidade,
@@ -1238,7 +1348,7 @@
     salvarERegistrar(registros);
   });
 
-  function renderResultado(registros){
+  function renderResultado(registros, avisosFEFO){
     const ehSaida = registros.length > 0 && registros[0].tipo === 'saida';
     const temErro = !ehSaida && registros.some(r => r.status !== 'ok');
     const banner = $('resultBannerWrap');
@@ -1250,6 +1360,19 @@
           <h2>Saída registrada</h2>
           <p>${registros.length} produto(s) retirado(s) da câmara.</p>
         </div>`;
+
+      if(avisosFEFO && avisosFEFO.length > 0){
+        const avisoDiv = document.createElement('div');
+        avisoDiv.className = 'result-banner warn';
+        avisoDiv.style.marginTop = '-8px';
+        avisoDiv.style.marginBottom = '20px';
+        avisoDiv.innerHTML = `
+          <div class="ic">⚠</div>
+          <h2>Atenção: ordem de saída (FEFO)</h2>
+          <p style="text-align:left; line-height:1.5;">${avisosFEFO.map(a => escapeHtml(a)).join('<br><br>')}</p>
+        `;
+        banner.appendChild(avisoDiv);
+      }
     } else {
       banner.innerHTML = temErro ? `
         <div class="result-banner warn">
@@ -1269,11 +1392,14 @@
     registros.forEach(r => {
       const item = document.createElement('div');
       item.className = 'log-item';
+      const sinal = calcularSinalValidade(r.validade);
+      const sinalHtml = sinal ? `<span class="sinal-badge sinal-${sinal.cor}" style="margin-top:4px; display:inline-block;">Val. ${formatarDataBR(r.validade)} · ${sinal.label}</span>` : (r.validade ? `<div class="li-meta">Val. ${formatarDataBR(r.validade)}</div>` : '');
       if(ehSaida){
         item.innerHTML = `
           <div>
             <div class="li-name">${escapeHtml(r.produto)}</div>
             <div class="li-meta">${r.quantidade_guardada} ${escapeHtml(r.unidade)} retirado(s)</div>
+            ${sinalHtml}
           </div>
           <span class="tipo-badge saida">Saída</span>
         `;
@@ -1284,6 +1410,7 @@
           <div>
             <div class="li-name">${escapeHtml(r.produto)}</div>
             <div class="li-meta">Lote ${escapeHtml(r.lote)} · ${r.quantidade_guardada}/${r.quantidade_esperada} ${escapeHtml(r.unidade)}</div>
+            ${sinalHtml}
           </div>
           <span class="tag-mini ${tagClass}">${tagText}</span>
         `;
@@ -1387,11 +1514,16 @@
         const tagText = r.status === 'ok' ? 'OK' : (r.status === 'insuf' ? 'Insuficiente' : 'A maior');
         return `<span class="tag-mini ${tagClass}" style="margin-left:6px;">${tagText}</span>`;
       })();
+      const sinal = calcularSinalValidade(r.validade);
+      const sinalHtml = sinal
+        ? `<span class="sinal-badge sinal-${sinal.cor}" style="margin-top:4px; display:inline-block;">Val. ${formatarDataBR(r.validade)} · ${sinal.label}</span>`
+        : (r.validade ? `<div class="li-meta">Val. ${formatarDataBR(r.validade)}</div>` : '');
       item.innerHTML = `
         <div>
           <div class="li-name">${escapeHtml(r.produto)}</div>
           <div class="li-meta">${escapeHtml(r.operador)} · ${escapeHtml(r.timestamp)}</div>
           <div class="li-meta">Lote ${escapeHtml(r.lote)} · ${detalheQtd}</div>
+          ${sinalHtml}
         </div>
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
           ${badge}${statusTag}
@@ -1424,10 +1556,10 @@
 
   $('btnExportar').addEventListener('click', () => {
     if(logCompleto.length === 0){ toast('Nenhum registro para exportar'); return; }
-    const headers = ['Operador','Data/Hora','Produto','Lote','Qtd Esperada','Qtd Guardada','Unidade','Status'];
+    const headers = ['Tipo','Operador','Data/Hora','Produto','Lote','Qtd Esperada','Qtd Guardada','Unidade','Validade','Status'];
     const rows = logCompleto.map(r => [
-      r.operador, r.timestamp, r.produto, r.lote,
-      r.quantidade_esperada, r.quantidade_guardada, r.unidade, r.status
+      r.tipo === 'saida' ? 'Saída' : 'Entrada', r.operador, r.timestamp, r.produto, r.lote,
+      r.quantidade_esperada, r.quantidade_guardada, r.unidade, r.validade ? formatarDataBR(r.validade) : '', r.status
     ]);
     let csv = headers.join(';') + '\n';
     rows.forEach(row => { csv += row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(';') + '\n'; });
@@ -1443,6 +1575,28 @@
 
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // ---------- sinalização de datas de validade ----------
+  // vermelho = crítico (≤30 dias), amarelo = atenção (≤60 dias), laranja = fique de olho (≤90 dias)
+  function calcularSinalValidade(dataStr){
+    if(!dataStr) return null;
+    const hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    const dataVal = new Date(dataStr + 'T00:00:00');
+    if(isNaN(dataVal.getTime())) return null;
+    const dias = Math.round((dataVal - hoje) / (1000 * 60 * 60 * 24));
+
+    if(dias <= 30) return { cor: 'vermelho', label: dias < 0 ? 'Vencido' : `${dias}d`, dias };
+    if(dias <= 60) return { cor: 'amarelo', label: `${dias}d`, dias };
+    if(dias <= 90) return { cor: 'laranja', label: `${dias}d`, dias };
+    return null;
+  }
+
+  function formatarDataBR(dataStr){
+    if(!dataStr) return '';
+    const [ano, mes, dia] = dataStr.split('-');
+    return `${dia}/${mes}/${ano}`;
   }
 
 })();
