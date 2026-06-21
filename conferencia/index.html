@@ -970,16 +970,16 @@
     }));
 
     try{
-      const existente = await window.storage.get('log_conferencias', true).catch(()=>null);
       let lista = [];
-      if(existente && existente.value){
-        try{ lista = JSON.parse(existente.value); }catch(e){ lista = []; }
+      const existente = localStorage.getItem('femsa_log_conferencias');
+      if(existente){
+        try{ lista = JSON.parse(existente); }catch(e){ lista = []; }
       }
       lista = lista.concat(registros);
-      await window.storage.set('log_conferencias', JSON.stringify(lista), true);
+      localStorage.setItem('femsa_log_conferencias', JSON.stringify(lista));
     }catch(e){
       console.error('Erro ao salvar log', e);
-      toast('Atenção: não foi possível salvar no log compartilhado');
+      toast('Atenção: não foi possível salvar o registro neste navegador');
     }
 
     renderResultado(registros);
@@ -1040,9 +1040,8 @@
 
   async function carregarLog(){
     try{
-      const res = await window.storage.get('log_conferencias', true).catch(()=>null);
-      if(res && res.value){ logCompleto = JSON.parse(res.value); }
-      else { logCompleto = []; }
+      const existente = localStorage.getItem('femsa_log_conferencias');
+      logCompleto = existente ? JSON.parse(existente) : [];
     }catch(e){ logCompleto = []; }
     renderLog('todos');
   }
