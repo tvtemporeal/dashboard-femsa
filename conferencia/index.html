@@ -1063,18 +1063,25 @@
   const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwRzAmkK76iAK4MQiDjVRDvw2ikWZlysT4D62RaMzBY2Ub287jHuWfxcv9GMLTS6IipbA/exec';
 
   async function apiGet(params){
-    const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
-    const res = await fetch(url);
-    return res.json();
+    try{
+      const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }catch(e){ throw new Error('Sem conexão com o servidor'); }
   }
 
   async function apiPost(body){
-    const res = await fetch(BACKEND_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(body)
-    });
-    return res.json();
+    try{
+      // text/plain evita CORS preflight — Apps Script ainda recebe e lê o JSON normalmente
+      const res = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(body)
+      });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }catch(e){ throw new Error('Sem conexão com o servidor'); }
   }
 
   // ---------- autenticação ----------
