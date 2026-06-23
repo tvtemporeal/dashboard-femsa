@@ -864,22 +864,34 @@
         </button>
       </div>
 
-      <label class="field-label">Produto / concentrado</label>
+      <label class="field-label">Seu nome</label>
+      <input type="text" id="rncNome" placeholder="Ex: João Pedro" autocomplete="off">
+
+      <label class="field-label" style="margin-top:16px;">Produto / concentrado</label>
       <input type="text" id="rncProduto" placeholder="Ex: Conc. Del Valle Uva P1C" autocomplete="off">
 
       <label class="field-label" style="margin-top:16px;">Erro identificado</label>
       <textarea id="rncErro" rows="3" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:15px; padding:13px 14px; border-radius:8px; font-family:inherit; resize:none; margin-top:0;"></textarea>
 
-      <label class="field-label" style="margin-top:16px;">Correção proposta</label>
+      <label class="field-label" style="margin-top:16px;">Ação corretiva</label>
       <textarea id="rncCorrecao" rows="3" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:15px; padding:13px 14px; border-radius:8px; font-family:inherit; resize:none;"></textarea>
 
-      <label class="field-label" style="margin-top:16px;">Foto da não conformidade</label>
-      <div id="rncFotoPreview" style="display:none; margin-bottom:10px;">
-        <img id="rncFotoImg" src="" style="width:100%; border-radius:8px; max-height:200px; object-fit:cover;">
+      <label class="field-label" style="margin-top:16px;">Foto — ANTES (não conformidade)</label>
+      <div id="rncFotoAntesPreview" style="display:none; margin-bottom:10px;">
+        <img id="rncFotoAntesImg" src="" style="width:100%; border-radius:8px; max-height:200px; object-fit:cover;">
       </div>
       <label class="btn btn-outline" style="display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-top:4px;">
-        📷 Tirar ou escolher foto
-        <input type="file" id="rncFotoInput" accept="image/*" capture="environment" style="display:none;">
+        📷 Foto do antes
+        <input type="file" id="rncFotoAntesInput" accept="image/*" capture="environment" style="display:none;">
+      </label>
+
+      <label class="field-label" style="margin-top:16px;">Foto — DEPOIS (opcional)</label>
+      <div id="rncFotoDepoisPreview" style="display:none; margin-bottom:10px;">
+        <img id="rncFotoDepoisImg" src="" style="width:100%; border-radius:8px; max-height:200px; object-fit:cover;">
+      </div>
+      <label class="btn btn-outline" style="display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-top:4px;">
+        📷 Foto do depois
+        <input type="file" id="rncFotoDepoisInput" accept="image/*" capture="environment" style="display:none;">
       </label>
 
       <div id="rncUploadStatus" style="font-size:12px; color:var(--cinza); margin-top:8px; display:none;"></div>
@@ -1679,17 +1691,21 @@
       const card = document.createElement('div');
       card.className = 'rnc-card';
       const isFab1 = r.fabrica === 'Fábrica 1';
-      const fotoHtml = r.foto_url ? `<div class="rc-foto"><a href="${escapeHtml(r.foto_url)}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extrairIdDrive(r.foto_url)}&sz=w400" onerror="this.style.display='none'"></a></div>` : '';
+      const fotoAntes = r.foto_url ? `<div style="flex:1;"><div class="rc-label" style="margin-top:0;">Antes</div><a href="${escapeHtml(r.foto_url)}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extrairIdDrive(r.foto_url)}&sz=w400" style="width:100%;border-radius:8px;max-height:160px;object-fit:cover;" onerror="this.style.display='none'"></a></div>` : '';
+      const fotoDepois = r.foto_depois_url ? `<div style="flex:1;"><div class="rc-label" style="margin-top:0;">Depois</div><a href="${escapeHtml(r.foto_depois_url)}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extrairIdDrive(r.foto_depois_url)}&sz=w400" style="width:100%;border-radius:8px;max-height:160px;object-fit:cover;" onerror="this.style.display='none'"></a></div>` : '';
+      const fotosHtml = (fotoAntes || fotoDepois) ? `<div style="display:flex; gap:8px; margin-top:12px;">${fotoAntes}${fotoDepois}</div>` : '';
+      const nomeHtml = r.nome ? `<div class="rc-meta" style="margin-top:0; margin-bottom:6px;">Reportado por: ${escapeHtml(r.nome)}</div>` : '';
       card.innerHTML = `
         <div class="rc-head">
           <div class="rc-produto">${escapeHtml(r.tipo_concentrado || r.produto || '—')}</div>
           <span class="rc-fab ${isFab1?'fab1':''}">${escapeHtml(r.fabrica||'—')}</span>
         </div>
+        ${nomeHtml}
         <div class="rc-label">Erro identificado</div>
         <div class="rc-texto">${escapeHtml(r.erro_identificado||'—')}</div>
-        <div class="rc-label">Correção proposta</div>
+        <div class="rc-label">Ação corretiva</div>
         <div class="rc-texto">${escapeHtml(r.correcao||'—')}</div>
-        ${fotoHtml}
+        ${fotosHtml}
         <div class="rc-meta">${escapeHtml(r.timestamp||r.registradoEm||'')}</div>
       `;
       container.appendChild(card);
@@ -1774,31 +1790,49 @@
     $('rncBtnFab2').classList.remove('active');
   });
 
-  let rncFotoBase64 = null;
-  let rncFotoMime = 'image/jpeg';
+  let rncFotoAntes = null, rncFotoAntesMime = 'image/jpeg';
+  let rncFotoDepois = null, rncFotoDepoisMime = 'image/jpeg';
 
-  $('rncFotoInput').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    rncFotoMime = file.type || 'image/jpeg';
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const dataUrl = ev.target.result;
-      rncFotoBase64 = dataUrl.split(',')[1];
-      $('rncFotoImg').src = dataUrl;
-      $('rncFotoPreview').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-  });
+  function ligarInputFoto(inputId, previewId, imgId, setar){
+    $(inputId).addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const mime = file.type || 'image/jpeg';
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target.result;
+        setar(dataUrl.split(',')[1], mime);
+        $(imgId).src = dataUrl;
+        $(previewId).style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  ligarInputFoto('rncFotoAntesInput', 'rncFotoAntesPreview', 'rncFotoAntesImg', (b, m) => { rncFotoAntes = b; rncFotoAntesMime = m; });
+  ligarInputFoto('rncFotoDepoisInput', 'rncFotoDepoisPreview', 'rncFotoDepoisImg', (b, m) => { rncFotoDepois = b; rncFotoDepoisMime = m; });
+
+  async function enviarFoto(base64, mime, sufixo){
+    if(!base64) return '';
+    const ext = mime === 'image/png' ? 'png' : 'jpg';
+    const resF = await apiPost({
+      acao: 'salvarFoto',
+      fotoBase64: base64,
+      mimeType: mime,
+      nomeArquivo: `rnc_${sufixo}_${Date.now()}.${ext}`
+    });
+    return resF.ok ? resF.url : '';
+  }
 
   $('btnEnviarRNC').addEventListener('click', async () => {
+    const nome = $('rncNome').value.trim();
     const produto = $('rncProduto').value.trim();
     const erro = $('rncErro').value.trim();
     const correcao = $('rncCorrecao').value.trim();
 
+    if(!nome){ toast('Informe seu nome'); return; }
     if(!produto){ toast('Informe o produto / concentrado'); return; }
     if(!erro){ toast('Descreva o erro identificado'); return; }
-    if(!correcao){ toast('Descreva a correção proposta'); return; }
+    if(!correcao){ toast('Descreva a ação corretiva'); return; }
 
     $('btnEnviarRNC').disabled = true;
     $('btnEnviarRNC').textContent = 'Enviando...';
@@ -1806,18 +1840,14 @@
     status.style.display = 'block';
 
     try{
-      let fotoUrl = '';
-      if(rncFotoBase64){
-        status.textContent = 'Enviando foto para o Drive...';
-        const ext = rncFotoMime === 'image/png' ? 'png' : 'jpg';
-        const resF = await apiPost({
-          acao: 'salvarFoto',
-          fotoBase64: rncFotoBase64,
-          mimeType: rncFotoMime,
-          nomeArquivo: `rnc_${Date.now()}.${ext}`
-        });
-        if(resF.ok) fotoUrl = resF.url;
-        else toast('Aviso: foto não foi salva — ' + resF.erro);
+      let fotoAntesUrl = '', fotoDepoisUrl = '';
+      if(rncFotoAntes){
+        status.textContent = 'Enviando foto do antes...';
+        fotoAntesUrl = await enviarFoto(rncFotoAntes, rncFotoAntesMime, 'antes');
+      }
+      if(rncFotoDepois){
+        status.textContent = 'Enviando foto do depois...';
+        fotoDepoisUrl = await enviarFoto(rncFotoDepois, rncFotoDepoisMime, 'depois');
       }
 
       status.textContent = 'Salvando registro...';
@@ -1825,17 +1855,20 @@
       await apiPost({
         acao: 'adicionarRNC',
         timestamp, fabrica: rncFabricaSelecionada,
+        nome,
         tipo_concentrado: produto,
         erro_identificado: erro,
-        correcao, foto_url: fotoUrl
+        correcao,
+        foto_url: fotoAntesUrl,
+        foto_depois_url: fotoDepoisUrl
       });
 
       status.style.display = 'none';
       $('btnEnviarRNC').style.display = 'none';
       $('screen-rnc-form').querySelector('p.lead').style.display = 'none';
-      document.querySelectorAll('#screen-rnc-form .field-label, #screen-rnc-form textarea, #screen-rnc-form input[type=text], #screen-rnc-form .tipo-toggle, #screen-rnc-form label[for]').forEach(el => el.style.display = 'none');
-      $('rncFotoPreview').style.display = 'none';
-      document.querySelector('label.btn.btn-outline').style.display = 'none';
+      document.querySelectorAll('#screen-rnc-form .field-label, #screen-rnc-form textarea, #screen-rnc-form input, #screen-rnc-form .tipo-toggle, #screen-rnc-form label.btn').forEach(el => el.style.display = 'none');
+      $('rncFotoAntesPreview').style.display = 'none';
+      $('rncFotoDepoisPreview').style.display = 'none';
       $('rncSucesso').style.display = 'block';
     }catch(e){
       toast('Erro ao enviar. Verifique sua internet e tente novamente.');
@@ -1844,9 +1877,6 @@
       status.style.display = 'none';
     }
   });
-
-  // garante que o campo "Fábrica" nos lançamentos normais também seja registrado
-  // (Fábrica 2 é o padrão, mas futuramente dá pra expandir)
 
   function renderConfiguracoes(){
     const container = $('configUserList');
