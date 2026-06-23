@@ -468,9 +468,9 @@
   .login-hero{
     position:relative;
     margin:-24px -20px 0;
-    height:150px;
+    height:255px;
     background:
-      radial-gradient(circle at 30% 20%, rgba(226,35,26,0.35), transparent 60%),
+      radial-gradient(circle at 50% 35%, rgba(226,35,26,0.4), transparent 65%),
       linear-gradient(135deg, #2a0a08 0%, #1a0605 50%, #0a0302 100%);
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
@@ -481,15 +481,55 @@
     position:absolute; inset:0;
     background-image:repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 24px);
   }
-  .login-logo{
-    position:relative; z-index:2;
-    filter:drop-shadow(0 6px 16px rgba(226,35,26,0.5));
-    animation:logoFloat 3s ease-in-out infinite;
+  .coca-bottle{
+    position:relative; z-index:2; margin-top:12px;
+    filter:drop-shadow(0 8px 20px rgba(226,35,26,0.45));
   }
-  @keyframes logoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
   .login-wave{
-    position:absolute; bottom:-2px; left:0; right:0; height:30px; z-index:1;
-    background:radial-gradient(ellipse at 50% 100%, rgba(226,35,26,0.4), transparent 70%);
+    position:absolute; bottom:-2px; left:0; right:0; height:40px; z-index:1;
+    background:radial-gradient(ellipse at 50% 100%, rgba(226,35,26,0.45), transparent 70%);
+  }
+  .coca-bottle .bottle-cap{
+    transform-origin:80px 48px;
+    animation:capPop 5s ease-in-out infinite;
+  }
+  @keyframes capPop{
+    0%, 12% { transform:translateY(0) rotate(0); opacity:1; }
+    16% { transform:translateY(-10px) rotate(-12deg); opacity:1; }
+    22% { transform:translateY(-22px) rotate(-22deg); opacity:1; }
+    30% { transform:translateY(-30px) rotate(-30deg); opacity:0; }
+    31%, 100% { transform:translateY(-30px) rotate(-30deg); opacity:0; }
+  }
+  .coca-bottle .gas-burst{ animation:gasOut 5s ease-out infinite; }
+  @keyframes gasOut{
+    0%, 15% { opacity:0; transform:translateY(8px) scale(0.6); }
+    20% { opacity:0.9; transform:translateY(0) scale(1); }
+    32% { opacity:0; transform:translateY(-16px) scale(1.3); }
+    100% { opacity:0; }
+  }
+  .coca-bottle .bubble{ animation:bubbleUp 3s ease-in infinite; }
+  .coca-bottle .b1{ animation-delay:0.2s; }
+  .coca-bottle .b2{ animation-delay:1.1s; }
+  .coca-bottle .b3{ animation-delay:0.6s; }
+  .coca-bottle .b4{ animation-delay:1.7s; }
+  .coca-bottle .b5{ animation-delay:2.3s; }
+  @keyframes bubbleUp{
+    0% { opacity:0; transform:translateY(0); }
+    15% { opacity:0.8; }
+    80% { opacity:0.5; }
+    100% { opacity:0; transform:translateY(-150px); }
+  }
+  .coca-bottle .liquid-top{ animation:fizz 5s ease-in-out infinite; }
+  @keyframes fizz{
+    0%,18% { transform:translateY(0); }
+    24% { transform:translateY(-3px); }
+    30% { transform:translateY(1px); }
+    36% { transform:translateY(0); }
+    100% { transform:translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .coca-bottle .bottle-cap, .coca-bottle .gas-burst, .coca-bottle .bubble, .coca-bottle .liquid-top{ animation:none; }
+    .coca-bottle .gas-burst{ opacity:0; }
   }
 
   /* ---- AÇÕES DO DRAWER (Nova entrada / Nova saída) ---- */
@@ -763,18 +803,101 @@
     <!-- ===== TELA 1: LOGIN ===== -->
     <section class="screen active" id="screen-login">
       <div class="login-hero">
-        <div class="login-logo">
-          <svg viewBox="0 0 60 60" width="58" height="58" fill="none">
-            <circle cx="30" cy="30" r="29" fill="#E2231A"/>
-            <path d="M18 22c-3 0-5 2.5-5 8s2 8 5 8c2.2 0 3.8-1.2 4.5-3.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
-            <path d="M42 22c3 0 5 2.5 5 8s-2 8-5 8c-2.2 0-3.8-1.2-4.5-3.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
-            <path d="M26 30h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <svg class="coca-bottle" viewBox="0 0 160 300" width="120" height="225" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="vidroR" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#1a0504"/>
+              <stop offset="14%" stop-color="#8a1612"/>
+              <stop offset="32%" stop-color="#c0392f"/>
+              <stop offset="44%" stop-color="#5a0f0c"/>
+              <stop offset="58%" stop-color="#7a1410"/>
+              <stop offset="78%" stop-color="#3d0c0a"/>
+              <stop offset="100%" stop-color="#120403"/>
+            </linearGradient>
+            <linearGradient id="liquidoR" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#1a0403"/>
+              <stop offset="30%" stop-color="#6b1009"/>
+              <stop offset="50%" stop-color="#9c1a10"/>
+              <stop offset="70%" stop-color="#4a0b06"/>
+              <stop offset="100%" stop-color="#120302"/>
+            </linearGradient>
+            <linearGradient id="brilhoR" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+              <stop offset="50%" stop-color="#ff8478" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="tampaR" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f23b30"/>
+              <stop offset="55%" stop-color="#d4150b"/>
+              <stop offset="100%" stop-color="#7a0d06"/>
+            </linearGradient>
+            <clipPath id="recorteR">
+              <path d="M58 64 L58 80 Q58 98 50 114 Q42 130 42 154 L42 256 Q42 272 58 272 L102 272 Q118 272 118 256 L118 154 Q118 130 110 114 Q102 98 102 80 L102 64 Z"/>
+            </clipPath>
+          </defs>
+
+          <ellipse class="bottle-shadow" cx="80" cy="282" rx="52" ry="11" fill="#000" opacity="0.4"/>
+
+          <g class="bottle-cap">
+            <rect x="64" y="38" width="32" height="20" rx="3" fill="url(#tampaR)"/>
+            <rect x="64" y="38" width="32" height="5" rx="2.5" fill="#ff6055" opacity="0.7"/>
+            <line x1="69" y1="42" x2="69" y2="54" stroke="#7a0d06" stroke-width="0.8"/>
+            <line x1="75" y1="42" x2="75" y2="54" stroke="#7a0d06" stroke-width="0.8"/>
+            <line x1="81" y1="42" x2="81" y2="54" stroke="#7a0d06" stroke-width="0.8"/>
+            <line x1="87" y1="42" x2="87" y2="54" stroke="#7a0d06" stroke-width="0.8"/>
+          </g>
+
+          <g class="gas-burst" opacity="0">
+            <circle cx="80" cy="40" r="2" fill="#fff" opacity="0.9"/>
+            <circle cx="72" cy="34" r="1.5" fill="#fff" opacity="0.8"/>
+            <circle cx="88" cy="34" r="1.6" fill="#fff" opacity="0.8"/>
+            <circle cx="76" cy="26" r="1.2" fill="#fff" opacity="0.7"/>
+            <circle cx="85" cy="28" r="1.3" fill="#fff" opacity="0.7"/>
+            <circle cx="80" cy="20" r="1" fill="#fff" opacity="0.6"/>
+          </g>
+
+          <rect x="68" y="56" width="24" height="10" rx="2" fill="#5a0d07"/>
+
+          <path d="M58 64 L58 80 Q58 98 50 114 Q42 130 42 154 L42 256 Q42 272 58 272 L102 272 Q118 272 118 256 L118 154 Q118 130 110 114 Q102 98 102 80 L102 64 Z" fill="url(#vidroR)" stroke="#ff8478" stroke-width="0.5" stroke-opacity="0.45"/>
+
+          <g clip-path="url(#recorteR)">
+            <rect class="liquid-fill" x="42" y="92" width="76" height="185" fill="url(#liquidoR)"/>
+            <rect class="liquid-top" x="42" y="90" width="76" height="4" fill="#c0392f" opacity="0.8"/>
+
+            <circle class="bubble b1" cx="60" cy="260" r="1.8" fill="#ff9e94" opacity="0"/>
+            <circle class="bubble b2" cx="95" cy="260" r="1.4" fill="#ff9e94" opacity="0"/>
+            <circle class="bubble b3" cx="75" cy="260" r="2.1" fill="#ffb3aa" opacity="0"/>
+            <circle class="bubble b4" cx="85" cy="260" r="1.2" fill="#ff9e94" opacity="0"/>
+            <circle class="bubble b5" cx="68" cy="260" r="1.6" fill="#ffb3aa" opacity="0"/>
+
+            <rect x="42" y="60" width="9" height="215" fill="url(#brilhoR)" opacity="0.7"/>
+            <rect x="106" y="60" width="7" height="215" fill="#ff8a7e" opacity="0.18"/>
+
+            <rect x="42" y="156" width="76" height="52" fill="#e2231a"/>
+            <rect x="42" y="156" width="76" height="3" fill="#fff" opacity="0.25"/>
+            <rect x="42" y="205" width="76" height="3" fill="#000" opacity="0.3"/>
+            <text x="80" y="186" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="19" font-weight="700" fill="#fff" letter-spacing="-0.5">Coca-Cola</text>
+            <text x="80" y="199" text-anchor="middle" font-family="Arial, sans-serif" font-size="6.5" letter-spacing="3.5" fill="#fff" opacity="0.9">MARINGÁ</text>
+          </g>
+
+          <g fill="#fff">
+            <circle class="drop" cx="53" cy="104" r="2.4" opacity="0.7"/>
+            <circle class="drop" cx="50" cy="138" r="1.7" opacity="0.55"/>
+            <circle class="drop" cx="55" cy="172" r="2.1" opacity="0.6"/>
+            <circle class="drop" cx="49" cy="208" r="1.5" opacity="0.5"/>
+            <circle class="drop" cx="54" cy="240" r="1.9" opacity="0.55"/>
+            <circle class="drop" cx="108" cy="118" r="2.1" opacity="0.6"/>
+            <circle class="drop" cx="111" cy="152" r="1.6" opacity="0.5"/>
+            <circle class="drop" cx="107" cy="188" r="2.3" opacity="0.6"/>
+            <circle class="drop" cx="112" cy="224" r="1.6" opacity="0.5"/>
+            <circle class="drop" cx="109" cy="254" r="1.9" opacity="0.55"/>
+          </g>
+          <path d="M50 84 Q47 100 45 118" stroke="#fff" stroke-width="1.5" stroke-opacity="0.35" fill="none" stroke-linecap="round"/>
+        </svg>
         <div class="login-wave"></div>
       </div>
-      <div class="hero-num" style="margin-top:20px;">CONTROLE DE CONCENTRADOS</div>
-      <h1 class="title">Xaroparia<br><span style="color:var(--vermelho);">FEMSA</span></h1>
+      <div class="hero-num" style="margin-top:20px;">CONTROLE DE ESTOQUE</div>
+      <h1 class="title">FEMSA<br><span style="color:var(--vermelho);">Maringá</span></h1>
       <p class="lead">Gestão de entradas, saídas e qualidade dos concentrados. Faça login para começar.</p>
 
       <label class="field-label">BR</label>
