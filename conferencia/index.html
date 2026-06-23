@@ -461,6 +461,95 @@
   .modal-actions{display:flex; gap:10px; margin-top:18px;}
   .modal-actions .btn{padding:13px;}
 
+  /* ---- LOGIN HERO (tema Coca-Cola) ---- */
+  .login-hero{
+    position:relative;
+    margin:-24px -20px 0;
+    height:150px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(226,35,26,0.35), transparent 60%),
+      linear-gradient(135deg, #2a0a08 0%, #1a0605 50%, #0a0302 100%);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    border-bottom:3px solid var(--vermelho);
+  }
+  .login-hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:repeating-linear-gradient(115deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 24px);
+  }
+  .login-logo{
+    position:relative; z-index:2;
+    filter:drop-shadow(0 6px 16px rgba(226,35,26,0.5));
+    animation:logoFloat 3s ease-in-out infinite;
+  }
+  @keyframes logoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+  .login-wave{
+    position:absolute; bottom:-2px; left:0; right:0; height:30px; z-index:1;
+    background:radial-gradient(ellipse at 50% 100%, rgba(226,35,26,0.4), transparent 70%);
+  }
+
+  /* ---- AÇÕES DO DRAWER (Nova entrada / Nova saída) ---- */
+  .drawer-acoes{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
+  .acao-btn{
+    display:flex; align-items:center; gap:12px;
+    padding:13px 12px; border-radius:10px; cursor:pointer; font-family:inherit;
+    border:1.5px solid var(--linha); background:var(--preto); color:var(--osso); text-align:left;
+    transition:border-color .15s, background .15s;
+  }
+  .acao-btn .acao-ic{
+    width:34px; height:34px; border-radius:9px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:900;
+  }
+  .acao-entrada .acao-ic{background:rgba(226,35,26,0.15); color:var(--vermelho);}
+  .acao-saida .acao-ic{background:rgba(217,142,4,0.15); color:var(--ambar);}
+  .acao-txt{font-size:14px; font-weight:800; line-height:1.2;}
+  .acao-txt small{display:block; font-size:10.5px; font-weight:500; color:var(--cinza); margin-top:2px;}
+  .acao-entrada.current{border-color:var(--vermelho); background:rgba(226,35,26,0.1);}
+  .acao-saida.current{border-color:var(--ambar); background:rgba(217,142,4,0.1);}
+
+  .drawer-sep{
+    font-size:10px; text-transform:uppercase; letter-spacing:2px; color:var(--cinza);
+    font-weight:800; margin:16px 0 8px; padding-left:4px;
+  }
+  .step-dot{width:7px; height:7px; border-radius:50%; background:var(--cinza); flex-shrink:0; margin-left:8px; margin-right:5px;}
+  .step-item.current .step-dot{background:var(--vermelho);}
+
+  /* ---- LINHAS DE PRODUTO (com seletor) ---- */
+  .produto-row{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
+    padding:12px; margin-bottom:12px;
+  }
+  .pr-top{display:flex; align-items:center; gap:8px;}
+  .ps-btn{
+    flex:1; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    background:var(--preto); border:1.5px solid var(--linha); border-radius:8px;
+    padding:11px 13px; cursor:pointer; text-align:left; color:var(--osso); font-family:inherit;
+    min-width:0;
+  }
+  .ps-selecionado{min-width:0;}
+  .ps-nome{font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .ps-formula{font-size:11px; color:var(--ambar); margin-top:2px; font-weight:600;}
+  .ps-placeholder{font-size:13px; color:#5c574c;}
+  .ps-arrow{color:var(--cinza); font-size:12px; flex-shrink:0;}
+  .pr-bottom{display:flex; gap:10px; margin-top:10px; padding-left:30px;}
+  .pr-field{flex:1;}
+  .pr-field label{display:flex; align-items:center; gap:6px; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); font-weight:700; margin-bottom:5px;}
+  .pr-field input{font-size:14px; padding:10px;}
+
+  /* ---- SELETOR (modal de busca) ---- */
+  .seletor-grupo{
+    font-size:10.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:800;
+    color:var(--vermelho); padding:12px 8px 6px; position:sticky; top:0; background:var(--carvao);
+  }
+  .seletor-item{
+    display:block; width:100%; text-align:left; background:transparent;
+    border:none; border-bottom:1px solid var(--linha); padding:12px 8px; cursor:pointer; color:var(--osso); font-family:inherit;
+  }
+  .seletor-item:active{background:rgba(226,35,26,0.08);}
+  .si-nome{font-size:13.5px; font-weight:700;}
+  .si-formula{font-size:11.5px; color:var(--ambar); margin-top:2px; font-weight:600;}
+
   /* ---- TABELA MANUAL DE PRODUTOS ---- */
   .manual-row{
     display:flex; gap:8px; align-items:center;
@@ -625,6 +714,16 @@
   </div>
 
   <!-- modal de edição de produto escaneado -->
+  <!-- modal seletor de produto -->
+  <div class="modal-overlay" id="seletorOverlay">
+    <div class="modal-box" style="max-height:85vh; display:flex; flex-direction:column;">
+      <div class="modal-title">Escolher produto</div>
+      <input type="text" id="seletorBusca" placeholder="🔍 Buscar por nome ou fórmula..." autocomplete="off" style="margin:14px 0; font-size:15px;">
+      <div id="seletorLista" style="overflow-y:auto; flex:1; margin:0 -4px;"></div>
+      <button class="btn btn-ghost" id="btnFecharSeletor" style="margin-top:12px;">Cancelar</button>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="editModalOverlay">
     <div class="modal-box">
       <div class="modal-title">Corrigir dados do produto</div>
@@ -660,9 +759,20 @@
 
     <!-- ===== TELA 1: LOGIN ===== -->
     <section class="screen active" id="screen-login">
-      <div class="hero-num">CONFERÊNCIA · CÂMARAS 1–7</div>
-      <h1 class="title">Guarda de<br>concentrados</h1>
-      <p class="lead">Faça login com seu BR e senha para iniciar o registro.</p>
+      <div class="login-hero">
+        <div class="login-logo">
+          <svg viewBox="0 0 60 60" width="58" height="58" fill="none">
+            <circle cx="30" cy="30" r="29" fill="#E2231A"/>
+            <path d="M18 22c-3 0-5 2.5-5 8s2 8 5 8c2.2 0 3.8-1.2 4.5-3.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M42 22c3 0 5 2.5 5 8s-2 8-5 8c-2.2 0-3.8-1.2-4.5-3.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M26 30h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="login-wave"></div>
+      </div>
+      <div class="hero-num" style="margin-top:20px;">CONTROLE DE CONCENTRADOS</div>
+      <h1 class="title">Xaroparia<br><span style="color:var(--vermelho);">FEMSA</span></h1>
+      <p class="lead">Gestão de entradas, saídas e qualidade dos concentrados. Faça login para começar.</p>
 
       <label class="field-label">BR</label>
       <input type="text" id="inputBr" placeholder="Ex: 1234567" autocomplete="off" inputmode="numeric">
@@ -670,22 +780,8 @@
       <label class="field-label" style="margin-top:16px;">Senha</label>
       <input type="password" id="inputSenha" placeholder="••••••" autocomplete="off">
 
-      <label class="field-label" style="margin-top:22px;">Tipo de registro</label>
-      <div class="tipo-toggle">
-        <button type="button" class="tipo-btn active" id="btnTipoEntrada" data-tipo="entrada">
-          <span class="tipo-ic">↓</span>
-          <span>Entrada</span>
-          <small>Guardar produtos na câmara</small>
-        </button>
-        <button type="button" class="tipo-btn" id="btnTipoSaida" data-tipo="saida">
-          <span class="tipo-ic">↑</span>
-          <span>Saída</span>
-          <small>Retirar produtos da câmara</small>
-        </button>
-      </div>
-
       <div class="stack">
-        <button class="btn btn-primary" id="btnEntrar">Entrar e iniciar registro</button>
+        <button class="btn btn-primary" id="btnEntrar">Entrar</button>
       </div>
     </section>
 
@@ -944,48 +1040,70 @@
   }
 
   // ---------- drawer lateral: etapas + produtos ----------
+  // ações principais (ficam no topo do menu, com destaque)
+  const ACOES = [
+    { id:'nova-entrada', label:'Nova entrada', hint:'Guardar na câmara', icone:'↓', tipo:'entrada' },
+    { id:'nova-saida',   label:'Nova saída',   hint:'Retirar da câmara',  icone:'↑', tipo:'saida' }
+  ];
+  // demais telas de navegação
   const STEPS = [
-    { id:'screen-scan',     num:1, label:'Lançar produtos',      hint:'Tabela manual' },
-    { id:'screen-confirm',  num:2, label:'Conferir quantidades',  hint:'Registrar o guardado', requires:'produtos' },
-    { id:'screen-result',   num:3, label:'Resultado',             hint:'Resumo do registro', requires:'finalizado' },
-    { id:'screen-log',      num:4, label:'Histórico',             hint:'Entradas e saídas' },
-    { id:'screen-estoque',  num:5, label:'Estoque atual',         hint:'Saldo por produto' },
-    { id:'screen-rnc',      num:6, label:'Concentrados em RNC',   hint:'Não conformidades' },
-    { id:'screen-fab1',     num:7, label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
-    { id:'screen-qrcode',   num:8, label:'QR Code RNC',           hint:'Compartilhar formulário' },
-    { id:'screen-config',   num:9, label:'Configurações',         hint:'Gerenciar usuários', adminOnly:true }
+    { id:'screen-log',      label:'Histórico',             hint:'Entradas e saídas' },
+    { id:'screen-estoque',  label:'Estoque atual',         hint:'Saldo por produto' },
+    { id:'screen-rnc',      label:'Concentrados em RNC',   hint:'Não conformidades' },
+    { id:'screen-fab1',     label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
+    { id:'screen-qrcode',   label:'QR Code RNC',           hint:'Compartilhar formulário' },
+    { id:'screen-config',   label:'Configurações',         hint:'Gerenciar usuários', adminOnly:true }
   ];
   let finalizadoFlag = false;
 
   function renderStepNav(currentId){
     const nav = $('stepNav');
     nav.innerHTML = '';
+
+    // ações principais: Nova Entrada / Nova Saída
+    const acoesWrap = document.createElement('div');
+    acoesWrap.className = 'drawer-acoes';
+    ACOES.forEach(acao => {
+      const btn = document.createElement('button');
+      btn.className = 'acao-btn acao-' + acao.tipo + (currentId === 'screen-scan' && tipoOperacao === acao.tipo ? ' current' : '');
+      btn.innerHTML = `<span class="acao-ic">${acao.icone}</span><span class="acao-txt">${acao.label}<small>${acao.hint}</small></span>`;
+      btn.addEventListener('click', () => {
+        tipoOperacao = acao.tipo;
+        manualRows = [];
+        produtos = [];
+        finalizadoFlag = false;
+        iniciarTabelaManual();
+        aplicarTextosPorTipo();
+        showScreen('screen-scan');
+      });
+      acoesWrap.appendChild(btn);
+    });
+    nav.appendChild(acoesWrap);
+
+    // separador
+    const sep = document.createElement('div');
+    sep.className = 'drawer-sep';
+    sep.textContent = 'Consultar';
+    nav.appendChild(sep);
+
     STEPS.forEach(step => {
-      if(step.adminOnly && (!usuarioAtual || !usuarioAtual.isAdmin)) return; // some só aparece pro admin
-      const blocked = (step.requires === 'produtos' && produtos.length === 0) ||
-                      (step.requires === 'finalizado' && !finalizadoFlag);
+      if(step.adminOnly && (!usuarioAtual || !usuarioAtual.isAdmin)) return;
       const div = document.createElement('div');
-      div.className = 'step-item' + (step.id === currentId ? ' current' : '') + (blocked ? ' disabled' : '');
-      div.innerHTML = `
-        <div class="step-num">${step.num}</div>
-        <div class="step-text">${step.label}<small>${step.hint}</small></div>
-      `;
-      if(!blocked){
-        div.addEventListener('click', () => {
-          if(step.id === 'screen-scan'){ iniciarTabelaManual(); }
-          if(step.id === 'screen-log'){ carregarLog(); }
-          if(step.id === 'screen-config'){ renderConfiguracoes(); }
-          if(step.id === 'screen-estoque'){ renderEstoque(); }
-          if(step.id === 'screen-rnc'){ renderRNC(); }
-          if(step.id === 'screen-fab1'){ renderFab1(); }
-          if(step.id === 'screen-qrcode'){ renderQRCode(); }
-          showScreen(step.id);
-        });
-      }
+      div.className = 'step-item' + (step.id === currentId ? ' current' : '');
+      div.innerHTML = `<div class="step-dot"></div><div class="step-text">${step.label}<small>${step.hint}</small></div>`;
+      div.addEventListener('click', () => {
+        if(step.id === 'screen-log'){ carregarLog(); }
+        if(step.id === 'screen-config'){ renderConfiguracoes(); }
+        if(step.id === 'screen-estoque'){ renderEstoque(); }
+        if(step.id === 'screen-rnc'){ renderRNC(); }
+        if(step.id === 'screen-fab1'){ renderFab1(); }
+        if(step.id === 'screen-qrcode'){ renderQRCode(); }
+        showScreen(step.id);
+      });
       nav.appendChild(div);
     });
 
-    // lista de produtos escaneados, com opção de correção
+    // produtos em edição (durante uma entrada)
     const prodSection = $('drawerProdSection');
     if(produtos.length > 0){
       prodSection.style.display = 'block';
@@ -997,7 +1115,7 @@
         item.innerHTML = `
           <div class="drawer-prod-info">
             <div class="dp-name">${escapeHtml(p.produto)}</div>
-            <div class="dp-meta">Lote ${escapeHtml(p.lote)} · ${p.quantidade_esperada} ${escapeHtml(p.unidade)}</div>
+            <div class="dp-meta">${escapeHtml(p.formula || p.lote)} · ${p.quantidade_esperada} ${escapeHtml(p.unidade)}</div>
           </div>
           <button class="dp-edit-btn" data-id="${p.id}">Corrigir</button>
         `;
@@ -1072,7 +1190,7 @@
   }
 
   // ---------- backend compartilhado (Google Sheets via Apps Script) ----------
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzcXlAzt4IhT9F8NJ0xqPgT86HHCMIbtqTkKjih3gxeKxhxi7f9DSJxF94IVkB5TGCRIg/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycby84v5tMZneo9APAakyO_O8t8ANiGzufjrEdoggveyGjygpiGjSZXQ7tGYTaVYakmhdKQ/exec';
 
   async function apiGet(params){
     const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
@@ -1120,37 +1238,26 @@
   // o admin é validado diretamente pela constante no login, não precisa estar na planilha
   async function garantirAdmin(){ /* não é mais necessário criar na planilha */ }
 
+  // entrar no app sem definir tipo ainda (será escolhido no menu lateral)
   function entrarNoApp(usuario){
     usuarioAtual = usuario;
     operador = usuario.nome;
     $('opName').textContent = operador;
     $('topbar').style.display = 'flex';
+    tipoOperacao = 'entrada';
     iniciarTabelaManual();
     aplicarTextosPorTipo();
     showScreen('screen-scan');
-    carregarLog();
   }
-
-  // ---------- toggle entrada / saída ----------
-  $('btnTipoEntrada').addEventListener('click', () => {
-    tipoOperacao = 'entrada';
-    $('btnTipoEntrada').classList.add('active');
-    $('btnTipoSaida').classList.remove('active');
-  });
-  $('btnTipoSaida').addEventListener('click', () => {
-    tipoOperacao = 'saida';
-    $('btnTipoSaida').classList.add('active');
-    $('btnTipoEntrada').classList.remove('active');
-  });
 
   function aplicarTextosPorTipo(){
     if(tipoOperacao === 'entrada'){
-      $('tituloLancamento').textContent = 'Lançar produtos do lote';
-      $('subtituloLancamento').textContent = 'Digite o material e a quantidade esperada de cada item da folha.';
+      $('tituloLancamento').textContent = 'Nova entrada';
+      $('subtituloLancamento').textContent = 'Escolha o produto e informe a quantidade que está sendo guardada na câmara.';
       $('btnContinuarManual').textContent = 'Continuar para conferência';
     } else {
-      $('tituloLancamento').textContent = 'Lançar retirada de produtos';
-      $('subtituloLancamento').textContent = 'Digite o material e a quantidade retirada da câmara.';
+      $('tituloLancamento').textContent = 'Nova saída';
+      $('subtituloLancamento').textContent = 'Escolha o produto e informe a quantidade retirada da câmara.';
       $('btnContinuarManual').textContent = 'Registrar saída';
     }
     renderTabelaManual();
@@ -1241,6 +1348,84 @@
     }
   });
 
+  // ---------- catálogo de produtos (lista fixa) ----------
+  const PRODUTOS_CONCENTRADOS = [
+    {nome:'Coca Cola sem Açúcar (3028563)', formula:'DS-2110.88'},
+    {nome:'Guaraná Kuat (3295556) QX', formula:'GU/B-73.00'},
+    {nome:'Sprite Fresh (3296962)', formula:'SP/D-1570.50'},
+    {nome:'Sprite Original (3078647) QX', formula:'SP-1565.01'},
+    {nome:'Sprite Zero (3086508)', formula:'SP/D-0215.50'},
+    {nome:'Fanta Uva (2065095) QX', formula:'GR/B - 385.00'},
+    {nome:'Fanta Uva (3362082) QX', formula:'GR/B - 385.00'},
+    {nome:'Fanta Uva (3405297) QX', formula:'GR/B - 385.00'},
+    {nome:'Fanta Carmesin (3401992) QX', formula:'ST/B-342.10'},
+    {nome:'Fanta Guaraná (3063905) QX', formula:'GU-71.00'},
+    {nome:'Fanta Maracujá (3386609) QX', formula:'PF-113.00'},
+    {nome:'Del Valle Frut Uva (3196792)', formula:'GR/A/B/-437.00'},
+    {nome:'Del Valle Frut Laranja (2026)', formula:'OR/A/B-1929.00'},
+    {nome:'Del Valle Frutas Cítricas (3087638)', formula:'CI/A/B-0218.00'},
+    {nome:'DV Frut Limão (3123098)', formula:'LE/D/V-0848.50'},
+    {nome:'Crystal Sabores Limão (2004519)', formula:'WA/LI/M-1200'},
+    {nome:'Crystal Sabores Frutas Verm (2003653)', formula:'WA/BK/M-3.000'},
+    {nome:'Crystal Sabores Tangerina (3031159)', formula:'WA/MA/M-2.00'},
+    {nome:'Crystal Sabores Melancia (3068175)', formula:'WA/ME/M-5.00'},
+    {nome:'Ice Tea Pessego (3024501)', formula:'TE/PE/B-0032.20'},
+    {nome:'Ice Tea Pessego Zero (3024640)', formula:'TE/PE/D-0032.52'},
+    {nome:'Ice Tea Limão (2098608)', formula:'TE/LE/B-0098.30'},
+    {nome:'Ice Tea Limão Zero (2096854)', formula:'TE/LE/D-0283.50'},
+    {nome:'Cha Verde Limão Zero (3016311)', formula:'TE/LE/D-1.60'},
+    {nome:'Chá Branco Lichia (3076001)', formula:'TE/LY/D-8.50'},
+    {nome:'Fanta Laranja (3292163) QX (Suco 267,30 KG)', formula:'OR - 1982.00'},
+    {nome:'Fanta Laranja (3292163) QX (Suco 66,84 KG)', formula:'OR - 1982.00'},
+    {nome:'Coca Cola (1770799)', formula:'CC - 0099'},
+    {nome:'CCMA - Sucralose (3405902)', formula:'CC/B-1.00'},
+    {nome:'Kapo Laranja (3087340)', formula:'OR/V-1924.00'},
+    {nome:'Kapo Maracuja (3031479)', formula:'PF/V-0117.00'},
+    {nome:'Kapo Maçã (3031584)', formula:'AP/V-0802.20'},
+    {nome:'Kapo Abacaxi (3089151)', formula:'PA/V-1567.00'},
+    {nome:'Kapo Citrus (3031161)', formula:'CI/V-0220.00'},
+    {nome:'Kapo Uva (3100267)', formula:'GR/V-0274.30'},
+    {nome:'Kapo Morango (3100076)', formula:'ST/V-0323.00'},
+    {nome:'Kapo Melância (3331978)', formula:'ME/V-0108.00'},
+    {nome:'Powerade Pro Uva (3010338)', formula:'GR/B/Q/V-0218.22'},
+    {nome:'Powerade Pro Mountain Blast (3010411)', formula:'FP/B/Q/V-0794.00'},
+    {nome:'Powerade Laranja (3053553)', formula:'OR/Q/V-1197.50'},
+    {nome:'Powerade Limão (3066869)', formula:'LE/B/Q/V-546.11'},
+    {nome:'Powerade Frutas Tropicais (3055282)', formula:'FP/Q/V-567.00'},
+    {nome:'Powerade Tangerina (30118663)', formula:'MA/Q/V/B-170.00'},
+    {nome:'Powerade Citrus Maracuja (3079476)', formula:'OR/PF/Q-1.00'},
+    {nome:'Powerade Abacaxi (3105236)', formula:'PA/Q/B/V-1569.00'},
+    {nome:'Powerade Maçã Verde (3286341)', formula:'AP/Q/V-0874.00-B01'},
+    {nome:'Powerade Mountain Blast Zero (3359455)', formula:'AP/Q/V-0874.00-B01'},
+    {nome:'Powerade Ataque (3391515)', formula:'FP/D/Q/V-0876.50'},
+    {nome:'Powerade Contra Ataque (3393341)', formula:'CI/FL/V-0003.00-B01'},
+    {nome:'Powerade Ataque', formula:'CI/V/B-233.00'},
+    {nome:'Powerade Abacaxi (Gold Rush)', formula:'PA/Q/B/V-1569.00'},
+    {nome:'Powerade Maçã Verde', formula:'AP/Q/V-0874.00-B01'},
+    {nome:'Powerade Mountain Blast Zero', formula:'FP/D/Q/V-0876.50'},
+    {nome:'Powerade Contra Ataque', formula:'CI/FL/V-0003.00-B01'}
+  ];
+
+  const PRODUTOS_SUCOS = [
+    {nome:'Maçã 17,58 KG', formula:'30102323'},
+    {nome:'Maçã 20,84 KG', formula:'30101062'},
+    {nome:'Maçã 23,45 KG', formula:'30102818'},
+    {nome:'Maçã 70,35 KG', formula:'30102322'},
+    {nome:'Maçã 26,15 KG', formula:'30116494'},
+    {nome:'Laranja 66,84 KG', formula:'30102501'},
+    {nome:'Laranja 267,36 KG', formula:'30100005'},
+    {nome:'Limão 17,42 KG', formula:'30100634'},
+    {nome:'Limão 69,68 KG', formula:'30100635'},
+    {nome:'Morango 6,21 KG', formula:'30101063'},
+    {nome:'Uva 82,78 KG', formula:'30101054'},
+    {nome:'Base Kapo 107,1 KG', formula:'30101061'}
+  ];
+
+  const TODOS_PRODUTOS = [
+    ...PRODUTOS_CONCENTRADOS.map(p => ({...p, grupo:'Concentrados'})),
+    ...PRODUTOS_SUCOS.map(p => ({...p, grupo:'Sucos'}))
+  ];
+
   // ---------- tabela manual de produtos ----------
   let manualRows = [];
   let manualRowCounter = 0;
@@ -1256,37 +1441,39 @@
 
   function adicionarLinhaManual(){
     manualRowCounter++;
-    manualRows.push({ id: 'm' + manualRowCounter, produto: '', quantidade: '', validade: '' });
+    manualRows.push({ id: 'm' + manualRowCounter, produto: '', formula: '', quantidade: '', validade: '' });
   }
 
   function renderTabelaManual(){
     const wrap = $('manualTable');
     wrap.innerHTML = '';
 
-    if(manualRows.length > 0){
-      const labels = document.createElement('div');
-      labels.className = 'manual-col-labels';
-      const rotuloQtd = tipoOperacao === 'entrada' ? 'Qtd. esperada' : 'Qtd. retirada';
-      labels.innerHTML = `<span>Produto</span><span>${rotuloQtd}</span>`;
-      wrap.appendChild(labels);
-    }
-
     manualRows.forEach((row, i) => {
       const div = document.createElement('div');
-      div.className = 'manual-row manual-row-2lines';
+      div.className = 'produto-row';
       const sinal = calcularSinalValidade(row.validade);
       const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
+      const produtoSelecionado = row.produto
+        ? `<div class="ps-selecionado">
+             <div class="ps-nome">${escapeHtml(row.produto)}</div>
+             <div class="ps-formula">${escapeHtml(row.formula || '')}</div>
+           </div>`
+        : `<div class="ps-placeholder">Toque para escolher o produto</div>`;
       div.innerHTML = `
-        <div class="mr-line1">
+        <div class="pr-top">
           <div class="mr-num">${i + 1}</div>
-          <input type="text" placeholder="Nome do produto" data-field="produto" data-id="${row.id}" value="${escapeHtml(row.produto)}">
-          <input type="number" placeholder="0" data-field="quantidade" data-id="${row.id}" value="${escapeHtml(String(row.quantidade))}">
+          <button class="ps-btn" data-id="${row.id}">${produtoSelecionado}<span class="ps-arrow">▾</span></button>
           <button class="mr-remove" data-id="${row.id}" title="Remover">×</button>
         </div>
-        <div class="mr-line2">
-          <label>Validade</label>
-          <input type="date" data-field="validade" data-id="${row.id}" value="${escapeHtml(row.validade)}">
-          ${badge}
+        <div class="pr-bottom">
+          <div class="pr-field">
+            <label>${tipoOperacao === 'entrada' ? 'Quantidade' : 'Qtd. retirada'}</label>
+            <input type="number" inputmode="numeric" placeholder="0" data-field="quantidade" data-id="${row.id}" value="${escapeHtml(String(row.quantidade))}">
+          </div>
+          <div class="pr-field">
+            <label>Validade ${badge}</label>
+            <input type="date" data-field="validade" data-id="${row.id}" value="${escapeHtml(row.validade)}" style="color-scheme:dark;">
+          </div>
         </div>
       `;
       wrap.appendChild(div);
@@ -1300,6 +1487,9 @@
         if(e.target.dataset.field === 'validade') renderTabelaManual();
       });
     });
+    wrap.querySelectorAll('.ps-btn').forEach(btn => {
+      btn.addEventListener('click', () => abrirSeletorProduto(btn.dataset.id));
+    });
     wrap.querySelectorAll('.mr-remove').forEach(btn => {
       btn.addEventListener('click', () => {
         manualRows = manualRows.filter(r => r.id !== btn.dataset.id);
@@ -1309,9 +1499,68 @@
     });
   }
 
+  // ---------- seletor de produto (modal de busca) ----------
+  let seletorLinhaId = null;
+  function abrirSeletorProduto(linhaId){
+    seletorLinhaId = linhaId;
+    $('seletorBusca').value = '';
+    renderListaSeletor('');
+    $('seletorOverlay').classList.add('show');
+    setTimeout(() => $('seletorBusca').focus(), 100);
+  }
+  function fecharSeletorProduto(){
+    $('seletorOverlay').classList.remove('show');
+    seletorLinhaId = null;
+  }
+
+  function renderListaSeletor(filtro){
+    const lista = $('seletorLista');
+    const termo = filtro.trim().toLowerCase();
+    lista.innerHTML = '';
+
+    ['Concentrados', 'Sucos'].forEach(grupo => {
+      const itensGrupo = TODOS_PRODUTOS.filter(p =>
+        p.grupo === grupo &&
+        (termo === '' || p.nome.toLowerCase().includes(termo) || (p.formula && p.formula.toLowerCase().includes(termo)))
+      );
+      if(itensGrupo.length === 0) return;
+
+      const header = document.createElement('div');
+      header.className = 'seletor-grupo';
+      header.textContent = grupo;
+      lista.appendChild(header);
+
+      itensGrupo.forEach(p => {
+        const item = document.createElement('button');
+        item.className = 'seletor-item';
+        item.innerHTML = `
+          <div class="si-nome">${escapeHtml(p.nome)}</div>
+          <div class="si-formula">${escapeHtml(p.formula)}</div>
+        `;
+        item.addEventListener('click', () => {
+          const row = manualRows.find(r => r.id === seletorLinhaId);
+          if(row){ row.produto = p.nome; row.formula = p.formula; }
+          fecharSeletorProduto();
+          renderTabelaManual();
+        });
+        lista.appendChild(item);
+      });
+    });
+
+    if(lista.children.length === 0){
+      lista.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">🔍</div>Nenhum produto encontrado</div>`;
+    }
+  }
+
   $('btnAddRow').addEventListener('click', () => {
     adicionarLinhaManual();
     renderTabelaManual();
+  });
+
+  $('seletorBusca').addEventListener('input', (e) => renderListaSeletor(e.target.value));
+  $('btnFecharSeletor').addEventListener('click', fecharSeletorProduto);
+  $('seletorOverlay').addEventListener('click', (e) => {
+    if(e.target.id === 'seletorOverlay') fecharSeletorProduto();
   });
 
   // verifica se existem lotes do mesmo produto (entradas registradas) com validade mais próxima
@@ -1350,7 +1599,8 @@
       produtos = validas.map((r, i) => ({
         id: 'p' + Date.now() + '_' + i,
         produto: r.produto.trim(),
-        lote: '—',
+        formula: r.formula || '',
+        lote: r.formula || '—',
         validade: r.validade || '',
         quantidade_esperada: Number(r.quantidade) || 0,
         unidade: 'unid.',
@@ -1364,7 +1614,9 @@
       const timestamp = new Date().toLocaleString('pt-BR');
       const registros = validas.map(r => ({
         operador, timestamp, tipo: 'saida',
-        produto: r.produto.trim(), lote: '—',
+        produto: r.produto.trim(),
+        formula: r.formula || '',
+        lote: r.formula || '—',
         validade: r.validade || '',
         quantidade_esperada: Number(r.quantidade) || 0,
         quantidade_guardada: Number(r.quantidade) || 0,
@@ -1397,7 +1649,7 @@
         <div class="pc-head">
           <div>
             <div class="pc-name">${escapeHtml(p.produto)}</div>
-            <div class="pc-lote">Lote ${escapeHtml(p.lote)}</div>
+            <div class="pc-lote" style="color:var(--ambar);">${escapeHtml(p.formula || p.lote)}</div>
             ${sinalHtml}
           </div>
           <div class="pc-expected">
@@ -1489,7 +1741,8 @@
     const timestamp = new Date().toLocaleString('pt-BR');
     const registros = produtos.map(p => ({
       operador, timestamp, tipo: 'entrada',
-      produto: p.produto, lote: p.lote,
+      produto: p.produto, lote: p.formula || p.lote,
+      formula: p.formula || '',
       validade: p.validade || '',
       quantidade_esperada: p.quantidade_esperada,
       quantidade_guardada: p.quantidade_guardada,
@@ -1691,8 +1944,10 @@
       const card = document.createElement('div');
       card.className = 'rnc-card';
       const isFab1 = r.fabrica === 'Fábrica 1';
-      const fotoAntes = r.foto_url ? `<div style="flex:1;"><div class="rc-label" style="margin-top:0;">Antes</div><a href="${escapeHtml(r.foto_url)}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extrairIdDrive(r.foto_url)}&sz=w400" style="width:100%;border-radius:8px;max-height:160px;object-fit:cover;" onerror="this.style.display='none'"></a></div>` : '';
-      const fotoDepois = r.foto_depois_url ? `<div style="flex:1;"><div class="rc-label" style="margin-top:0;">Depois</div><a href="${escapeHtml(r.foto_depois_url)}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extrairIdDrive(r.foto_depois_url)}&sz=w400" style="width:100%;border-radius:8px;max-height:160px;object-fit:cover;" onerror="this.style.display='none'"></a></div>` : '';
+      const idAntes = extrairIdDrive(r.foto_url);
+      const idDepois = extrairIdDrive(r.foto_depois_url);
+      const fotoAntes = idAntes ? `<div style="flex:1;"><div class="rc-label" style="margin-top:0;">Antes</div><img src="https://drive.google.com/thumbnail?id=${idAntes}&sz=w400" style="width:100%;border-radius:8px;max-height:160px;object-fit:cover;cursor:pointer;" onclick="window._abrirLightbox('${idAntes}')" onerror="this.parentElement.innerHTML+='<div style=\\'font-size:11px;color:var(--cinza)\\'>Foto indisponível</div>';this.style.display='none'"></div>` : '';
+      const fotoDepois = idDepois ? `<div style="flex:1;"><div class="rc-label" style="margin-top:0;">Depois</div><img src="https://drive.google.com/thumbnail?id=${idDepois}&sz=w400" style="width:100%;border-radius:8px;max-height:160px;object-fit:cover;cursor:pointer;" onclick="window._abrirLightbox('${idDepois}')" onerror="this.style.display='none'"></div>` : '';
       const fotosHtml = (fotoAntes || fotoDepois) ? `<div style="display:flex; gap:8px; margin-top:12px;">${fotoAntes}${fotoDepois}</div>` : '';
       const nomeHtml = r.nome ? `<div class="rc-meta" style="margin-top:0; margin-bottom:6px;">Reportado por: ${escapeHtml(r.nome)}</div>` : '';
       card.innerHTML = `
@@ -1713,9 +1968,28 @@
   }
 
   function extrairIdDrive(url){
-    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    return m ? m[1] : '';
+    if(!url) return '';
+    let m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if(m) return m[1];
+    m = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if(m) return m[1];
+    return '';
   }
+
+  // lightbox: amplia foto ao tocar
+  function abrirLightbox(driveId){
+    let lb = document.getElementById('lightboxOverlay');
+    if(!lb){
+      lb = document.createElement('div');
+      lb.id = 'lightboxOverlay';
+      lb.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px;';
+      lb.innerHTML = '<img id="lightboxImg" style="max-width:100%; max-height:100%; border-radius:10px;"><div style="position:absolute; top:20px; right:24px; color:#fff; font-size:34px; font-weight:300; cursor:pointer;">×</div>';
+      lb.addEventListener('click', () => lb.remove());
+      document.body.appendChild(lb);
+    }
+    document.getElementById('lightboxImg').src = `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`;
+  }
+  window._abrirLightbox = abrirLightbox;
 
   // ---------- Fábrica 1: log filtrado ----------
   async function renderFab1(){
