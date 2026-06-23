@@ -526,6 +526,21 @@
   .estoque-card .ec-saldo .unit{font-size:9px; text-transform:uppercase; color:var(--cinza); letter-spacing:1px;}
   .estoque-card .ec-detalhe{font-size:11.5px; color:var(--cinza); margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;}
 
+  /* ---- CARDS RNC ---- */
+  .rnc-card{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
+    padding:16px; margin-bottom:12px;
+  }
+  .rnc-card .rc-head{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:10px;}
+  .rnc-card .rc-produto{font-size:15px; font-weight:800;}
+  .rnc-card .rc-fab{font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
+    padding:4px 9px; border-radius:5px; background:rgba(226,35,26,0.15); color:#F08176; flex-shrink:0;}
+  .rnc-card .rc-fab.fab1{background:rgba(217,142,4,0.15); color:#F0B33E;}
+  .rnc-card .rc-label{font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); font-weight:700; margin-bottom:3px; margin-top:10px;}
+  .rnc-card .rc-texto{font-size:13px; line-height:1.5;}
+  .rnc-card .rc-foto img{width:100%; border-radius:8px; max-height:180px; object-fit:cover; cursor:pointer; margin-top:10px;}
+  .rnc-card .rc-meta{font-size:11px; color:var(--cinza); margin-top:10px;}
+
   /* ---- TOGGLE ENTRADA / SAÍDA ---- */
   .tipo-toggle{
     display:flex; gap:10px; margin-top:10px;
@@ -787,6 +802,100 @@
       </div>
     </section>
 
+    <!-- ===== TELA RNC ===== -->
+    <section class="screen" id="screen-rnc">
+      <div class="section-label">Não conformidades</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Concentrados em RNC</h1>
+      <p class="lead" style="margin-bottom:18px;">Registros de não conformidade identificados nas câmaras.</p>
+      <div class="nav-tabs" id="rncFiltroTabs">
+        <button class="active" data-fab="todos">Todos</button>
+        <button data-fab="Fábrica 2">Fábrica 2</button>
+        <button data-fab="Fábrica 1">Fábrica 1</button>
+      </div>
+      <div id="rncList"></div>
+      <div class="stack" style="margin-top:20px;">
+        <button class="btn btn-ghost" id="btnVoltarInicioRNC">← Voltar ao início</button>
+      </div>
+    </section>
+
+    <!-- ===== TELA FÁBRICA 1 ===== -->
+    <section class="screen" id="screen-fab1">
+      <div class="section-label">Estoque externo</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Concentrados Fábrica 1</h1>
+      <p class="lead" style="margin-bottom:18px;">Entradas e saídas registradas para a Fábrica 1.</p>
+      <div id="fab1List"></div>
+      <div class="stack" style="margin-top:20px;">
+        <button class="btn btn-ghost" id="btnVoltarInicioFab1">← Voltar ao início</button>
+      </div>
+    </section>
+
+    <!-- ===== TELA QR CODE ===== -->
+    <section class="screen" id="screen-qrcode">
+      <div class="section-label">Formulário público</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">QR Code RNC</h1>
+      <p class="lead" style="margin-bottom:20px;">Qualquer pessoa escaneia este QR Code e registra um erro sem precisar de login ou senha.</p>
+      <div style="text-align:center; margin-bottom:20px;">
+        <img id="qrImg" src="" alt="QR Code" style="width:220px; height:220px; border-radius:12px; border:3px solid var(--vermelho); background:#fff; padding:8px;">
+        <div style="margin-top:12px; font-size:12px; color:var(--cinza);">Escaneie para abrir o formulário de RNC</div>
+      </div>
+      <div class="stack">
+        <button class="btn btn-outline" id="btnCopiarLinkRNC">Copiar link do formulário</button>
+        <button class="btn btn-ghost" id="btnVoltarInicioQR">← Voltar ao início</button>
+      </div>
+    </section>
+
+    <!-- ===== TELA PÚBLICA: FORMULÁRIO RNC (sem login) ===== -->
+    <section class="screen" id="screen-rnc-form">
+      <div class="hero-num">FEMSA · REGISTRO PÚBLICO</div>
+      <h1 class="title" style="font-size:26px;">Registrar não conformidade</h1>
+      <p class="lead" style="margin-bottom:20px;">Preencha os campos abaixo e envie a foto da não conformidade identificada.</p>
+
+      <label class="field-label">Fábrica</label>
+      <div class="tipo-toggle" style="margin-top:0; margin-bottom:18px;">
+        <button type="button" class="tipo-btn active" id="rncBtnFab2" data-fab="Fábrica 2">
+          <span class="tipo-ic" style="font-size:14px;">F2</span>
+          <span>Fábrica 2</span>
+          <small>Xaroparia 2</small>
+        </button>
+        <button type="button" class="tipo-btn" id="rncBtnFab1" data-fab="Fábrica 1">
+          <span class="tipo-ic" style="font-size:14px;">F1</span>
+          <span>Fábrica 1</span>
+          <small>Xaroparia 1</small>
+        </button>
+      </div>
+
+      <label class="field-label">Produto / concentrado</label>
+      <input type="text" id="rncProduto" placeholder="Ex: Conc. Del Valle Uva P1C" autocomplete="off">
+
+      <label class="field-label" style="margin-top:16px;">Erro identificado</label>
+      <textarea id="rncErro" rows="3" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:15px; padding:13px 14px; border-radius:8px; font-family:inherit; resize:none; margin-top:0;"></textarea>
+
+      <label class="field-label" style="margin-top:16px;">Correção proposta</label>
+      <textarea id="rncCorrecao" rows="3" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:15px; padding:13px 14px; border-radius:8px; font-family:inherit; resize:none;"></textarea>
+
+      <label class="field-label" style="margin-top:16px;">Foto da não conformidade</label>
+      <div id="rncFotoPreview" style="display:none; margin-bottom:10px;">
+        <img id="rncFotoImg" src="" style="width:100%; border-radius:8px; max-height:200px; object-fit:cover;">
+      </div>
+      <label class="btn btn-outline" style="display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-top:4px;">
+        📷 Tirar ou escolher foto
+        <input type="file" id="rncFotoInput" accept="image/*" capture="environment" style="display:none;">
+      </label>
+
+      <div id="rncUploadStatus" style="font-size:12px; color:var(--cinza); margin-top:8px; display:none;"></div>
+
+      <div class="stack" style="margin-top:24px;">
+        <button class="btn btn-primary" id="btnEnviarRNC">Enviar registro</button>
+      </div>
+
+      <div id="rncSucesso" style="display:none; text-align:center; padding:30px 10px;">
+        <div style="font-size:38px; margin-bottom:10px;">✅</div>
+        <h2 style="font-size:18px; margin:0 0 8px;">Registro enviado!</h2>
+        <p style="color:var(--cinza); font-size:13px;">O erro foi registrado e a equipe responsável será notificada.</p>
+        <button class="btn btn-outline" style="margin-top:20px;" onclick="location.reload()">Registrar outro erro</button>
+      </div>
+    </section>
+
   </main>
 
   <!-- barra inferior fixa (somente na tela de confirmação) -->
@@ -824,12 +933,15 @@
 
   // ---------- drawer lateral: etapas + produtos ----------
   const STEPS = [
-    { id:'screen-scan',     num:1, label:'Lançar produtos',  hint:'Tabela manual' },
-    { id:'screen-confirm',  num:2, label:'Conferir quantidades', hint:'Registrar o guardado', requires:'produtos' },
-    { id:'screen-result',   num:3, label:'Resultado',       hint:'Resumo do registro', requires:'finalizado' },
-    { id:'screen-log',      num:4, label:'Histórico',       hint:'Todos os registros' },
-    { id:'screen-estoque',  num:5, label:'Estoque atual',   hint:'Saldo por produto' },
-    { id:'screen-config',   num:6, label:'Configurações',   hint:'Gerenciar usuários', adminOnly:true }
+    { id:'screen-scan',     num:1, label:'Lançar produtos',      hint:'Tabela manual' },
+    { id:'screen-confirm',  num:2, label:'Conferir quantidades',  hint:'Registrar o guardado', requires:'produtos' },
+    { id:'screen-result',   num:3, label:'Resultado',             hint:'Resumo do registro', requires:'finalizado' },
+    { id:'screen-log',      num:4, label:'Histórico',             hint:'Entradas e saídas' },
+    { id:'screen-estoque',  num:5, label:'Estoque atual',         hint:'Saldo por produto' },
+    { id:'screen-rnc',      num:6, label:'Concentrados em RNC',   hint:'Não conformidades' },
+    { id:'screen-fab1',     num:7, label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
+    { id:'screen-qrcode',   num:8, label:'QR Code RNC',           hint:'Compartilhar formulário' },
+    { id:'screen-config',   num:9, label:'Configurações',         hint:'Gerenciar usuários', adminOnly:true }
   ];
   let finalizadoFlag = false;
 
@@ -852,6 +964,9 @@
           if(step.id === 'screen-log'){ carregarLog(); }
           if(step.id === 'screen-config'){ renderConfiguracoes(); }
           if(step.id === 'screen-estoque'){ renderEstoque(); }
+          if(step.id === 'screen-rnc'){ renderRNC(); }
+          if(step.id === 'screen-fab1'){ renderFab1(); }
+          if(step.id === 'screen-qrcode'){ renderQRCode(); }
           showScreen(step.id);
         });
       }
@@ -1518,6 +1633,213 @@
     iniciarTabelaManual();
     showScreen('screen-scan');
   });
+
+  $('btnVoltarInicioRNC').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
+  $('btnVoltarInicioFab1').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
+  $('btnVoltarInicioQR').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
+
+  // ---------- RNC: listagem ----------
+  let rncFiltroFab = 'todos';
+  document.querySelectorAll('#rncFiltroTabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#rncFiltroTabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      rncFiltroFab = btn.dataset.fab;
+      renderRNCLista();
+    });
+  });
+
+  async function renderRNC(){
+    const container = $('rncList');
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza);font-size:13px;">Carregando RNCs...</p></div>';
+    try{
+      const res = await apiGet({ acao:'listarRNC' });
+      window._rncData = res.ok ? res.rnc : [];
+    }catch(e){ window._rncData = []; }
+    renderRNCLista();
+  }
+
+  function renderRNCLista(){
+    const container = $('rncList');
+    let dados = (window._rncData || []).slice().reverse();
+    if(rncFiltroFab !== 'todos') dados = dados.filter(r => r.fabrica === rncFiltroFab);
+    if(dados.length === 0){
+      container.innerHTML = `<div class="empty-state"><div class="ic">✅</div>Nenhuma RNC registrada</div>`;
+      return;
+    }
+    container.innerHTML = '';
+    dados.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'rnc-card';
+      const isFab1 = r.fabrica === 'Fábrica 1';
+      const fotoHtml = r.foto_url ? `<div class="rc-foto"><a href="${escapeHtml(r.foto_url)}" target="_blank"><img src="https://drive.google.com/thumbnail?id=${extrairIdDrive(r.foto_url)}&sz=w400" onerror="this.style.display='none'"></a></div>` : '';
+      card.innerHTML = `
+        <div class="rc-head">
+          <div class="rc-produto">${escapeHtml(r.tipo_concentrado || r.produto || '—')}</div>
+          <span class="rc-fab ${isFab1?'fab1':''}">${escapeHtml(r.fabrica||'—')}</span>
+        </div>
+        <div class="rc-label">Erro identificado</div>
+        <div class="rc-texto">${escapeHtml(r.erro_identificado||'—')}</div>
+        <div class="rc-label">Correção proposta</div>
+        <div class="rc-texto">${escapeHtml(r.correcao||'—')}</div>
+        ${fotoHtml}
+        <div class="rc-meta">${escapeHtml(r.timestamp||r.registradoEm||'')}</div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function extrairIdDrive(url){
+    const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? m[1] : '';
+  }
+
+  // ---------- Fábrica 1: log filtrado ----------
+  async function renderFab1(){
+    const container = $('fab1List');
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza);font-size:13px;">Carregando...</p></div>';
+    try{
+      const res = await apiGet({ acao:'listarLog' });
+      const fab1 = (res.ok ? res.log : []).filter(r => r.fabrica === 'Fábrica 1');
+      if(fab1.length === 0){
+        container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Nenhum registro para Fábrica 1 ainda</div>`;
+        return;
+      }
+      // calcula saldo igual ao estoque atual, mas só pra Fábrica 1
+      const saldos = {};
+      fab1.forEach(r => {
+        const chave = r.produto.trim().toLowerCase();
+        if(!saldos[chave]) saldos[chave] = { nome: r.produto.trim(), saldo:0, totalEntradas:0, totalSaidas:0, unidade: r.unidade||'unid.' };
+        const qtd = Number(r.quantidade_guardada)||0;
+        if(r.tipo==='entrada'){ saldos[chave].saldo+=qtd; saldos[chave].totalEntradas+=qtd; }
+        else { saldos[chave].saldo-=qtd; saldos[chave].totalSaidas+=qtd; }
+      });
+      container.innerHTML = '';
+      Object.values(saldos).sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'estoque-card';
+        const cls = item.saldo>0?'positivo':(item.saldo===0?'zero':'negativo');
+        card.innerHTML = `
+          <div class="ec-head">
+            <div class="ec-nome">${escapeHtml(item.nome)}</div>
+            <div class="ec-saldo"><div class="num ${cls}">${item.saldo}</div><div class="unit">${escapeHtml(item.unidade)}</div></div>
+          </div>
+          <div class="ec-detalhe"><span>↓ ${item.totalEntradas} entrou</span><span>↑ ${item.totalSaidas} saiu</span></div>
+        `;
+        container.appendChild(card);
+      });
+    }catch(e){
+      container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao carregar</div>`;
+    }
+  }
+
+  // ---------- QR Code ----------
+  const URL_RNC_PUBLICA = 'https://tvtemporeal.github.io/dashboard-femsa/conferencia/?rnc=1';
+
+  function renderQRCode(){
+    $('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(URL_RNC_PUBLICA)}&bgcolor=ffffff&color=1A1A1A&margin=10`;
+  }
+
+  $('btnCopiarLinkRNC').addEventListener('click', () => {
+    navigator.clipboard.writeText(URL_RNC_PUBLICA).then(() => toast('Link copiado!'))
+      .catch(() => { prompt('Copie o link abaixo:', URL_RNC_PUBLICA); });
+  });
+
+  // ---------- Formulário público RNC (sem login, ativado por ?rnc=1 na URL) ----------
+  const URL_PARAMS = new URLSearchParams(window.location.search);
+  if(URL_PARAMS.get('rnc') === '1'){
+    // modo público: pula o login e mostra direto o formulário de RNC
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $('screen-rnc-form').classList.add('active');
+    $('topbar').style.display = 'none';
+    $('summaryBar').style.display = 'none';
+  }
+
+  let rncFabricaSelecionada = 'Fábrica 2';
+  $('rncBtnFab2').addEventListener('click', () => {
+    rncFabricaSelecionada = 'Fábrica 2';
+    $('rncBtnFab2').classList.add('active');
+    $('rncBtnFab1').classList.remove('active');
+  });
+  $('rncBtnFab1').addEventListener('click', () => {
+    rncFabricaSelecionada = 'Fábrica 1';
+    $('rncBtnFab1').classList.add('active');
+    $('rncBtnFab2').classList.remove('active');
+  });
+
+  let rncFotoBase64 = null;
+  let rncFotoMime = 'image/jpeg';
+
+  $('rncFotoInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    rncFotoMime = file.type || 'image/jpeg';
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      rncFotoBase64 = dataUrl.split(',')[1];
+      $('rncFotoImg').src = dataUrl;
+      $('rncFotoPreview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $('btnEnviarRNC').addEventListener('click', async () => {
+    const produto = $('rncProduto').value.trim();
+    const erro = $('rncErro').value.trim();
+    const correcao = $('rncCorrecao').value.trim();
+
+    if(!produto){ toast('Informe o produto / concentrado'); return; }
+    if(!erro){ toast('Descreva o erro identificado'); return; }
+    if(!correcao){ toast('Descreva a correção proposta'); return; }
+
+    $('btnEnviarRNC').disabled = true;
+    $('btnEnviarRNC').textContent = 'Enviando...';
+    const status = $('rncUploadStatus');
+    status.style.display = 'block';
+
+    try{
+      let fotoUrl = '';
+      if(rncFotoBase64){
+        status.textContent = 'Enviando foto para o Drive...';
+        const ext = rncFotoMime === 'image/png' ? 'png' : 'jpg';
+        const resF = await apiPost({
+          acao: 'salvarFoto',
+          fotoBase64: rncFotoBase64,
+          mimeType: rncFotoMime,
+          nomeArquivo: `rnc_${Date.now()}.${ext}`
+        });
+        if(resF.ok) fotoUrl = resF.url;
+        else toast('Aviso: foto não foi salva — ' + resF.erro);
+      }
+
+      status.textContent = 'Salvando registro...';
+      const timestamp = new Date().toLocaleString('pt-BR');
+      await apiPost({
+        acao: 'adicionarRNC',
+        timestamp, fabrica: rncFabricaSelecionada,
+        tipo_concentrado: produto,
+        erro_identificado: erro,
+        correcao, foto_url: fotoUrl
+      });
+
+      status.style.display = 'none';
+      $('btnEnviarRNC').style.display = 'none';
+      $('screen-rnc-form').querySelector('p.lead').style.display = 'none';
+      document.querySelectorAll('#screen-rnc-form .field-label, #screen-rnc-form textarea, #screen-rnc-form input[type=text], #screen-rnc-form .tipo-toggle, #screen-rnc-form label[for]').forEach(el => el.style.display = 'none');
+      $('rncFotoPreview').style.display = 'none';
+      document.querySelector('label.btn.btn-outline').style.display = 'none';
+      $('rncSucesso').style.display = 'block';
+    }catch(e){
+      toast('Erro ao enviar. Verifique sua internet e tente novamente.');
+      $('btnEnviarRNC').disabled = false;
+      $('btnEnviarRNC').textContent = 'Enviar registro';
+      status.style.display = 'none';
+    }
+  });
+
+  // garante que o campo "Fábrica" nos lançamentos normais também seja registrado
+  // (Fábrica 2 é o padrão, mas futuramente dá pra expandir)
 
   function renderConfiguracoes(){
     const container = $('configUserList');
