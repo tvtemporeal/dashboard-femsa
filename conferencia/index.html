@@ -1142,15 +1142,22 @@
 
     <!-- ===== TELA QR CODE ===== -->
     <section class="screen" id="screen-qrcode">
-      <div class="section-label">Formulário público</div>
-      <h1 class="title" style="font-size:24px; margin-bottom:8px;">QR Code RNC</h1>
-      <p class="lead" style="margin-bottom:20px;">Qualquer pessoa escaneia este QR Code e registra um erro sem precisar de login ou senha.</p>
-      <div style="text-align:center; margin-bottom:20px;">
-        <img id="qrImg" src="" alt="QR Code" style="width:220px; height:220px; border-radius:12px; border:3px solid var(--vermelho); background:#fff; padding:8px;">
-        <div style="margin-top:12px; font-size:12px; color:var(--cinza);">Escaneie para abrir o formulário de RNC</div>
+      <div class="section-label">Compartilhar acesso</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">QR Codes</h1>
+      <p class="lead" style="margin-bottom:18px;">Imprima e cole nas câmaras ou em lugares visíveis.</p>
+
+      <div class="nav-tabs">
+        <button class="active" data-qrtipo="rnc">Registro de RNC</button>
+        <button data-qrtipo="login">Login do app</button>
       </div>
+
+      <div id="qrInfoBox" style="text-align:center; margin-bottom:20px;">
+        <img id="qrImg" src="" alt="QR Code" style="width:220px; height:220px; border-radius:12px; border:3px solid var(--vermelho); background:#fff; padding:8px;">
+        <div id="qrLegenda" style="margin-top:12px; font-size:12.5px; color:var(--cinza); padding:0 10px;">Escaneie para abrir o formulário de RNC (sem precisar de login)</div>
+      </div>
+
       <div class="stack">
-        <button class="btn btn-outline" id="btnCopiarLinkRNC">Copiar link do formulário</button>
+        <button class="btn btn-outline" id="btnCopiarLinkRNC">Copiar link</button>
         <button class="btn btn-ghost" id="btnVoltarInicioQR">← Voltar ao início</button>
       </div>
     </section>
@@ -1209,13 +1216,15 @@
 
       <div class="stack" style="margin-top:24px;">
         <button class="btn btn-primary" id="btnEnviarRNC">Enviar registro</button>
+        <button class="btn btn-ghost" id="btnVoltarRNC" style="display:none;">← Voltar ao início</button>
       </div>
 
       <div id="rncSucesso" style="display:none; text-align:center; padding:30px 10px;">
         <div style="font-size:38px; margin-bottom:10px;">✅</div>
         <h2 style="font-size:18px; margin:0 0 8px;">Registro enviado!</h2>
         <p style="color:var(--cinza); font-size:13px;">O erro foi registrado e a equipe responsável será notificada.</p>
-        <button class="btn btn-outline" style="margin-top:20px;" onclick="location.reload()">Registrar outro erro</button>
+        <button class="btn btn-outline" id="btnNovoRNC" style="margin-top:20px;">Registrar outro erro</button>
+        <button class="btn btn-ghost" id="btnVoltarSucessoRNC" style="margin-top:8px; display:none;">← Voltar ao início</button>
       </div>
     </section>
 
@@ -1262,12 +1271,13 @@
   ];
   // demais telas de navegação
   const STEPS = [
-    { id:'screen-log',      label:'Histórico',             hint:'Entradas e saídas' },
-    { id:'screen-estoque',  label:'Estoque atual',         hint:'Saldo por produto' },
-    { id:'screen-rnc',      label:'Concentrados em RNC',   hint:'Não conformidades' },
-    { id:'screen-fab1',     label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
-    { id:'screen-qrcode',   label:'QR Code RNC',           hint:'Compartilhar formulário' },
-    { id:'screen-config',   label:'Configurações',         hint:'Gerenciar usuários', adminOnly:true }
+    { id:'screen-log',         label:'Histórico',             hint:'Entradas e saídas' },
+    { id:'screen-estoque',     label:'Estoque atual',         hint:'Saldo por produto' },
+    { id:'registrar-rnc',      label:'Registrar RNC',         hint:'Reportar não conformidade' },
+    { id:'screen-rnc',         label:'Concentrados em RNC',   hint:'Histórico de não conformidades' },
+    { id:'screen-fab1',        label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
+    { id:'screen-qrcode',      label:'QR Codes',              hint:'Compartilhar acesso' },
+    { id:'screen-config',      label:'Configurações',         hint:'Gerenciar usuários', adminOnly:true }
   ];
   let finalizadoFlag = false;
 
@@ -1313,6 +1323,12 @@
         if(step.id === 'screen-rnc'){ renderRNC(); }
         if(step.id === 'screen-fab1'){ renderFab1(); }
         if(step.id === 'screen-qrcode'){ renderQRCode(); }
+        if(step.id === 'registrar-rnc'){
+          // abre formulário de RNC em modo interno (com cabeçalho do app)
+          resetarFormularioRNC();
+          showScreen('screen-rnc-form');
+          return;
+        }
         showScreen(step.id);
       });
       nav.appendChild(div);
@@ -2253,14 +2269,31 @@
 
   // ---------- QR Code ----------
   const URL_RNC_PUBLICA = 'https://tvtemporeal.github.io/dashboard-femsa/conferencia/?rnc=1';
+  const URL_LOGIN_APP = 'https://tvtemporeal.github.io/dashboard-femsa/conferencia/';
+  let qrTipoAtual = 'rnc';
 
   function renderQRCode(){
-    $('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(URL_RNC_PUBLICA)}&bgcolor=ffffff&color=1A1A1A&margin=10`;
+    const url = qrTipoAtual === 'login' ? URL_LOGIN_APP : URL_RNC_PUBLICA;
+    $('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=1A1A1A&margin=10`;
+    $('qrLegenda').textContent = qrTipoAtual === 'login'
+      ? 'Escaneie para abrir o app e fazer login com seu BR e senha.'
+      : 'Escaneie para abrir o formulário de RNC (sem precisar de login).';
   }
 
+  // tabs de tipo de QR
+  document.querySelectorAll('#screen-qrcode [data-qrtipo]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-qrcode [data-qrtipo]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      qrTipoAtual = btn.dataset.qrtipo;
+      renderQRCode();
+    });
+  });
+
   $('btnCopiarLinkRNC').addEventListener('click', () => {
-    navigator.clipboard.writeText(URL_RNC_PUBLICA).then(() => toast('Link copiado!'))
-      .catch(() => { prompt('Copie o link abaixo:', URL_RNC_PUBLICA); });
+    const url = qrTipoAtual === 'login' ? URL_LOGIN_APP : URL_RNC_PUBLICA;
+    navigator.clipboard.writeText(url).then(() => toast('Link copiado!'))
+      .catch(() => { prompt('Copie o link abaixo:', url); });
   });
 
   // ---------- Formulário público RNC (sem login, ativado por ?rnc=1 na URL) ----------
@@ -2274,6 +2307,41 @@
   }
 
   let rncFabricaSelecionada = 'Fábrica 2';
+
+  // limpa o formulário e mostra o botão Voltar (modo interno, vindo do menu)
+  function resetarFormularioRNC(){
+    $('rncNome').value = usuarioAtual ? usuarioAtual.nome : '';
+    $('rncProduto').value = '';
+    $('rncErro').value = '';
+    $('rncCorrecao').value = '';
+    $('rncFotoAntesPreview').style.display = 'none';
+    $('rncFotoDepoisPreview').style.display = 'none';
+    rncFotoAntes = null; rncFotoDepois = null;
+    $('rncSucesso').style.display = 'none';
+    $('btnEnviarRNC').style.display = 'flex';
+    $('btnEnviarRNC').disabled = false;
+    $('btnEnviarRNC').textContent = 'Enviar registro';
+    $('rncUploadStatus').style.display = 'none';
+    // restaura campos que foram escondidos após envio
+    document.querySelectorAll('#screen-rnc-form .field-label, #screen-rnc-form textarea, #screen-rnc-form input, #screen-rnc-form .tipo-toggle, #screen-rnc-form label.btn').forEach(el => el.style.display = '');
+    const lead = $('screen-rnc-form').querySelector('p.lead');
+    if(lead) lead.style.display = '';
+    // mostra botão Voltar (estamos no modo interno)
+    $('btnVoltarRNC').style.display = 'flex';
+    $('btnVoltarSucessoRNC').style.display = 'block';
+  }
+
+  $('btnVoltarRNC').addEventListener('click', () => {
+    iniciarTabelaManual();
+    showScreen('screen-scan');
+  });
+  $('btnVoltarSucessoRNC').addEventListener('click', () => {
+    iniciarTabelaManual();
+    showScreen('screen-scan');
+  });
+  $('btnNovoRNC').addEventListener('click', () => {
+    resetarFormularioRNC();
+  });
   $('rncBtnFab2').addEventListener('click', () => {
     rncFabricaSelecionada = 'Fábrica 2';
     $('rncBtnFab2').classList.add('active');
