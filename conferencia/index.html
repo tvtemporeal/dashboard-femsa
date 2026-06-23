@@ -944,11 +944,30 @@
     setTimeout(()=> t.classList.remove('show'), 2800);
   }
 
+  // ---------- backend compartilhado (Google Sheets via Apps Script) ----------
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxtfobUH0VFW049cjWy162_vhwkcI38MbAOCtOKoZc5qt4ruVcxXQteXwNZOi_sffEkkQ/exec';
+
+  async function apiGet(params){
+    const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
+    const res = await fetch(url);
+    return res.json();
+  }
+
+  async function apiPost(body){
+    const res = await fetch(BACKEND_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    return res.json();
+  }
+
   // ---------- autenticação ----------
   const BR_ADMIN = '5758236';
   const SENHA_ADMIN = '291201';
-  let usuarioAtual = null; // { br, nome, isAdmin }
+  let usuarioAtual = null;
   let brEmPrimeiroAcesso = null;
+  let cacheUsuarios = null; // evita buscar várias vezes no mesmo login
 
   async function sha256(texto){
     const enc = new TextEncoder().encode(texto);
@@ -956,51 +975,24 @@
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  function carregarUsuarios(){
+  async function carregarUsuarios(){
+    if(cacheUsuarios) return cacheUsuarios;
     try{
-      const raw = localStorage.getItem('femsa_usuarios');
-      return raw ? JSON.parse(raw) : [];
+      const res = await apiGet({ acao: 'listarUsuarios' });
+      cacheUsuarios = res.ok ? res.usuarios : [];
+      return cacheUsuarios;
     }catch(e){ return []; }
   }
-  function salvarUsuarios(lista){
-    try{
-      localStorage.setItem('femsa_usuarios', JSON.stringify(lista));
-      // confirma que realmente gravou (alguns navegadores embutidos de outros apps bloqueiam silenciosamente)
-      const releitura = localStorage.getItem('femsa_usuarios');
-      return releitura === JSON.stringify(lista);
-    }catch(e){
-      console.error('Falha ao salvar usuários', e);
-      return false;
-    }
-  }
 
-  // testa se o armazenamento do navegador realmente persiste — alguns apps (Whatsapp, Instagram, etc)
-  // abrem links num navegador embutido que apaga tudo ao fechar, e isso causa "cadastro sumindo"
-  function testarArmazenamentoDisponivel(){
-    try{
-      localStorage.setItem('femsa_teste_storage', '1');
-      const ok = localStorage.getItem('femsa_teste_storage') === '1';
-      localStorage.removeItem('femsa_teste_storage');
-      return ok;
-    }catch(e){
-      return false;
-    }
-  }
-  if(!testarArmazenamentoDisponivel()){
-    const aviso = document.createElement('div');
-    aviso.style.cssText = 'background:#D9362A; color:#fff; font-size:12px; font-weight:700; text-align:center; padding:10px 16px; position:relative; z-index:200;';
-    aviso.innerHTML = '⚠ Este navegador não está salvando dados. Abra este link direto no Chrome/Edge (não dentro do WhatsApp/Instagram) para os cadastros e registros funcionarem.';
-    document.body.insertBefore(aviso, document.body.firstChild);
-  }
-
-  // garante que o usuário administrador sempre exista, mesmo na primeira vez que o app roda neste navegador
   async function garantirAdmin(){
-    let usuarios = carregarUsuarios();
-    if(!usuarios.find(u => u.br === BR_ADMIN)){
-      const senhaHash = await sha256(SENHA_ADMIN);
-      usuarios.push({ br: BR_ADMIN, nome: 'Administrador', senhaHash, isAdmin: true });
-      salvarUsuarios(usuarios);
-    }
+    try{
+      const usuarios = await carregarUsuarios();
+      if(!usuarios.find(u => String(u.br) === BR_ADMIN)){
+        const senhaHash = await sha256(SENHA_ADMIN);
+        await apiPost({ acao:'criarUsuario', br: BR_ADMIN, nome:'Administrador', senhaHash, isAdmin: true });
+        cacheUsuarios = null;
+      }
+    }catch(e){ console.warn('Sem conexão com backend, modo offline'); }
   }
   garantirAdmin();
 
@@ -1046,27 +1038,37 @@
     if(!br){ toast('Digite seu BR'); return; }
     if(!senha){ toast('Digite sua senha'); return; }
 
-    const usuarios = carregarUsuarios();
-    const usuario = usuarios.find(u => u.br === br);
+    $('btnEntrar').disabled = true;
+    $('btnEntrar').textContent = 'Verificando...';
 
-    if(!usuario){
-      // BR não cadastrado -> abre primeiro acesso
-      brEmPrimeiroAcesso = br;
-      $('paBr').value = br;
-      $('paNome').value = '';
-      $('paSenha').value = '';
-      $('paSenhaConfirma').value = '';
-      showScreen('screen-primeiro-acesso');
-      return;
+    try{
+      cacheUsuarios = null;
+      const usuarios = await carregarUsuarios();
+      const usuario = usuarios.find(u => String(u.br) === String(br));
+
+      if(!usuario){
+        brEmPrimeiroAcesso = br;
+        $('paBr').value = br;
+        $('paNome').value = '';
+        $('paSenha').value = '';
+        $('paSenhaConfirma').value = '';
+        showScreen('screen-primeiro-acesso');
+        return;
+      }
+
+      const senhaHash = await sha256(senha);
+      if(String(senhaHash) !== String(usuario.senhaHash)){
+        toast('Senha incorreta');
+        return;
+      }
+
+      entrarNoApp({ br: usuario.br, nome: usuario.nome, isAdmin: String(usuario.isAdmin) === 'TRUE' || usuario.isAdmin === true });
+    }catch(e){
+      toast('Erro de conexão com o servidor. Verifique sua internet.');
+    }finally{
+      $('btnEntrar').disabled = false;
+      $('btnEntrar').textContent = 'Entrar e iniciar registro';
     }
-
-    const senhaHash = await sha256(senha);
-    if(senhaHash !== usuario.senhaHash){
-      toast('Senha incorreta');
-      return;
-    }
-
-    entrarNoApp(usuario);
   });
 
   // ---------- primeiro acesso ----------
@@ -1084,25 +1086,25 @@
     if(!senha || senha.length < 4){ toast('A senha deve ter pelo menos 4 caracteres'); return; }
     if(senha !== senhaConfirma){ toast('As senhas não coincidem'); return; }
 
-    const usuarios = carregarUsuarios();
-    if(usuarios.find(u => u.br === brEmPrimeiroAcesso)){
-      toast('Esse BR já foi cadastrado, faça login normalmente');
-      showScreen('screen-login');
-      return;
+    $('btnCadastrarAcesso').disabled = true;
+    $('btnCadastrarAcesso').textContent = 'Cadastrando...';
+    try{
+      const senhaHash = await sha256(senha);
+      const res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
+      if(!res.ok){
+        toast(res.erro === 'BR já cadastrado' ? 'Esse BR já foi cadastrado, faça login normalmente' : 'Erro: ' + res.erro);
+        if(res.erro === 'BR já cadastrado') showScreen('screen-login');
+        return;
+      }
+      cacheUsuarios = null;
+      toast('Cadastro criado com sucesso');
+      entrarNoApp({ br: brEmPrimeiroAcesso, nome, isAdmin: false });
+    }catch(e){
+      toast('Erro de conexão. Verifique sua internet e tente novamente.');
+    }finally{
+      $('btnCadastrarAcesso').disabled = false;
+      $('btnCadastrarAcesso').textContent = 'Cadastrar e entrar';
     }
-
-    const senhaHash = await sha256(senha);
-    const novoUsuario = { br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false };
-    usuarios.push(novoUsuario);
-    const salvouComSucesso = salvarUsuarios(usuarios);
-
-    if(!salvouComSucesso){
-      toast('Não foi possível salvar o cadastro neste navegador. Abra o link direto no Chrome/Edge (não dentro de outro app) e tente novamente.');
-      return;
-    }
-
-    toast('Cadastro criado com sucesso');
-    entrarNoApp(novoUsuario);
   });
 
   // ---------- tabela manual de produtos ----------
@@ -1181,12 +1183,8 @@
   // verifica se existem lotes do mesmo produto (entradas registradas) com validade mais próxima
   // do que a que está sendo retirada agora — alerta de FEFO (primeiro que vence, primeiro que sai)
   function verificarFEFO(registrosSaida){
-    let entradas = [];
-    try{
-      const raw = localStorage.getItem('femsa_log_conferencias');
-      entradas = raw ? JSON.parse(raw).filter(r => r.tipo === 'entrada' && r.validade) : [];
-    }catch(e){ entradas = []; }
-
+    // usa logCompleto que já foi carregado do backend
+    const entradas = logCompleto.filter(r => r.tipo === 'entrada' && r.validade);
     const avisos = [];
     registrosSaida.forEach(saida => {
       if(!saida.validade) return;
@@ -1197,7 +1195,7 @@
       );
       if(conflitantes.length > 0){
         const maisCritica = conflitantes.sort((a,b) => a.validade.localeCompare(b.validade))[0];
-        avisos.push(`${saida.produto}: existe lote com validade ${formatarDataBR(maisCritica.validade)} (mais próxima) que ainda não saiu`);
+        avisos.push(`${saida.produto}: existe lote com validade ${formatarDataBR(maisCritica.validade)} mais próxima que ainda não saiu`);
       }
     });
     return avisos;
@@ -1342,18 +1340,8 @@
   // ---------- finalizar / log ----------
   // salva registros no log local e mostra a tela de resultado (usado por entrada e saída)
   function salvarERegistrar(registros, avisosFEFO){
-    try{
-      let lista = [];
-      const existente = localStorage.getItem('femsa_log_conferencias');
-      if(existente){
-        try{ lista = JSON.parse(existente); }catch(e){ lista = []; }
-      }
-      lista = lista.concat(registros);
-      localStorage.setItem('femsa_log_conferencias', JSON.stringify(lista));
-    }catch(e){
-      console.error('Erro ao salvar log', e);
-      toast('Atenção: não foi possível salvar o registro neste navegador');
-    }
+    // envia ao backend compartilhado (sem aguardar — não bloqueia o app)
+    apiPost({ acao:'adicionarLog', registros }).catch(e => console.warn('Erro ao salvar log no servidor:', e));
 
     renderResultado(registros, avisosFEFO);
     finalizadoFlag = true;
@@ -1471,63 +1459,58 @@
   // ---------- estoque atual (saldo = entradas - saídas) ----------
   function renderEstoque(){
     const container = $('estoqueList');
-    let log = [];
-    try{
-      const raw = localStorage.getItem('femsa_log_conferencias');
-      log = raw ? JSON.parse(raw) : [];
-    }catch(e){ log = []; }
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Calculando estoque...</p></div>';
 
-    if(log.length === 0){
-      container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Nenhum registro de entrada ou saída ainda</div>`;
-      return;
-    }
-
-    // agrupa por nome de produto (normalizado), somando entradas e subtraindo saídas
-    const saldos = {}; // chave normalizada -> { nomeOriginal, saldo, unidade, validadeMaisProxima }
-    log.forEach(r => {
-      const chave = r.produto.trim().toLowerCase();
-      if(!saldos[chave]){
-        saldos[chave] = { nome: r.produto.trim(), saldo: 0, unidade: r.unidade || 'unid.', validadeMaisProxima: null, totalEntradas: 0, totalSaidas: 0 };
+    carregarLog().then(() => {
+      if(logCompleto.length === 0){
+        container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Nenhum registro de entrada ou saída ainda</div>`;
+        return;
       }
-      const qtd = Number(r.quantidade_guardada) || 0;
-      if(r.tipo === 'entrada'){
-        saldos[chave].saldo += qtd;
-        saldos[chave].totalEntradas += qtd;
-        if(r.validade && (!saldos[chave].validadeMaisProxima || r.validade < saldos[chave].validadeMaisProxima)){
-          saldos[chave].validadeMaisProxima = r.validade;
+      const saldos = {};
+      logCompleto.forEach(r => {
+        const chave = r.produto.trim().toLowerCase();
+        if(!saldos[chave]){
+          saldos[chave] = { nome: r.produto.trim(), saldo: 0, unidade: r.unidade || 'unid.', validadeMaisProxima: null, totalEntradas: 0, totalSaidas: 0 };
         }
-      } else if(r.tipo === 'saida'){
-        saldos[chave].saldo -= qtd;
-        saldos[chave].totalSaidas += qtd;
-      }
-    });
+        const qtd = Number(r.quantidade_guardada) || 0;
+        if(r.tipo === 'entrada'){
+          saldos[chave].saldo += qtd;
+          saldos[chave].totalEntradas += qtd;
+          if(r.validade && (!saldos[chave].validadeMaisProxima || r.validade < saldos[chave].validadeMaisProxima)){
+            saldos[chave].validadeMaisProxima = r.validade;
+          }
+        } else if(r.tipo === 'saida'){
+          saldos[chave].saldo -= qtd;
+          saldos[chave].totalSaidas += qtd;
+        }
+      });
 
-    const lista = Object.values(saldos).sort((a, b) => a.nome.localeCompare(b.nome));
-
-    container.innerHTML = '';
-    lista.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'estoque-card';
-      const saldoClasse = item.saldo > 0 ? 'positivo' : (item.saldo === 0 ? 'zero' : 'negativo');
-      const sinal = calcularSinalValidade(item.validadeMaisProxima);
-      const sinalHtml = sinal
-        ? `<span class="sinal-badge sinal-${sinal.cor}">Lote mais próx.: ${formatarDataBR(item.validadeMaisProxima)} · ${sinal.label}</span>`
-        : (item.validadeMaisProxima ? `<span>Lote mais próx.: ${formatarDataBR(item.validadeMaisProxima)}</span>` : '');
-      card.innerHTML = `
-        <div class="ec-head">
-          <div class="ec-nome">${escapeHtml(item.nome)}</div>
-          <div class="ec-saldo">
-            <div class="num ${saldoClasse}">${item.saldo}</div>
-            <div class="unit">${escapeHtml(item.unidade)}</div>
+      const lista = Object.values(saldos).sort((a, b) => a.nome.localeCompare(b.nome));
+      container.innerHTML = '';
+      lista.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'estoque-card';
+        const saldoClasse = item.saldo > 0 ? 'positivo' : (item.saldo === 0 ? 'zero' : 'negativo');
+        const sinal = calcularSinalValidade(item.validadeMaisProxima);
+        const sinalHtml = sinal
+          ? `<span class="sinal-badge sinal-${sinal.cor}">Lote mais próx.: ${formatarDataBR(item.validadeMaisProxima)} · ${sinal.label}</span>`
+          : (item.validadeMaisProxima ? `<span>Lote mais próx.: ${formatarDataBR(item.validadeMaisProxima)}</span>` : '');
+        card.innerHTML = `
+          <div class="ec-head">
+            <div class="ec-nome">${escapeHtml(item.nome)}</div>
+            <div class="ec-saldo">
+              <div class="num ${saldoClasse}">${item.saldo}</div>
+              <div class="unit">${escapeHtml(item.unidade)}</div>
+            </div>
           </div>
-        </div>
-        <div class="ec-detalhe">
-          <span>↓ ${item.totalEntradas} entrou</span>
-          <span>↑ ${item.totalSaidas} saiu</span>
-          ${sinalHtml}
-        </div>
-      `;
-      container.appendChild(card);
+          <div class="ec-detalhe">
+            <span>↓ ${item.totalEntradas} entrou</span>
+            <span>↑ ${item.totalSaidas} saiu</span>
+            ${sinalHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
     });
   }
 
@@ -1538,36 +1521,50 @@
 
   function renderConfiguracoes(){
     const container = $('configUserList');
-    const usuarios = carregarUsuarios().filter(u => !u.isAdmin); // não lista a conta admin
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Carregando usuários...</p></div>';
 
-    if(usuarios.length === 0){
-      container.innerHTML = `<div class="empty-state"><div class="ic">👤</div>Nenhum usuário cadastrado ainda</div>`;
-      return;
-    }
-
-    container.innerHTML = '';
-    usuarios.forEach(u => {
-      const row = document.createElement('div');
-      row.className = 'user-row';
-      row.innerHTML = `
-        <div class="ur-info">
-          <div class="ur-nome">${escapeHtml(u.nome)}</div>
-          <div class="ur-br">BR ${escapeHtml(u.br)}</div>
-        </div>
-        <button class="ur-reset" data-br="${escapeHtml(u.br)}">Resetar cadastro</button>
-      `;
-      container.appendChild(row);
-    });
-
-    container.querySelectorAll('.ur-reset').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const br = btn.dataset.br;
-        const usuariosAtuais = carregarUsuarios();
-        const restantes = usuariosAtuais.filter(u => u.br !== br);
-        salvarUsuarios(restantes);
-        toast('Cadastro resetado — esse BR vai pedir primeiro acesso novamente');
-        renderConfiguracoes();
+    carregarUsuarios().then(usuarios => {
+      const comuns = usuarios.filter(u => String(u.isAdmin) !== 'TRUE' && u.isAdmin !== true);
+      if(comuns.length === 0){
+        container.innerHTML = `<div class="empty-state"><div class="ic">👤</div>Nenhum usuário cadastrado ainda</div>`;
+        return;
+      }
+      container.innerHTML = '';
+      comuns.forEach(u => {
+        const row = document.createElement('div');
+        row.className = 'user-row';
+        row.innerHTML = `
+          <div class="ur-info">
+            <div class="ur-nome">${escapeHtml(u.nome)}</div>
+            <div class="ur-br">BR ${escapeHtml(String(u.br))}</div>
+          </div>
+          <button class="ur-reset" data-br="${escapeHtml(String(u.br))}">Resetar cadastro</button>
+        `;
+        container.appendChild(row);
       });
+
+      container.querySelectorAll('.ur-reset').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.textContent = 'Resetando...';
+          btn.disabled = true;
+          try{
+            const res = await apiPost({ acao:'resetarUsuario', br: btn.dataset.br });
+            if(res.ok){
+              cacheUsuarios = null;
+              toast('Cadastro resetado — esse BR vai pedir primeiro acesso novamente');
+              renderConfiguracoes();
+            } else {
+              toast('Erro ao resetar: ' + res.erro);
+            }
+          }catch(e){
+            toast('Erro de conexão ao resetar usuário');
+            btn.textContent = 'Resetar cadastro';
+            btn.disabled = false;
+          }
+        });
+      });
+    }).catch(() => {
+      container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao carregar usuários</div>`;
     });
   }
 
@@ -1578,9 +1575,12 @@
 
   async function carregarLog(){
     try{
-      const existente = localStorage.getItem('femsa_log_conferencias');
-      logCompleto = existente ? JSON.parse(existente) : [];
-    }catch(e){ logCompleto = []; }
+      const res = await apiGet({ acao:'listarLog' });
+      logCompleto = res.ok ? res.log : [];
+    }catch(e){
+      logCompleto = [];
+      toast('Erro ao carregar histórico. Verifique sua internet.');
+    }
     renderLog('todos', 'todos');
   }
 
