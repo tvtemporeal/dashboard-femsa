@@ -145,9 +145,8 @@
     border-radius:8px;
     border:none;
     font-size:15px;
-    font-weight:800;
-    letter-spacing:0.3px;
-    text-transform:uppercase;
+    font-weight:700;
+    letter-spacing:0;
     cursor:pointer;
     font-family:inherit;
     transition:transform .12s, filter .12s;
@@ -464,6 +463,20 @@
   .modal-actions{display:flex; gap:10px; margin-top:18px;}
   .modal-actions .btn{padding:13px;}
 
+  /* ---- GARRAFA PLANO DE FUNDO ---- */
+  .bg-bottle{
+    position:fixed; top:50%; left:50%;
+    transform:translate(-50%, -48%);
+    width:340px; height:600px; max-width:90vw;
+    z-index:0; opacity:0.04; pointer-events:none;
+    filter:saturate(1.3);
+  }
+  main{ position:relative; z-index:1; }
+
+  /* garrafinha do topbar */
+  .topbar-bottle{ flex-shrink:0; filter:drop-shadow(0 2px 4px rgba(226,35,26,0.4)); }
+  .brand{ display:flex; align-items:center; gap:7px; }
+
   /* ---- LOGIN HERO (tema Coca-Cola) ---- */
   .login-hero{
     position:relative;
@@ -558,27 +571,75 @@
   .step-dot{width:7px; height:7px; border-radius:50%; background:var(--cinza); flex-shrink:0; margin-left:8px; margin-right:5px;}
   .step-item.current .step-dot{background:var(--vermelho);}
 
+  /* ---- BARRA DE PROGRESSO DE PASSOS ---- */
+  .progress-steps{
+    display:flex; align-items:center; gap:10px;
+    margin:4px 0 22px;
+  }
+  .step-pill{
+    display:flex; align-items:center; gap:7px;
+    padding:7px 12px;
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:20px;
+    font-size:11.5px; font-weight:700; color:var(--cinza);
+    white-space:nowrap;
+  }
+  .step-pill.active{
+    background:rgba(226,35,26,0.12); border-color:var(--vermelho); color:var(--osso);
+  }
+  .step-pill.done{
+    border-color:var(--verde); color:#4FCC85;
+  }
+  .step-dot-pill{
+    width:7px; height:7px; border-radius:50%; background:var(--cinza); flex-shrink:0;
+  }
+  .step-pill.active .step-dot-pill{ background:var(--vermelho); box-shadow:0 0 0 3px rgba(226,35,26,0.2); }
+  .step-pill.done .step-dot-pill{ background:var(--verde); }
+  .step-line{
+    flex:1; height:2px; background:var(--linha); border-radius:2px; min-width:10px;
+  }
+  .step-line.active{ background:linear-gradient(90deg, var(--verde), var(--vermelho)); }
+
   /* ---- LINHAS DE PRODUTO (com seletor) ---- */
   .produto-row{
-    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
-    padding:12px; margin-bottom:12px;
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:14px;
+    padding:14px; margin-bottom:14px; position:relative; overflow:hidden;
+    backdrop-filter:blur(2px);
   }
-  .pr-top{display:flex; align-items:center; gap:8px;}
+  .produto-row::before{
+    content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--linha); transition:background .2s;
+  }
+  .produto-row.tem-produto::before{ background:var(--vermelho); }
+  .produto-row.tem-suco::before{ background:var(--ambar); }
+  .pr-top{display:flex; align-items:center; gap:10px;}
+  .pr-num-circle{
+    width:26px; height:26px; border-radius:50%; flex-shrink:0;
+    background:var(--vermelho); color:#fff; font-size:13px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+  }
   .ps-btn{
     flex:1; display:flex; align-items:center; justify-content:space-between; gap:8px;
-    background:var(--preto); border:1.5px solid var(--linha); border-radius:8px;
-    padding:11px 13px; cursor:pointer; text-align:left; color:var(--osso); font-family:inherit;
-    min-width:0;
+    background:var(--preto); border:1.5px solid var(--linha); border-radius:9px;
+    padding:12px 13px; cursor:pointer; text-align:left; color:var(--osso); font-family:inherit;
+    min-width:0; transition:border-color .15s;
   }
+  .ps-btn:active{border-color:var(--vermelho);}
   .ps-selecionado{min-width:0;}
   .ps-nome{font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .ps-formula{font-size:11px; color:var(--ambar); margin-top:2px; font-weight:600;}
-  .ps-placeholder{font-size:13px; color:#5c574c;}
-  .ps-arrow{color:var(--cinza); font-size:12px; flex-shrink:0;}
-  .pr-bottom{display:flex; gap:10px; margin-top:10px; padding-left:30px;}
-  .pr-field{flex:1;}
-  .pr-field label{display:flex; align-items:center; gap:6px; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); font-weight:700; margin-bottom:5px;}
-  .pr-field input{font-size:14px; padding:10px;}
+  .ps-placeholder{font-size:13px; color:#6b6456;}
+  .ps-arrow{color:var(--cinza); font-size:11px; flex-shrink:0;}
+  .pr-bottom{display:flex; gap:12px; margin-top:12px; padding-left:36px;}
+  .pr-field{flex:1; display:flex; flex-direction:column;}
+  .pr-field label{display:flex; align-items:center; gap:6px; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); font-weight:700; margin-bottom:6px; height:14px;}
+  .pr-field input{font-size:14px; padding:11px 12px; height:42px; box-sizing:border-box;}
+  .mr-remove{
+    flex-shrink:0; width:38px; height:38px; border-radius:9px;
+    background:transparent; border:1.5px solid var(--linha); color:var(--erro);
+    font-size:18px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s, background .15s;
+  }
+  .mr-remove:active{ background:rgba(217,54,42,0.12); border-color:var(--erro); }
 
   /* ---- SELETOR (modal de busca) ---- */
   .seletor-grupo{
@@ -728,11 +789,17 @@
 <div class="app">
 
   <header class="topbar" id="topbar" style="display:none;">
-    <div style="display:flex; align-items:center; gap:12px;">
+    <div style="display:flex; align-items:center; gap:10px;">
       <div class="burger" id="btnBurger"><span></span><span></span><span></span></div>
       <div class="brand">
+        <svg class="topbar-bottle" viewBox="0 0 24 56" width="16" height="38" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="2" width="8" height="5" rx="1.2" fill="#d4150b"/>
+          <rect x="9" y="7" width="6" height="2.5" rx="0.6" fill="#7a0d06"/>
+          <path d="M7 9 L7 13 Q7 17 5 21 Q3 25 3 31 L3 50 Q3 54 7 54 L17 54 Q21 54 21 50 L21 31 Q21 25 19 21 Q17 17 17 13 L17 9 Z" fill="#c0392f" stroke="#ff8478" stroke-width="0.4" stroke-opacity="0.5"/>
+          <rect x="3" y="30" width="18" height="12" fill="#e2231a"/>
+          <rect x="4.5" y="14" width="2" height="36" fill="#fff" opacity="0.25"/>
+        </svg>
         <span class="mark">FEMSA</span>
-        <span class="sub">Concentrados</span>
       </div>
     </div>
     <div class="op-chip" id="opChip"><span class="dot"></span><span id="opName">—</span></div>
@@ -799,6 +866,14 @@
   </div>
 
   <main>
+    <div class="bg-bottle" aria-hidden="true">
+      <svg viewBox="0 0 160 300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <rect x="64" y="38" width="32" height="20" rx="3" fill="#d4150b"/>
+        <rect x="68" y="56" width="24" height="10" rx="2" fill="#5a0d07"/>
+        <path d="M58 64 L58 80 Q58 98 50 114 Q42 130 42 154 L42 256 Q42 272 58 272 L102 272 Q118 272 118 256 L118 154 Q118 130 110 114 Q102 98 102 80 L102 64 Z" fill="#c0392f"/>
+        <rect x="42" y="156" width="76" height="50" fill="#e2231a"/>
+      </svg>
+    </div>
 
     <!-- ===== TELA 1: LOGIN ===== -->
     <section class="screen active" id="screen-login">
@@ -937,23 +1012,37 @@
 
     <!-- ===== TELA 2: ENTRADA MANUAL DE PRODUTOS ===== -->
     <section class="screen" id="screen-scan">
-      <div class="section-label">Passo 1 de 2</div>
-      <h1 class="title" style="font-size:24px;" id="tituloLancamento">Lançar produtos do lote</h1>
+      <div class="progress-steps">
+        <div class="step-pill active"><span class="step-dot-pill"></span> Lançamento</div>
+        <div class="step-line"></div>
+        <div class="step-pill"><span class="step-dot-pill"></span> Conferência</div>
+      </div>
+      <h1 class="title" style="font-size:26px;" id="tituloLancamento">Lançar produtos do lote</h1>
       <p class="lead" style="margin-bottom:18px;" id="subtituloLancamento">Digite o material e a quantidade esperada de cada item da folha.</p>
 
       <div id="manualTable"></div>
 
-      <button class="btn btn-outline" id="btnAddRow" style="margin-top:6px;">+ Adicionar produto</button>
+      <button class="btn btn-outline" id="btnAddRow" style="margin-top:6px;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Adicionar produto
+      </button>
 
       <div class="stack">
-        <button class="btn btn-primary" id="btnContinuarManual">Continuar</button>
+        <button class="btn btn-primary" id="btnContinuarManual">
+          <span>Continuar</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8m0 0L7 3m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </section>
 
     <!-- ===== TELA 3: CONFIRMAÇÃO ===== -->
     <section class="screen" id="screen-confirm">
-      <div class="section-label">Passo 2 de 2</div>
-      <h1 class="title" style="font-size:24px;">Conferir quantidades</h1>
+      <div class="progress-steps">
+        <div class="step-pill done"><span class="step-dot-pill"></span> Lançamento</div>
+        <div class="step-line active"></div>
+        <div class="step-pill active"><span class="step-dot-pill"></span> Conferência</div>
+      </div>
+      <h1 class="title" style="font-size:26px;">Conferir quantidades</h1>
       <p class="lead" style="margin-bottom:20px;">Digite quanto foi efetivamente guardado de cada produto.</p>
 
       <div id="productList"></div>
@@ -1576,7 +1665,13 @@
 
     manualRows.forEach((row, i) => {
       const div = document.createElement('div');
-      div.className = 'produto-row';
+      // detecta categoria pelo nome (produto está em PRODUTOS_CONCENTRADOS ou PRODUTOS_SUCOS)
+      let categoria = '';
+      if(row.produto){
+        if(PRODUTOS_CONCENTRADOS.find(p => p.nome === row.produto)) categoria = ' tem-produto';
+        else if(PRODUTOS_SUCOS.find(p => p.nome === row.produto)) categoria = ' tem-suco';
+      }
+      div.className = 'produto-row' + categoria;
       const sinal = calcularSinalValidade(row.validade);
       const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
       const produtoSelecionado = row.produto
@@ -1587,7 +1682,7 @@
         : `<div class="ps-placeholder">Toque para escolher o produto</div>`;
       div.innerHTML = `
         <div class="pr-top">
-          <div class="mr-num">${i + 1}</div>
+          <div class="pr-num-circle">${i + 1}</div>
           <button class="ps-btn" data-id="${row.id}">${produtoSelecionado}<span class="ps-arrow">▾</span></button>
           <button class="mr-remove" data-id="${row.id}" title="Remover">×</button>
         </div>
