@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Conferência de Concentrados · FEMSA</title>
+<title>Controle de Estoque FEMSA Maringá</title>
+<meta property="og:title" content="Controle de Estoque FEMSA Maringá">
+<meta property="og:description" content="Gestão de entradas, saídas e qualidade dos concentrados">
+<meta name="apple-mobile-web-app-title" content="Estoque FEMSA Maringá">
 <style>
   :root{
     --vermelho:#E2231A;
@@ -1190,7 +1193,7 @@
   }
 
   // ---------- backend compartilhado (Google Sheets via Apps Script) ----------
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycby84v5tMZneo9APAakyO_O8t8ANiGzufjrEdoggveyGjygpiGjSZXQ7tGYTaVYakmhdKQ/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz0l_KF6tzsdrbuukQ2eI8diyCXZYBcYJcJuLJtyVYF-ScqWBU31wTCbmWsWlzVjfNd/exec';
 
   async function apiGet(params){
     const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
