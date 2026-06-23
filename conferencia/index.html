@@ -1063,25 +1063,24 @@
   const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwRzAmkK76iAK4MQiDjVRDvw2ikWZlysT4D62RaMzBY2Ub287jHuWfxcv9GMLTS6IipbA/exec';
 
   async function apiGet(params){
-    try{
-      const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
-      const res = await fetch(url);
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    }catch(e){ throw new Error('Sem conexão com o servidor'); }
+    const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
+    const res = await fetch(url, { method: 'GET', redirect: 'follow' });
+    const texto = await res.text();
+    try { return JSON.parse(texto); }
+    catch(e){ throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120)); }
   }
 
   async function apiPost(body){
-    try{
-      // text/plain evita CORS preflight — Apps Script ainda recebe e lê o JSON normalmente
-      const res = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(body)
-      });
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    }catch(e){ throw new Error('Sem conexão com o servidor'); }
+    // text/plain evita CORS preflight — Apps Script lê e.postData.contents normalmente
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    });
+    const texto = await res.text();
+    try { return JSON.parse(texto); }
+    catch(e){ throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120)); }
   }
 
   // ---------- autenticação ----------
@@ -1186,7 +1185,7 @@
 
       entrarNoApp({ br: usuario.br, nome: usuario.nome, isAdmin: String(usuario.isAdmin) === 'TRUE' || usuario.isAdmin === true });
     }catch(e){
-      toast('Erro de conexão com o servidor. Verifique sua internet.');
+      toast('Falha: ' + (e.message || 'erro desconhecido'));
     }finally{
       $('btnEntrar').disabled = false;
       $('btnEntrar').textContent = 'Entrar e iniciar registro';
@@ -1222,7 +1221,7 @@
       toast('Cadastro criado com sucesso');
       entrarNoApp({ br: brEmPrimeiroAcesso, nome, isAdmin: false });
     }catch(e){
-      toast('Erro de conexão. Verifique sua internet e tente novamente.');
+      toast('Falha: ' + (e.message || 'erro desconhecido'));
     }finally{
       $('btnCadastrarAcesso').disabled = false;
       $('btnCadastrarAcesso').textContent = 'Cadastrar e entrar';
