@@ -1105,17 +1105,8 @@
     }catch(e){ return []; }
   }
 
-  async function garantirAdmin(){
-    try{
-      const usuarios = await carregarUsuarios();
-      if(!usuarios.find(u => String(u.br) === BR_ADMIN)){
-        const senhaHash = await sha256(SENHA_ADMIN);
-        await apiPost({ acao:'criarUsuario', br: BR_ADMIN, nome:'Administrador', senhaHash, isAdmin: true });
-        cacheUsuarios = null;
-      }
-    }catch(e){ console.warn('Sem conexão com backend, modo offline'); }
-  }
-  garantirAdmin();
+  // o admin é validado diretamente pela constante no login, não precisa estar na planilha
+  async function garantirAdmin(){ /* não é mais necessário criar na planilha */ }
 
   function entrarNoApp(usuario){
     usuarioAtual = usuario;
@@ -1163,6 +1154,16 @@
     $('btnEntrar').textContent = 'Verificando...';
 
     try{
+      // login do admin: sempre validado pela constante fixa, independente do que está na planilha
+      if(String(br) === BR_ADMIN){
+        if(senha === SENHA_ADMIN){
+          entrarNoApp({ br: BR_ADMIN, nome: 'Administrador', isAdmin: true });
+        } else {
+          toast('Senha incorreta');
+        }
+        return;
+      }
+
       cacheUsuarios = null;
       const usuarios = await carregarUsuarios();
       const usuario = usuarios.find(u => String(u.br) === String(br));
