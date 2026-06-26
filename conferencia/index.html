@@ -545,6 +545,56 @@
     .coca-bottle .gas-burst{ opacity:0; }
   }
 
+  /* ========== LAYOUT DESKTOP (a partir de 900px) ========== */
+  @media (min-width: 900px){
+    .app{ max-width:1100px; padding:0 20px; }
+    main{ padding:28px 28px 60px; }
+
+    /* tela de lançamento: cards em 2 colunas */
+    #screen-scan #manualTable{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    #screen-scan #manualTable .produto-row{ margin-bottom:0; }
+
+    /* tela de conferência: cards em 2 colunas */
+    #screen-confirm #productList{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    /* histórico, estoque, RNC, solicitações: também em 2 colunas */
+    #logContainer, #estoqueList, #rncList, #fab1List, #solicLista{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .log-item, .estoque-card, .rnc-card, .solic-card{ margin-bottom:0 !important; }
+
+    /* botões e título não ocupam toda a largura à toa */
+    .stack{ max-width:520px; margin-left:auto; margin-right:auto; }
+    h1.title, .lead, .section-label, .progress-steps, .nav-tabs{ max-width:900px; }
+
+    /* tela de login: hero menor, conteúdo centralizado */
+    #screen-login{ max-width:520px; margin:0 auto; }
+
+    /* form de RNC e Solicitações: largura confortável, não esticada */
+    #screen-rnc-form, #screen-config, #screen-qrcode{ max-width:680px; margin:0 auto; }
+
+    /* drawer mais largo no desktop */
+    .drawer{ width:340px; }
+  }
+
+  @media (min-width: 1280px){
+    .app{ max-width:1240px; }
+    /* em telas bem largas, 3 colunas no histórico/estoque/RNC */
+    #logContainer, #estoqueList, #rncList, #fab1List, #solicLista{
+      grid-template-columns:1fr 1fr 1fr;
+    }
+  }
+
   /* ---- AÇÕES DO DRAWER (Nova entrada / Nova saída) ---- */
   .drawer-acoes{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
   .acao-btn{
