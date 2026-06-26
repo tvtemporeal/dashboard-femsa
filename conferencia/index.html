@@ -463,6 +463,27 @@
   .modal-actions{display:flex; gap:10px; margin-top:18px;}
   .modal-actions .btn{padding:13px;}
 
+  /* ---- DECORAÇÕES LATERAIS (caixas e latas) ---- */
+  .bg-decor{
+    display:none;
+    position:fixed; top:50%; transform:translateY(-50%);
+    width:120px; height:auto; z-index:0;
+    opacity:0.18; pointer-events:none;
+  }
+  .bg-decor svg{ width:100%; height:auto; display:block; }
+  .bg-decor-left{ left:20px; }
+  .bg-decor-right{ right:20px; }
+  @media (min-width: 1280px){
+    .bg-decor{ display:block; opacity:0.22; }
+    .bg-decor-left{ left:30px; width:140px; }
+    .bg-decor-right{ right:30px; width:130px; }
+  }
+  @media (min-width: 1500px){
+    .bg-decor{ opacity:0.28; }
+    .bg-decor-left{ left:50px; width:160px; }
+    .bg-decor-right{ right:50px; width:150px; }
+  }
+
   /* ---- GARRAFA PLANO DE FUNDO ---- */
   .bg-bottle{
     position:fixed; top:50%; left:50%;
@@ -566,12 +587,12 @@
     }
 
     /* histórico, estoque, RNC, solicitações: também em 2 colunas */
-    #logContainer, #estoqueList, #rncList, #fab1List, #solicLista{
+    #logContainer, #estoqueList, #rncList, #fab1List, #solicLista, #audPainel, #audHistorico{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:12px;
     }
-    .log-item, .estoque-card, .rnc-card, .solic-card{ margin-bottom:0 !important; }
+    .log-item, .estoque-card, .rnc-card, .solic-card, .aud-sala-card, .aud-historico-card{ margin-bottom:0 !important; }
 
     /* botões e título não ocupam toda a largura à toa */
     .stack{ max-width:520px; margin-left:auto; margin-right:auto; }
@@ -590,7 +611,7 @@
   @media (min-width: 1280px){
     .app{ max-width:1240px; }
     /* em telas bem largas, 3 colunas no histórico/estoque/RNC */
-    #logContainer, #estoqueList, #rncList, #fab1List, #solicLista{
+    #logContainer, #estoqueList, #rncList, #fab1List, #solicLista, #audPainel, #audHistorico{
       grid-template-columns:1fr 1fr 1fr;
     }
   }
@@ -778,6 +799,56 @@
   }
   .log-del-btn:active{ background:rgba(217,54,42,0.12); border-color:var(--erro); }
 
+  /* ---- CARDS AUDITORIA ---- */
+  .aud-sala-card{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:14px;
+    padding:16px; margin-bottom:14px; border-left:4px solid var(--cinza);
+  }
+  .aud-sala-card.aud-status-ok{ border-left-color:var(--verde); }
+  .aud-sala-card.aud-status-proxima{ border-left-color:var(--ambar); }
+  .aud-sala-card.aud-status-vencida{ border-left-color:var(--erro); background:rgba(217,54,42,0.05); }
+  .aud-sala-card.aud-status-nunca{ border-left-color:var(--ambar); }
+  .aud-sala-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .aud-sala-ic{ font-size:24px; }
+  .aud-sala-nome{ font-size:15.5px; font-weight:800; flex:1; }
+  .aud-meta{ font-size:12px; color:var(--cinza); margin-top:4px; }
+  .aud-meta b{ color:var(--osso); font-weight:700; }
+  .aud-badge{
+    display:inline-block; font-size:11px; font-weight:800; padding:5px 10px;
+    border-radius:5px; margin-bottom:6px;
+  }
+  .aud-badge.ok{ background:rgba(31,138,76,0.18); color:#4FCC85; }
+  .aud-badge.proxima{ background:rgba(217,142,4,0.18); color:#F0B33E; }
+  .aud-badge.vencida{ background:rgba(217,54,42,0.2); color:#F08176; }
+
+  /* desvios no formulário */
+  .aud-desvio-card{
+    background:var(--carvao); border:1.5px solid var(--linha); border-left:3px solid var(--ambar);
+    border-radius:10px; padding:12px; margin-bottom:10px;
+  }
+  .aud-desvio-head{ display:flex; align-items:center; gap:10px; }
+  .aud-desvio-num{
+    width:24px; height:24px; border-radius:50%; background:var(--ambar); color:#1a1a1a;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;
+  }
+  .aud-desvio-titulo{ flex:1; font-size:13px; font-weight:800; }
+
+  /* histórico de auditorias */
+  .aud-historico-card{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
+    padding:14px; margin-bottom:12px; border-left:4px solid var(--verde);
+  }
+  .aud-historico-card.com-desvios{ border-left-color:var(--erro); }
+  .aud-h-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:4px; }
+  .aud-h-sala{ font-size:15px; font-weight:800; }
+  .aud-h-meta{ font-size:11.5px; color:var(--cinza); margin-bottom:10px; }
+  .aud-h-desvio{
+    background:rgba(255,255,255,0.03); border-radius:8px; padding:10px; margin-top:10px;
+  }
+  .aud-h-desvio-num{ font-size:11px; font-weight:800; color:var(--ambar); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .aud-h-desvio-label{ font-size:10px; text-transform:uppercase; color:var(--cinza); font-weight:700; letter-spacing:1px; margin-top:6px; }
+  .aud-h-desvio-texto{ font-size:13px; line-height:1.4; }
+
   /* ---- CARDS SOLICITAÇÕES ---- */
   .solic-card{
     background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
@@ -944,6 +1015,77 @@
   </div>
 
   <main>
+    <!-- Decoração lateral: caixas de concentrado à esquerda -->
+    <div class="bg-decor bg-decor-left" aria-hidden="true">
+      <svg viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- caixa de baixo -->
+        <g transform="translate(8, 110)">
+          <rect x="0" y="0" width="64" height="56" fill="#8a3a1f" rx="2"/>
+          <rect x="0" y="0" width="64" height="10" fill="#6a2a15" rx="2"/>
+          <rect x="6" y="18" width="52" height="30" fill="#e2231a" rx="1"/>
+          <text x="32" y="36" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="700" fill="#fff">Coca-Cola</text>
+          <line x1="0" y1="10" x2="64" y2="10" stroke="#3a1508" stroke-width="0.5"/>
+          <line x1="32" y1="0" x2="32" y2="10" stroke="#3a1508" stroke-width="0.5"/>
+        </g>
+        <!-- caixa do meio -->
+        <g transform="translate(4, 56)">
+          <rect x="0" y="0" width="68" height="56" fill="#9a4225" rx="2"/>
+          <rect x="0" y="0" width="68" height="10" fill="#7a321a" rx="2"/>
+          <rect x="6" y="18" width="56" height="30" fill="#e2231a" rx="1"/>
+          <text x="34" y="36" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="700" fill="#fff">Coca-Cola</text>
+          <line x1="0" y1="10" x2="68" y2="10" stroke="#3a1508" stroke-width="0.5"/>
+          <line x1="34" y1="0" x2="34" y2="10" stroke="#3a1508" stroke-width="0.5"/>
+        </g>
+        <!-- caixa de cima (pequena) -->
+        <g transform="translate(14, 14)">
+          <rect x="0" y="0" width="52" height="44" fill="#7a3018" rx="2"/>
+          <rect x="0" y="0" width="52" height="8" fill="#5a2010" rx="2"/>
+          <rect x="5" y="14" width="42" height="24" fill="#e2231a" rx="1"/>
+          <text x="26" y="29" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="7.5" font-weight="700" fill="#fff">Coca-Cola</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Decoração lateral: latas à direita -->
+    <div class="bg-decor bg-decor-right" aria-hidden="true">
+      <svg viewBox="0 0 80 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="latagrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#a01510"/>
+            <stop offset="30%" stop-color="#e2231a"/>
+            <stop offset="55%" stop-color="#ff5247"/>
+            <stop offset="80%" stop-color="#c01a13"/>
+            <stop offset="100%" stop-color="#6a0d08"/>
+          </linearGradient>
+        </defs>
+        <!-- lata 1 -->
+        <g transform="translate(18, 10)">
+          <ellipse cx="22" cy="3" rx="20" ry="3" fill="#bcb3a0"/>
+          <rect x="2" y="3" width="40" height="74" fill="url(#latagrad)"/>
+          <ellipse cx="22" cy="77" rx="20" ry="3" fill="#6a0d08"/>
+          <rect x="2" y="30" width="40" height="22" fill="#fff" opacity="0.95"/>
+          <text x="22" y="44" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="900" fill="#e2231a">Coca-Cola</text>
+          <ellipse cx="22" cy="3" rx="20" ry="3" fill="none" stroke="#8a8478" stroke-width="0.5"/>
+        </g>
+        <!-- lata 2 -->
+        <g transform="translate(10, 100)">
+          <ellipse cx="22" cy="3" rx="20" ry="3" fill="#bcb3a0"/>
+          <rect x="2" y="3" width="40" height="74" fill="url(#latagrad)"/>
+          <ellipse cx="22" cy="77" rx="20" ry="3" fill="#6a0d08"/>
+          <rect x="2" y="30" width="40" height="22" fill="#fff" opacity="0.95"/>
+          <text x="22" y="44" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="900" fill="#e2231a">Coca-Cola</text>
+        </g>
+        <!-- lata 3 (deitada na parte de baixo) -->
+        <g transform="translate(22, 195) rotate(-12)">
+          <ellipse cx="20" cy="3" rx="18" ry="2.5" fill="#bcb3a0"/>
+          <rect x="2" y="3" width="36" height="36" fill="url(#latagrad)"/>
+          <ellipse cx="20" cy="39" rx="18" ry="2.5" fill="#6a0d08"/>
+          <rect x="2" y="15" width="36" height="14" fill="#fff" opacity="0.95"/>
+          <text x="20" y="24" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="7" font-weight="900" fill="#e2231a">Coca-Cola</text>
+        </g>
+      </svg>
+    </div>
+
     <div class="bg-bottle" aria-hidden="true">
       <svg viewBox="0 0 160 300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
         <rect x="64" y="38" width="32" height="20" rx="3" fill="#d4150b"/>
@@ -1285,6 +1427,68 @@
       </div>
     </section>
 
+    <!-- ===== TELA AUDITORIA DAS SALAS ===== -->
+    <section class="screen" id="screen-auditoria">
+      <div class="section-label">Controle de qualidade</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Auditoria das salas</h1>
+      <p class="lead" style="margin-bottom:18px;">Cada sala deve ser auditada a cada 15 dias. Salas em vermelho estão com auditoria vencida.</p>
+
+      <div class="nav-tabs">
+        <button class="active" data-aud-aba="painel">Painel das salas</button>
+        <button data-aud-aba="historico">Histórico</button>
+      </div>
+
+      <!-- Painel das 7 salas -->
+      <div id="audPainelWrap">
+        <div id="audPainel"></div>
+      </div>
+
+      <!-- Histórico de auditorias -->
+      <div id="audHistoricoWrap" style="display:none;">
+        <div id="audHistorico"></div>
+      </div>
+
+      <div class="stack" style="margin-top:20px;">
+        <button class="btn btn-ghost" id="btnVoltarInicioAud">← Voltar ao início</button>
+      </div>
+    </section>
+
+    <!-- ===== TELA NOVA AUDITORIA (formulário) ===== -->
+    <section class="screen" id="screen-aud-form">
+      <div class="section-label">Nova auditoria</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;" id="audFormTitulo">Auditar sala</h1>
+      <p class="lead" style="margin-bottom:20px;">Registre se a sala está conforme ou se há desvios encontrados.</p>
+
+      <label class="field-label">Houve desvios?</label>
+      <div class="tipo-toggle" style="margin-top:0; margin-bottom:18px;">
+        <button type="button" class="tipo-btn active" id="audBtnSemDesvios" data-tem-desvios="nao">
+          <span class="tipo-ic" style="font-size:14px; background:rgba(31,138,76,0.15); color:#4FCC85;">✓</span>
+          <span>Não</span>
+          <small>Sala conforme</small>
+        </button>
+        <button type="button" class="tipo-btn" id="audBtnComDesvios" data-tem-desvios="sim">
+          <span class="tipo-ic" style="font-size:14px; background:rgba(217,54,42,0.15); color:#F08176;">!</span>
+          <span>Sim</span>
+          <small>Houve desvios</small>
+        </button>
+      </div>
+
+      <!-- Lista de desvios (só aparece quando "Sim") -->
+      <div id="audDesviosWrap" style="display:none;">
+        <div class="drawer-label" style="margin-bottom:10px;">Desvios encontrados</div>
+        <div id="audDesviosList"></div>
+        <button class="btn btn-outline" id="btnAudAddDesvio" style="margin-top:6px;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Adicionar desvio
+        </button>
+      </div>
+
+      <div class="stack" style="margin-top:24px;">
+        <button class="btn btn-primary" id="btnSalvarAuditoria">Finalizar auditoria</button>
+        <button class="btn btn-ghost" id="btnCancelarAuditoria">← Cancelar</button>
+      </div>
+    </section>
+
     <!-- ===== TELA PÚBLICA: FORMULÁRIO RNC (sem login) ===== -->
     <section class="screen" id="screen-rnc-form">
       <div class="hero-num">FEMSA · REGISTRO PÚBLICO</div>
@@ -1397,6 +1601,7 @@
     { id:'screen-log',         label:'Histórico',             hint:'Entradas e saídas' },
     { id:'screen-estoque',     label:'Estoque atual',         hint:'Saldo por produto' },
     { id:'screen-solic',       label:'Solicitações F1 → F2',  hint:'Pedidos da Fábrica 1' },
+    { id:'screen-auditoria',   label:'Auditoria das salas',   hint:'7 salas · ciclo de 15 dias' },
     { id:'registrar-rnc',      label:'Registrar RNC',         hint:'Reportar não conformidade' },
     { id:'screen-rnc',         label:'Concentrados em RNC',   hint:'Histórico de não conformidades' },
     { id:'screen-fab1',        label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
@@ -1448,6 +1653,7 @@
         if(step.id === 'screen-fab1'){ renderFab1(); }
         if(step.id === 'screen-qrcode'){ renderQRCode(); }
         if(step.id === 'screen-solic'){ renderSolicitacoes(); }
+        if(step.id === 'screen-auditoria'){ renderAuditoria(); }
         if(step.id === 'registrar-rnc'){
           // abre formulário de RNC em modo interno (com cabeçalho do app)
           resetarFormularioRNC();
@@ -2607,6 +2813,265 @@
 
   $('btnVoltarInicioSolic').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
 
+  // ============= AUDITORIA DAS SALAS =============
+  const SALAS_AUDITORIA = [
+    { id:'ibc', nome:'IBC', icone:'📦' },
+    { id:'powerade', nome:'Powerade', icone:'⚡' },
+    { id:'frut', nome:'Frut', icone:'🍊' },
+    { id:'kapo', nome:'Kapo', icone:'🧃' },
+    { id:'camera_fria', nome:'Câmara Fria', icone:'❄️' },
+    { id:'camera_inflamaveis', nome:'Câmara Fria de Inflamáveis', icone:'🔥' },
+    { id:'sala_refrigerante', nome:'Sala de Refrigerante', icone:'🥤' }
+  ];
+  const CICLO_AUDITORIA_DIAS = 15;
+
+  let audCache = [];
+  let audSalaAtual = null;
+  let audDesvios = []; // [{desvio, correcao}]
+  let audTemDesvios = 'nao';
+
+  // tabs do painel/histórico
+  document.querySelectorAll('#screen-auditoria [data-aud-aba]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-auditoria [data-aud-aba]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const aba = btn.dataset.audAba;
+      $('audPainelWrap').style.display = aba === 'painel' ? 'block' : 'none';
+      $('audHistoricoWrap').style.display = aba === 'historico' ? 'block' : 'none';
+      if(aba === 'historico') renderAudHistorico();
+    });
+  });
+
+  async function renderAuditoria(){
+    const painel = $('audPainel');
+    painel.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza);font-size:13px;">Carregando auditorias...</p></div>';
+    try{
+      const res = await apiGet({ acao:'listarAuditorias' });
+      audCache = res.ok ? res.auditorias : [];
+    }catch(e){ audCache = []; }
+    renderAudPainel();
+  }
+
+  // calcula o status da sala: pegando a auditoria mais recente daquela sala
+  function statusDaSala(salaId){
+    const auditorias = audCache.filter(a => a.sala_id === salaId);
+    if(auditorias.length === 0){
+      return { status:'nunca', diasDesde:null, ultima:null, proxima:null };
+    }
+    // pega a mais recente
+    auditorias.sort((a,b) => {
+      const da = parseData(a.data) || new Date(0);
+      const db = parseData(b.data) || new Date(0);
+      return db - da;
+    });
+    const ultima = auditorias[0];
+    const dataUltima = parseData(ultima.data);
+    if(!dataUltima) return { status:'nunca', diasDesde:null, ultima, proxima:null };
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const dataLim = new Date(dataUltima); dataLim.setHours(0,0,0,0);
+    const diasDesde = Math.floor((hoje - dataLim) / (1000*60*60*24));
+    const proxima = new Date(dataLim); proxima.setDate(proxima.getDate() + CICLO_AUDITORIA_DIAS);
+    const status = diasDesde > CICLO_AUDITORIA_DIAS ? 'vencida' :
+                   diasDesde >= CICLO_AUDITORIA_DIAS - 3 ? 'proxima' : 'ok';
+    return { status, diasDesde, ultima, proxima };
+  }
+
+  function renderAudPainel(){
+    const painel = $('audPainel');
+    painel.innerHTML = '';
+    SALAS_AUDITORIA.forEach(sala => {
+      const st = statusDaSala(sala.id);
+      const card = document.createElement('div');
+      card.className = 'aud-sala-card aud-status-' + st.status;
+      let statusHtml;
+      if(st.status === 'nunca'){
+        statusHtml = `<div class="aud-meta">Nunca auditada</div>`;
+      } else {
+        const ultimaTxt = formatarDataBR(st.ultima.data);
+        const proxTxt = formatarDataBR(st.proxima);
+        const labelStatus = st.status === 'vencida'
+          ? `<span class="aud-badge vencida">⚠ Auditoria vencida há ${st.diasDesde - CICLO_AUDITORIA_DIAS} dia(s)</span>`
+          : st.status === 'proxima'
+            ? `<span class="aud-badge proxima">Próxima auditoria em breve</span>`
+            : `<span class="aud-badge ok">✓ Em dia</span>`;
+        statusHtml = `
+          ${labelStatus}
+          <div class="aud-meta">Última: <b>${ultimaTxt}</b> por ${escapeHtml(st.ultima.auditor||'—')}</div>
+          <div class="aud-meta">Próxima: <b>${proxTxt}</b></div>
+        `;
+      }
+      card.innerHTML = `
+        <div class="aud-sala-head">
+          <div class="aud-sala-ic">${sala.icone}</div>
+          <div class="aud-sala-nome">${escapeHtml(sala.nome)}</div>
+        </div>
+        ${statusHtml}
+        <button class="btn btn-primary aud-sala-btn" data-sala-id="${sala.id}" style="margin-top:14px; padding:11px; font-size:13px;">Auditar agora</button>
+      `;
+      painel.appendChild(card);
+    });
+    painel.querySelectorAll('.aud-sala-btn').forEach(btn => {
+      btn.addEventListener('click', () => abrirFormAuditoria(btn.dataset.salaId));
+    });
+  }
+
+  function abrirFormAuditoria(salaId){
+    audSalaAtual = SALAS_AUDITORIA.find(s => s.id === salaId);
+    if(!audSalaAtual) return;
+    $('audFormTitulo').textContent = 'Auditar: ' + audSalaAtual.nome;
+    audTemDesvios = 'nao';
+    audDesvios = [];
+    $('audBtnSemDesvios').classList.add('active');
+    $('audBtnComDesvios').classList.remove('active');
+    $('audDesviosWrap').style.display = 'none';
+    renderAudDesviosList();
+    showScreen('screen-aud-form');
+  }
+
+  $('audBtnSemDesvios').addEventListener('click', () => {
+    audTemDesvios = 'nao';
+    $('audBtnSemDesvios').classList.add('active');
+    $('audBtnComDesvios').classList.remove('active');
+    $('audDesviosWrap').style.display = 'none';
+  });
+  $('audBtnComDesvios').addEventListener('click', () => {
+    audTemDesvios = 'sim';
+    $('audBtnComDesvios').classList.add('active');
+    $('audBtnSemDesvios').classList.remove('active');
+    $('audDesviosWrap').style.display = 'block';
+    if(audDesvios.length === 0){
+      audDesvios.push({ desvio:'', correcao:'' });
+      renderAudDesviosList();
+    }
+  });
+
+  function renderAudDesviosList(){
+    const list = $('audDesviosList');
+    list.innerHTML = '';
+    audDesvios.forEach((d, i) => {
+      const div = document.createElement('div');
+      div.className = 'aud-desvio-card';
+      div.innerHTML = `
+        <div class="aud-desvio-head">
+          <div class="aud-desvio-num">${i + 1}</div>
+          <div class="aud-desvio-titulo">Desvio #${i + 1}</div>
+          ${audDesvios.length > 1 ? `<button class="mr-remove" data-i="${i}" title="Remover">×</button>` : ''}
+        </div>
+        <label class="field-label" style="margin-top:10px;">Qual foi o desvio?</label>
+        <textarea data-campo="desvio" data-i="${i}" rows="2" style="width:100%; background:var(--preto); border:1.5px solid var(--linha); color:var(--osso); font-size:14px; padding:10px 12px; border-radius:8px; font-family:inherit; resize:none;">${escapeHtml(d.desvio)}</textarea>
+        <label class="field-label" style="margin-top:10px;">O que foi feito para corrigir?</label>
+        <textarea data-campo="correcao" data-i="${i}" rows="2" style="width:100%; background:var(--preto); border:1.5px solid var(--linha); color:var(--osso); font-size:14px; padding:10px 12px; border-radius:8px; font-family:inherit; resize:none;">${escapeHtml(d.correcao)}</textarea>
+      `;
+      list.appendChild(div);
+    });
+    list.querySelectorAll('textarea').forEach(t => {
+      t.addEventListener('input', (e) => {
+        const i = Number(e.target.dataset.i);
+        if(audDesvios[i]) audDesvios[i][e.target.dataset.campo] = e.target.value;
+      });
+    });
+    list.querySelectorAll('.mr-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        audDesvios.splice(Number(btn.dataset.i), 1);
+        renderAudDesviosList();
+      });
+    });
+  }
+
+  $('btnAudAddDesvio').addEventListener('click', () => {
+    audDesvios.push({ desvio:'', correcao:'' });
+    renderAudDesviosList();
+  });
+
+  $('btnSalvarAuditoria').addEventListener('click', async () => {
+    if(!audSalaAtual){ toast('Sala não selecionada'); return; }
+    if(audTemDesvios === 'sim'){
+      const incompletos = audDesvios.filter(d => !d.desvio.trim() || !d.correcao.trim());
+      if(audDesvios.length === 0){ toast('Adicione pelo menos um desvio'); return; }
+      if(incompletos.length > 0){ toast('Preencha todos os desvios e correções'); return; }
+    }
+
+    $('btnSalvarAuditoria').disabled = true;
+    $('btnSalvarAuditoria').textContent = 'Salvando...';
+    try{
+      const agora = new Date();
+      const dataIso = agora.toISOString().slice(0,10);
+      const res = await apiPost({
+        acao: 'adicionarAuditoria',
+        sala_id: audSalaAtual.id,
+        sala_nome: audSalaAtual.nome,
+        data: dataIso,
+        timestamp: agora.toLocaleString('pt-BR'),
+        auditor: usuarioAtual ? usuarioAtual.nome : '—',
+        tem_desvios: audTemDesvios,
+        desvios: audTemDesvios === 'sim' ? audDesvios : []
+      });
+      if(!res.ok){ toast('Erro ao salvar: ' + res.erro); return; }
+      toast('Auditoria registrada com sucesso');
+      await renderAuditoria();
+      showScreen('screen-auditoria');
+    }catch(e){
+      toast('Erro de rede: ' + (e.message || ''));
+    }finally{
+      $('btnSalvarAuditoria').disabled = false;
+      $('btnSalvarAuditoria').textContent = 'Finalizar auditoria';
+    }
+  });
+
+  $('btnCancelarAuditoria').addEventListener('click', () => {
+    showScreen('screen-auditoria');
+  });
+  $('btnVoltarInicioAud').addEventListener('click', () => {
+    iniciarTabelaManual();
+    showScreen('screen-scan');
+  });
+
+  function renderAudHistorico(){
+    const list = $('audHistorico');
+    const dados = audCache.slice().sort((a,b) => {
+      const da = parseData(a.data) || new Date(0);
+      const db = parseData(b.data) || new Date(0);
+      return db - da;
+    });
+    if(dados.length === 0){
+      list.innerHTML = `<div class="empty-state"><div class="ic">📋</div>Nenhuma auditoria registrada ainda</div>`;
+      return;
+    }
+    list.innerHTML = '';
+    dados.forEach(a => {
+      const card = document.createElement('div');
+      const temDesvios = String(a.tem_desvios||'nao') === 'sim';
+      card.className = 'aud-historico-card' + (temDesvios ? ' com-desvios' : '');
+      let desviosHtml = '';
+      // desvios podem vir como string JSON ou já como array
+      let listaDesvios = a.desvios;
+      if(typeof listaDesvios === 'string'){
+        try { listaDesvios = JSON.parse(listaDesvios); } catch(e){ listaDesvios = []; }
+      }
+      if(temDesvios && Array.isArray(listaDesvios) && listaDesvios.length > 0){
+        desviosHtml = listaDesvios.map((d, i) => `
+          <div class="aud-h-desvio">
+            <div class="aud-h-desvio-num">Desvio ${i+1}</div>
+            <div class="aud-h-desvio-label">O que aconteceu:</div>
+            <div class="aud-h-desvio-texto">${escapeHtml(d.desvio || '—')}</div>
+            <div class="aud-h-desvio-label">Correção:</div>
+            <div class="aud-h-desvio-texto">${escapeHtml(d.correcao || '—')}</div>
+          </div>
+        `).join('');
+      }
+      card.innerHTML = `
+        <div class="aud-h-head">
+          <div class="aud-h-sala">${escapeHtml(a.sala_nome || a.sala_id || '—')}</div>
+          <span class="aud-badge ${temDesvios?'vencida':'ok'}">${temDesvios ? '⚠ Com desvios' : '✓ Conforme'}</span>
+        </div>
+        <div class="aud-h-meta">${escapeHtml(a.timestamp || formatarDataBR(a.data) || '')} · por ${escapeHtml(a.auditor || '—')}</div>
+        ${desviosHtml}
+      `;
+      list.appendChild(card);
+    });
+  }
+
+
   // ---------- Fábrica 1: log filtrado ----------
   async function renderFab1(){
     const container = $('fab1List');
@@ -2917,6 +3382,9 @@
       const sinalHtml = sinal
         ? `<span class="sinal-badge sinal-${sinal.cor}" style="margin-top:4px; display:inline-block;">Val. ${formatarDataBR(r.validade)} · ${sinal.label}</span>`
         : (r.validade ? `<div class="li-meta">Val. ${formatarDataBR(r.validade)}</div>` : '');
+      const loteOuFormula = (r.lote && r.lote !== '—' && r.lote !== 'undefined') ? r.lote
+                          : (r.formula && r.formula !== 'undefined') ? r.formula : '';
+      const loteHtml = loteOuFormula ? `Lote ${escapeHtml(loteOuFormula)} · ` : '';
       const adminBtn = (usuarioAtual && usuarioAtual.isAdmin)
         ? `<button class="log-del-btn" data-row-id="${escapeHtml(r.id||'')}" data-row-key="${escapeHtml((r.timestamp||'')+'|'+(r.produto||'')+'|'+(r.quantidade_guardada||''))}" title="Excluir registro">🗑</button>`
         : '';
@@ -2924,7 +3392,7 @@
         <div>
           <div class="li-name">${escapeHtml(r.produto)}</div>
           <div class="li-meta">${escapeHtml(r.operador)} · ${escapeHtml(r.timestamp)}</div>
-          <div class="li-meta">Lote ${escapeHtml(r.lote)} · ${detalheQtd}</div>
+          <div class="li-meta">${loteHtml}${detalheQtd}</div>
           ${sinalHtml}
         </div>
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
@@ -3006,12 +3474,12 @@
 
   // ---------- sinalização de datas de validade ----------
   // vermelho = crítico (≤30 dias), amarelo = atenção (≤60 dias), laranja = fique de olho (≤90 dias)
-  function calcularSinalValidade(dataStr){
-    if(!dataStr) return null;
+  function calcularSinalValidade(v){
+    const dataVal = parseData(v);
+    if(!dataVal) return null;
     const hoje = new Date();
     hoje.setHours(0,0,0,0);
-    const dataVal = new Date(dataStr + 'T00:00:00');
-    if(isNaN(dataVal.getTime())) return null;
+    dataVal.setHours(0,0,0,0);
     const dias = Math.round((dataVal - hoje) / (1000 * 60 * 60 * 24));
 
     if(dias <= 30) return { cor: 'vermelho', label: dias < 0 ? 'Vencido' : `${dias}d`, dias };
@@ -3020,12 +3488,38 @@
     return null;
   }
 
-  function formatarDataBR(dataStr){
-    if(!dataStr) return '';
-    const [ano, mes, dia] = dataStr.split('-');
-    return `${dia}/${mes}/${ano}`;
+  // converte qualquer formato de data (YYYY-MM-DD, ISO completo, Date, ou objeto do Sheets)
+  // para um objeto Date válido, ou null se não der pra interpretar
+  function parseData(v){
+    if(!v && v !== 0) return null;
+    if(v instanceof Date) return isNaN(v.getTime()) ? null : v;
+    const s = String(v).trim();
+    if(!s) return null;
+    // YYYY-MM-DD ou YYYY-MM-DDTHH:MM:SS... (ISO)
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m){
+      const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // DD/MM/YYYY
+    m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+    if(m){
+      const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // tenta o construtor padrão (data ISO completa etc.)
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
   }
 
+  function formatarDataBR(v){
+    const d = parseData(v);
+    if(!d) return '';
+    const dia = String(d.getDate()).padStart(2,'0');
+    const mes = String(d.getMonth()+1).padStart(2,'0');
+    const ano = d.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  }
 })();
 </script>
 </body>
