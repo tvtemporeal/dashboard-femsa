@@ -463,25 +463,25 @@
   .modal-actions{display:flex; gap:10px; margin-top:18px;}
   .modal-actions .btn{padding:13px;}
 
-  /* ---- DECORAÇÕES LATERAIS (caixas e latas) ---- */
+  /* ---- DECORAÇÕES LATERAIS (padrão industrial) ---- */
   .bg-decor{
     display:none;
-    position:fixed; top:50%; transform:translateY(-50%);
-    width:120px; height:auto; z-index:0;
-    opacity:0.18; pointer-events:none;
+    position:fixed; top:0; bottom:0;
+    width:130px; z-index:0;
+    opacity:0.5; pointer-events:none;
   }
-  .bg-decor svg{ width:100%; height:auto; display:block; }
-  .bg-decor-left{ left:20px; }
-  .bg-decor-right{ right:20px; }
+  .bg-decor svg{ width:100%; height:100%; display:block; }
+  .bg-decor-left{ left:0; }
+  .bg-decor-right{ right:0; }
   @media (min-width: 1280px){
-    .bg-decor{ display:block; opacity:0.22; }
-    .bg-decor-left{ left:30px; width:140px; }
-    .bg-decor-right{ right:30px; width:130px; }
+    .bg-decor{ display:block; }
+    .bg-decor-left{ width:150px; }
+    .bg-decor-right{ width:150px; }
   }
   @media (min-width: 1500px){
-    .bg-decor{ opacity:0.28; }
-    .bg-decor-left{ left:50px; width:160px; }
-    .bg-decor-right{ right:50px; width:150px; }
+    .bg-decor{ opacity:0.6; }
+    .bg-decor-left{ width:180px; }
+    .bg-decor-right{ width:180px; }
   }
 
   /* ---- GARRAFA PLANO DE FUNDO ---- */
@@ -1015,74 +1015,85 @@
   </div>
 
   <main>
-    <!-- Decoração lateral: caixas de concentrado à esquerda -->
+    <!-- Decoração industrial: padrão geométrico à esquerda -->
     <div class="bg-decor bg-decor-left" aria-hidden="true">
-      <svg viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- caixa de baixo -->
-        <g transform="translate(8, 110)">
-          <rect x="0" y="0" width="64" height="56" fill="#8a3a1f" rx="2"/>
-          <rect x="0" y="0" width="64" height="10" fill="#6a2a15" rx="2"/>
-          <rect x="6" y="18" width="52" height="30" fill="#e2231a" rx="1"/>
-          <text x="32" y="36" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="700" fill="#fff">Coca-Cola</text>
-          <line x1="0" y1="10" x2="64" y2="10" stroke="#3a1508" stroke-width="0.5"/>
-          <line x1="32" y1="0" x2="32" y2="10" stroke="#3a1508" stroke-width="0.5"/>
+      <svg viewBox="0 0 120 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="hexEsq" x="0" y="0" width="34" height="58" patternUnits="userSpaceOnUse">
+            <!-- hexágono "deitado" no padrão -->
+            <path d="M17 2 L31 10 L31 26 L17 34 L3 26 L3 10 Z" fill="none" stroke="#E2231A" stroke-width="0.7" opacity="0.85"/>
+            <circle cx="17" cy="18" r="1.2" fill="#E2231A" opacity="0.6"/>
+          </pattern>
+          <linearGradient id="fadeEsq" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#000" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </linearGradient>
+          <mask id="maskEsq">
+            <rect x="0" y="0" width="120" height="600" fill="url(#fadeEsq)"/>
+          </mask>
+        </defs>
+
+        <rect x="0" y="0" width="120" height="600" fill="url(#hexEsq)" mask="url(#maskEsq)"/>
+
+        <!-- linha técnica vertical -->
+        <line x1="60" y1="40" x2="60" y2="560" stroke="#D98E04" stroke-width="0.6" stroke-dasharray="3 4" opacity="0.5"/>
+
+        <!-- marcadores / "válvulas" -->
+        <g stroke="#D98E04" stroke-width="0.8" fill="none" opacity="0.55">
+          <circle cx="60" cy="120" r="6"/>
+          <circle cx="60" cy="120" r="2.5" fill="#D98E04"/>
+          <circle cx="60" cy="300" r="6"/>
+          <line x1="54" y1="300" x2="66" y2="300"/>
+          <line x1="60" y1="294" x2="60" y2="306"/>
+          <circle cx="60" cy="480" r="6"/>
+          <circle cx="60" cy="480" r="2.5" fill="#D98E04"/>
         </g>
-        <!-- caixa do meio -->
-        <g transform="translate(4, 56)">
-          <rect x="0" y="0" width="68" height="56" fill="#9a4225" rx="2"/>
-          <rect x="0" y="0" width="68" height="10" fill="#7a321a" rx="2"/>
-          <rect x="6" y="18" width="56" height="30" fill="#e2231a" rx="1"/>
-          <text x="34" y="36" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="700" fill="#fff">Coca-Cola</text>
-          <line x1="0" y1="10" x2="68" y2="10" stroke="#3a1508" stroke-width="0.5"/>
-          <line x1="34" y1="0" x2="34" y2="10" stroke="#3a1508" stroke-width="0.5"/>
-        </g>
-        <!-- caixa de cima (pequena) -->
-        <g transform="translate(14, 14)">
-          <rect x="0" y="0" width="52" height="44" fill="#7a3018" rx="2"/>
-          <rect x="0" y="0" width="52" height="8" fill="#5a2010" rx="2"/>
-          <rect x="5" y="14" width="42" height="24" fill="#e2231a" rx="1"/>
-          <text x="26" y="29" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="7.5" font-weight="700" fill="#fff">Coca-Cola</text>
-        </g>
+
+        <!-- legenda técnica vertical (rótulo industrial) -->
+        <text x="10" y="80" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#E2231A" letter-spacing="4" opacity="0.55">P-01</text>
+        <text x="10" y="260" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#E2231A" letter-spacing="4" opacity="0.55">P-02</text>
+        <text x="10" y="440" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#E2231A" letter-spacing="4" opacity="0.55">P-03</text>
       </svg>
     </div>
 
-    <!-- Decoração lateral: latas à direita -->
+    <!-- Decoração industrial: padrão geométrico à direita -->
     <div class="bg-decor bg-decor-right" aria-hidden="true">
-      <svg viewBox="0 0 80 240" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 120 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <linearGradient id="latagrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#a01510"/>
-            <stop offset="30%" stop-color="#e2231a"/>
-            <stop offset="55%" stop-color="#ff5247"/>
-            <stop offset="80%" stop-color="#c01a13"/>
-            <stop offset="100%" stop-color="#6a0d08"/>
+          <pattern id="hexDir" x="0" y="0" width="34" height="58" patternUnits="userSpaceOnUse">
+            <path d="M17 2 L31 10 L31 26 L17 34 L3 26 L3 10 Z" fill="none" stroke="#E2231A" stroke-width="0.7" opacity="0.85"/>
+            <circle cx="17" cy="18" r="1.2" fill="#E2231A" opacity="0.6"/>
+          </pattern>
+          <linearGradient id="fadeDir" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0.6"/>
           </linearGradient>
+          <mask id="maskDir">
+            <rect x="0" y="0" width="120" height="600" fill="url(#fadeDir)"/>
+          </mask>
         </defs>
-        <!-- lata 1 -->
-        <g transform="translate(18, 10)">
-          <ellipse cx="22" cy="3" rx="20" ry="3" fill="#bcb3a0"/>
-          <rect x="2" y="3" width="40" height="74" fill="url(#latagrad)"/>
-          <ellipse cx="22" cy="77" rx="20" ry="3" fill="#6a0d08"/>
-          <rect x="2" y="30" width="40" height="22" fill="#fff" opacity="0.95"/>
-          <text x="22" y="44" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="900" fill="#e2231a">Coca-Cola</text>
-          <ellipse cx="22" cy="3" rx="20" ry="3" fill="none" stroke="#8a8478" stroke-width="0.5"/>
+
+        <rect x="0" y="0" width="120" height="600" fill="url(#hexDir)" mask="url(#maskDir)"/>
+
+        <!-- tubulação técnica vertical -->
+        <line x1="60" y1="40" x2="60" y2="560" stroke="#D98E04" stroke-width="0.6" stroke-dasharray="3 4" opacity="0.5"/>
+
+        <!-- elementos técnicos -->
+        <g stroke="#D98E04" stroke-width="0.8" fill="none" opacity="0.55">
+          <rect x="52" y="170" width="16" height="16" rx="1"/>
+          <line x1="55" y1="178" x2="65" y2="178"/>
+
+          <circle cx="60" cy="360" r="6"/>
+          <line x1="54" y1="360" x2="66" y2="360"/>
+
+          <rect x="52" y="510" width="16" height="16" rx="1"/>
+          <line x1="55" y1="514" x2="65" y2="514"/>
+          <line x1="55" y1="522" x2="65" y2="522"/>
         </g>
-        <!-- lata 2 -->
-        <g transform="translate(10, 100)">
-          <ellipse cx="22" cy="3" rx="20" ry="3" fill="#bcb3a0"/>
-          <rect x="2" y="3" width="40" height="74" fill="url(#latagrad)"/>
-          <ellipse cx="22" cy="77" rx="20" ry="3" fill="#6a0d08"/>
-          <rect x="2" y="30" width="40" height="22" fill="#fff" opacity="0.95"/>
-          <text x="22" y="44" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="9" font-weight="900" fill="#e2231a">Coca-Cola</text>
-        </g>
-        <!-- lata 3 (deitada na parte de baixo) -->
-        <g transform="translate(22, 195) rotate(-12)">
-          <ellipse cx="20" cy="3" rx="18" ry="2.5" fill="#bcb3a0"/>
-          <rect x="2" y="3" width="36" height="36" fill="url(#latagrad)"/>
-          <ellipse cx="20" cy="39" rx="18" ry="2.5" fill="#6a0d08"/>
-          <rect x="2" y="15" width="36" height="14" fill="#fff" opacity="0.95"/>
-          <text x="20" y="24" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="7" font-weight="900" fill="#e2231a">Coca-Cola</text>
-        </g>
+
+        <text x="84" y="180" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#E2231A" letter-spacing="4" opacity="0.55">T-01</text>
+        <text x="84" y="370" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#E2231A" letter-spacing="4" opacity="0.55">V-02</text>
+        <text x="84" y="520" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#E2231A" letter-spacing="4" opacity="0.55">T-03</text>
       </svg>
     </div>
 
