@@ -719,6 +719,34 @@
   .estoque-card .ec-saldo .unit{font-size:9px; text-transform:uppercase; color:var(--cinza); letter-spacing:1px;}
   .estoque-card .ec-detalhe{font-size:11.5px; color:var(--cinza); margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;}
 
+  /* botão admin de excluir registro */
+  .log-del-btn{
+    background:transparent; border:1.5px solid var(--linha); color:var(--erro);
+    width:32px; height:32px; border-radius:8px; cursor:pointer;
+    font-size:13px; display:flex; align-items:center; justify-content:center;
+    margin-top:4px;
+  }
+  .log-del-btn:active{ background:rgba(217,54,42,0.12); border-color:var(--erro); }
+
+  /* ---- CARDS SOLICITAÇÕES ---- */
+  .solic-card{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
+    padding:14px; margin-bottom:12px; border-left:4px solid var(--ambar);
+  }
+  .solic-card.atendido{ border-left-color:var(--verde); opacity:0.7; }
+  .solic-card .sc-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:4px; }
+  .solic-card .sc-produto{ font-size:15px; font-weight:800; flex:1; }
+  .solic-card .sc-qtd{
+    background:var(--vermelho); color:#fff; font-weight:800; font-size:14px;
+    padding:5px 11px; border-radius:6px; flex-shrink:0;
+  }
+  .solic-card .sc-formula{ font-size:11.5px; color:var(--ambar); font-weight:600; margin-bottom:8px; }
+  .solic-card .sc-obs{ font-size:12.5px; color:var(--osso); margin:8px 0; padding:8px 10px; background:rgba(255,255,255,0.03); border-radius:6px; }
+  .solic-card .sc-meta{ font-size:11px; color:var(--cinza); margin-top:6px; }
+  .solic-card .sc-acoes{ margin-top:12px; }
+  .solic-card .sc-atendido{ font-size:12px; color:#4FCC85; font-weight:600; }
+  .solic-card .sc-atendido small{ color:var(--cinza); font-weight:400; }
+
   /* ---- CARDS RNC ---- */
   .rnc-card{
     background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
@@ -1162,6 +1190,51 @@
       </div>
     </section>
 
+    <!-- ===== TELA SOLICITAÇÕES F1 -> F2 ===== -->
+    <section class="screen" id="screen-solic">
+      <div class="section-label">Pedidos entre fábricas</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Solicitações F1 → F2</h1>
+      <p class="lead" style="margin-bottom:18px;">A Fábrica 1 solicita concentrados aqui. A Fábrica 2 vê a lista e marca como atendido.</p>
+
+      <div class="nav-tabs">
+        <button class="active" data-solic-aba="lista">Lista de pedidos</button>
+        <button data-solic-aba="novo">Novo pedido</button>
+      </div>
+
+      <!-- Lista de pedidos -->
+      <div id="solicListaWrap">
+        <div class="nav-tabs" style="margin-bottom:12px;">
+          <button class="active" data-solic-filtro="pendente">Pendentes</button>
+          <button data-solic-filtro="atendido">Atendidos</button>
+          <button data-solic-filtro="todos">Todos</button>
+        </div>
+        <div id="solicLista"></div>
+      </div>
+
+      <!-- Novo pedido -->
+      <div id="solicNovoWrap" style="display:none;">
+        <label class="field-label">Produto</label>
+        <button class="ps-btn" id="solicBtnProduto" style="width:100%; margin-bottom:14px;">
+          <div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>
+          <span class="ps-arrow">▾</span>
+        </button>
+
+        <label class="field-label">Quantidade desejada</label>
+        <input type="number" id="solicQtd" inputmode="numeric" placeholder="0">
+
+        <label class="field-label" style="margin-top:16px;">Observação (opcional)</label>
+        <textarea id="solicObs" rows="3" placeholder="Ex: para o turno da noite" style="width:100%; background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso); font-size:15px; padding:13px 14px; border-radius:8px; font-family:inherit; resize:none;"></textarea>
+
+        <div class="stack" style="margin-top:20px;">
+          <button class="btn btn-primary" id="btnEnviarSolicitacao">Enviar pedido</button>
+        </div>
+      </div>
+
+      <div class="stack" style="margin-top:18px;">
+        <button class="btn btn-ghost" id="btnVoltarInicioSolic">← Voltar ao início</button>
+      </div>
+    </section>
+
     <!-- ===== TELA PÚBLICA: FORMULÁRIO RNC (sem login) ===== -->
     <section class="screen" id="screen-rnc-form">
       <div class="hero-num">FEMSA · REGISTRO PÚBLICO</div>
@@ -1273,6 +1346,7 @@
   const STEPS = [
     { id:'screen-log',         label:'Histórico',             hint:'Entradas e saídas' },
     { id:'screen-estoque',     label:'Estoque atual',         hint:'Saldo por produto' },
+    { id:'screen-solic',       label:'Solicitações F1 → F2',  hint:'Pedidos da Fábrica 1' },
     { id:'registrar-rnc',      label:'Registrar RNC',         hint:'Reportar não conformidade' },
     { id:'screen-rnc',         label:'Concentrados em RNC',   hint:'Histórico de não conformidades' },
     { id:'screen-fab1',        label:'Concentrados Fábrica 1',hint:'Estoque Fábrica 1' },
@@ -1323,6 +1397,7 @@
         if(step.id === 'screen-rnc'){ renderRNC(); }
         if(step.id === 'screen-fab1'){ renderFab1(); }
         if(step.id === 'screen-qrcode'){ renderQRCode(); }
+        if(step.id === 'screen-solic'){ renderSolicitacoes(); }
         if(step.id === 'registrar-rnc'){
           // abre formulário de RNC em modo interno (com cabeçalho do app)
           resetarFormularioRNC();
@@ -1451,10 +1526,52 @@
   let brEmPrimeiroAcesso = null;
   let cacheUsuarios = null; // evita buscar várias vezes no mesmo login
 
+  // hash SHA-256 — usa crypto.subtle se disponível, senão cai em fallback JS puro
   async function sha256(texto){
-    const enc = new TextEncoder().encode(texto);
-    const buf = await crypto.subtle.digest('SHA-256', enc);
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    try{
+      if(window.crypto && window.crypto.subtle){
+        const enc = new TextEncoder().encode(texto);
+        const buf = await window.crypto.subtle.digest('SHA-256', enc);
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+    }catch(e){ /* cai no fallback abaixo */ }
+    return sha256Fallback(texto);
+  }
+
+  // implementação SHA-256 em JS puro (para navegadores que bloqueiam crypto.subtle)
+  function sha256Fallback(s){
+    function rrot(n,b){return (n>>>b)|(n<<(32-b));}
+    const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    // UTF-8
+    const utf8=unescape(encodeURIComponent(s));
+    const msg=[];
+    for(let i=0;i<utf8.length;i++) msg.push(utf8.charCodeAt(i));
+    const l=msg.length*8;
+    msg.push(0x80);
+    while(msg.length%64!==56) msg.push(0);
+    for(let i=7;i>=0;i--) msg.push((l>>>(i*8))&0xff);
+    for(let i=0;i<msg.length;i+=64){
+      const W=new Array(64);
+      for(let t=0;t<16;t++) W[t]=(msg[i+t*4]<<24)|(msg[i+t*4+1]<<16)|(msg[i+t*4+2]<<8)|msg[i+t*4+3];
+      for(let t=16;t<64;t++){
+        const s0=rrot(W[t-15],7)^rrot(W[t-15],18)^(W[t-15]>>>3);
+        const s1=rrot(W[t-2],17)^rrot(W[t-2],19)^(W[t-2]>>>10);
+        W[t]=(W[t-16]+s0+W[t-7]+s1)|0;
+      }
+      let [a,b,c,d,e,f,g,h]=H;
+      for(let t=0;t<64;t++){
+        const S1=rrot(e,6)^rrot(e,11)^rrot(e,25);
+        const ch=(e&f)^(~e&g);
+        const T1=(h+S1+ch+K[t]+W[t])|0;
+        const S0=rrot(a,2)^rrot(a,13)^rrot(a,22);
+        const mj=(a&b)^(a&c)^(b&c);
+        const T2=(S0+mj)|0;
+        h=g; g=f; f=e; e=(d+T1)|0; d=c; c=b; b=a; a=(T1+T2)|0;
+      }
+      H=[(H[0]+a)|0,(H[1]+b)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];
+    }
+    return H.map(v=>((v>>>0).toString(16).padStart(8,'0'))).join('');
   }
 
   async function carregarUsuarios(){
@@ -1561,18 +1678,42 @@
     $('btnCadastrarAcesso').disabled = true;
     $('btnCadastrarAcesso').textContent = 'Cadastrando...';
     try{
-      const senhaHash = await sha256(senha);
-      const res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
-      if(!res.ok){
-        toast(res.erro === 'BR já cadastrado' ? 'Esse BR já foi cadastrado, faça login normalmente' : 'Erro: ' + res.erro);
-        if(res.erro === 'BR já cadastrado') showScreen('screen-login');
+      let senhaHash;
+      try{
+        senhaHash = await sha256(senha);
+      }catch(eHash){
+        toast('Erro ao gerar senha: ' + (eHash.message || 'falha de criptografia'));
+        return;
+      }
+      if(!senhaHash || senhaHash.length < 32){
+        toast('Erro: a senha não foi processada corretamente');
+        return;
+      }
+
+      let res;
+      try{
+        res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
+      }catch(eApi){
+        toast('Erro de rede ao cadastrar: ' + (eApi.message || 'verifique sua internet'));
+        return;
+      }
+
+      if(!res || !res.ok){
+        const erroReal = res ? res.erro : 'sem resposta do servidor';
+        if(erroReal === 'BR já cadastrado'){
+          toast('Esse BR já foi cadastrado, faça login normalmente');
+          showScreen('screen-login');
+        } else {
+          toast('Servidor recusou o cadastro: ' + erroReal);
+        }
         return;
       }
       cacheUsuarios = null;
       toast('Cadastro criado com sucesso');
       entrarNoApp({ br: brEmPrimeiroAcesso, nome, isAdmin: false });
     }catch(e){
-      toast('Falha: ' + (e.message || 'erro desconhecido'));
+      toast('Falha inesperada: ' + (e.message || e.toString()));
+      console.error('Erro completo cadastro:', e);
     }finally{
       $('btnCadastrarAcesso').disabled = false;
       $('btnCadastrarAcesso').textContent = 'Cadastrar e entrar';
@@ -2228,6 +2369,194 @@
   }
   window._abrirLightbox = abrirLightbox;
 
+  // ---------- SOLICITAÇÕES F1 -> F2 ----------
+  let solicFiltroStatus = 'pendente';
+  let solicProdutoSel = null; // {nome, formula}
+  let solicCache = [];
+
+  // tabs (lista / novo)
+  document.querySelectorAll('#screen-solic [data-solic-aba]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-solic [data-solic-aba]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const aba = btn.dataset.solicAba;
+      $('solicListaWrap').style.display = aba === 'lista' ? 'block' : 'none';
+      $('solicNovoWrap').style.display = aba === 'novo' ? 'block' : 'none';
+    });
+  });
+
+  // filtros de status
+  document.querySelectorAll('#screen-solic [data-solic-filtro]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-solic [data-solic-filtro]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      solicFiltroStatus = btn.dataset.solicFiltro;
+      renderSolicLista();
+    });
+  });
+
+  // seletor de produto (reutiliza o modal genérico do app)
+  $('solicBtnProduto').addEventListener('click', () => {
+    abrirSeletorParaSolic();
+  });
+  function abrirSeletorParaSolic(){
+    // usa o seletor existente, mas o callback é diferente
+    seletorLinhaId = '__solic__'; // marca especial pra detectar
+    $('seletorBusca').value = '';
+    renderListaSeletor('');
+    $('seletorOverlay').classList.add('show');
+    setTimeout(() => $('seletorBusca').focus(), 100);
+  }
+  // hook: depois da função original renderListaSeletor escolher um produto, ela já chama renderTabelaManual.
+  // precisamos interceptar quando seletorLinhaId === '__solic__'
+  // a melhor forma: sobrescrever o comportamento no clique
+  document.addEventListener('click', (e) => {
+    // capturado depois (já tratado no renderListaSeletor)
+  }, true);
+
+  // sobrescreve renderListaSeletor pra também tratar o caso de solicitação
+  const _origRenderListaSeletor = renderListaSeletor;
+  renderListaSeletor = function(filtro){
+    const lista = $('seletorLista');
+    const termo = filtro.trim().toLowerCase();
+    lista.innerHTML = '';
+    ['Concentrados', 'Sucos'].forEach(grupo => {
+      const itensGrupo = TODOS_PRODUTOS.filter(p =>
+        p.grupo === grupo &&
+        (termo === '' || p.nome.toLowerCase().includes(termo) || (p.formula && p.formula.toLowerCase().includes(termo)))
+      );
+      if(itensGrupo.length === 0) return;
+      const header = document.createElement('div');
+      header.className = 'seletor-grupo';
+      header.textContent = grupo;
+      lista.appendChild(header);
+      itensGrupo.forEach(p => {
+        const item = document.createElement('button');
+        item.className = 'seletor-item';
+        item.innerHTML = `<div class="si-nome">${escapeHtml(p.nome)}</div><div class="si-formula">${escapeHtml(p.formula)}</div>`;
+        item.addEventListener('click', () => {
+          if(seletorLinhaId === '__solic__'){
+            solicProdutoSel = { nome: p.nome, formula: p.formula };
+            $('solicProdutoLabel').outerHTML = `<div class="ps-selecionado" id="solicProdutoLabel"><div class="ps-nome">${escapeHtml(p.nome)}</div><div class="ps-formula">${escapeHtml(p.formula)}</div></div>`;
+            fecharSeletorProduto();
+            return;
+          }
+          const row = manualRows.find(r => r.id === seletorLinhaId);
+          if(row){ row.produto = p.nome; row.formula = p.formula; }
+          fecharSeletorProduto();
+          renderTabelaManual();
+        });
+        lista.appendChild(item);
+      });
+    });
+    if(lista.children.length === 0){
+      lista.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">🔍</div>Nenhum produto encontrado</div>`;
+    }
+  };
+
+  $('btnEnviarSolicitacao').addEventListener('click', async () => {
+    if(!solicProdutoSel){ toast('Escolha o produto primeiro'); return; }
+    const qtd = Number($('solicQtd').value);
+    if(!qtd || qtd <= 0){ toast('Informe a quantidade desejada'); return; }
+    const obs = $('solicObs').value.trim();
+
+    $('btnEnviarSolicitacao').disabled = true;
+    $('btnEnviarSolicitacao').textContent = 'Enviando...';
+    try{
+      const timestamp = new Date().toLocaleString('pt-BR');
+      const res = await apiPost({
+        acao: 'adicionarSolicitacao',
+        timestamp,
+        solicitante: usuarioAtual ? usuarioAtual.nome : '—',
+        produto: solicProdutoSel.nome,
+        formula: solicProdutoSel.formula,
+        quantidade: qtd,
+        observacao: obs
+      });
+      if(!res.ok){ toast('Erro: ' + res.erro); return; }
+      toast('Pedido enviado!');
+      // limpa form e volta pra lista
+      solicProdutoSel = null;
+      $('solicProdutoLabel').outerHTML = '<div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>';
+      $('solicQtd').value = '';
+      $('solicObs').value = '';
+      document.querySelectorAll('#screen-solic [data-solic-aba]').forEach(b => b.classList.toggle('active', b.dataset.solicAba === 'lista'));
+      $('solicListaWrap').style.display = 'block';
+      $('solicNovoWrap').style.display = 'none';
+      await renderSolicitacoes();
+    }catch(e){
+      toast('Erro de rede: ' + (e.message || ''));
+    }finally{
+      $('btnEnviarSolicitacao').disabled = false;
+      $('btnEnviarSolicitacao').textContent = 'Enviar pedido';
+    }
+  });
+
+  async function renderSolicitacoes(){
+    const container = $('solicLista');
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza);font-size:13px;">Carregando pedidos...</p></div>';
+    try{
+      const res = await apiGet({ acao:'listarSolicitacoes' });
+      solicCache = res.ok ? res.solicitacoes : [];
+    }catch(e){ solicCache = []; }
+    renderSolicLista();
+  }
+
+  function renderSolicLista(){
+    const container = $('solicLista');
+    let dados = solicCache.slice().reverse();
+    if(solicFiltroStatus !== 'todos'){
+      dados = dados.filter(s => (s.status || 'pendente') === solicFiltroStatus);
+    }
+    if(dados.length === 0){
+      const msg = solicFiltroStatus === 'pendente' ? 'Nenhum pedido pendente' :
+                  solicFiltroStatus === 'atendido' ? 'Nenhum pedido atendido ainda' :
+                  'Nenhum pedido registrado';
+      container.innerHTML = `<div class="empty-state"><div class="ic">📋</div>${msg}</div>`;
+      return;
+    }
+    container.innerHTML = '';
+    dados.forEach(s => {
+      const card = document.createElement('div');
+      const atendido = String(s.status || 'pendente') === 'atendido';
+      card.className = 'solic-card' + (atendido ? ' atendido' : '');
+      const obsHtml = s.observacao ? `<div class="sc-obs">${escapeHtml(s.observacao)}</div>` : '';
+      const acaoHtml = atendido
+        ? `<div class="sc-atendido">✓ Atendido por ${escapeHtml(s.atendido_por||'—')}<br><small>${escapeHtml(s.atendido_em||'')}</small></div>`
+        : `<button class="btn btn-primary sc-btn-atender" data-id="${s.id}" style="width:auto; padding:9px 16px; font-size:13px;">Marcar como atendido</button>`;
+      card.innerHTML = `
+        <div class="sc-head">
+          <div class="sc-produto">${escapeHtml(s.produto || '—')}</div>
+          <div class="sc-qtd">${escapeHtml(String(s.quantidade||0))}</div>
+        </div>
+        <div class="sc-formula">${escapeHtml(s.formula || '')}</div>
+        ${obsHtml}
+        <div class="sc-meta">Por <b>${escapeHtml(s.solicitante||'—')}</b> · ${escapeHtml(s.timestamp||'')}</div>
+        <div class="sc-acoes">${acaoHtml}</div>
+      `;
+      container.appendChild(card);
+    });
+    container.querySelectorAll('.sc-btn-atender').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true; btn.textContent = 'Marcando...';
+        try{
+          const res = await apiPost({
+            acao: 'atenderSolicitacao',
+            id: btn.dataset.id,
+            atendido_por: usuarioAtual ? usuarioAtual.nome : '—',
+            atendido_em: new Date().toLocaleString('pt-BR')
+          });
+          if(res.ok){ toast('Pedido marcado como atendido'); await renderSolicitacoes(); }
+          else { toast('Erro: ' + res.erro); btn.disabled = false; btn.textContent = 'Marcar como atendido'; }
+        }catch(e){
+          toast('Erro de rede'); btn.disabled = false; btn.textContent = 'Marcar como atendido';
+        }
+      });
+    });
+  }
+
+  $('btnVoltarInicioSolic').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
+
   // ---------- Fábrica 1: log filtrado ----------
   async function renderFab1(){
     const container = $('fab1List');
@@ -2538,6 +2867,9 @@
       const sinalHtml = sinal
         ? `<span class="sinal-badge sinal-${sinal.cor}" style="margin-top:4px; display:inline-block;">Val. ${formatarDataBR(r.validade)} · ${sinal.label}</span>`
         : (r.validade ? `<div class="li-meta">Val. ${formatarDataBR(r.validade)}</div>` : '');
+      const adminBtn = (usuarioAtual && usuarioAtual.isAdmin)
+        ? `<button class="log-del-btn" data-row-id="${escapeHtml(r.id||'')}" data-row-key="${escapeHtml((r.timestamp||'')+'|'+(r.produto||'')+'|'+(r.quantidade_guardada||''))}" title="Excluir registro">🗑</button>`
+        : '';
       item.innerHTML = `
         <div>
           <div class="li-name">${escapeHtml(r.produto)}</div>
@@ -2547,10 +2879,35 @@
         </div>
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
           ${badge}${statusTag}
+          ${adminBtn}
         </div>
       `;
       container.appendChild(item);
     });
+
+    container.querySelectorAll('.log-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => excluirRegistroLog(btn.dataset.rowKey));
+    });
+  }
+
+  async function excluirRegistroLog(chave){
+    if(!usuarioAtual || !usuarioAtual.isAdmin){ toast('Apenas admin pode excluir'); return; }
+    const senha = prompt('Confirme com a senha do administrador para excluir este registro:');
+    if(senha === null) return; // cancelou
+    if(senha !== SENHA_ADMIN){ toast('Senha incorreta'); return; }
+    if(!confirm('Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.')) return;
+
+    try{
+      const res = await apiPost({ acao: 'excluirLog', chave });
+      if(res.ok){
+        toast('Registro excluído');
+        await carregarLog();
+      } else {
+        toast('Erro ao excluir: ' + res.erro);
+      }
+    }catch(e){
+      toast('Erro de rede ao excluir');
+    }
   }
 
   let filtroTipoAtual = 'todos';
