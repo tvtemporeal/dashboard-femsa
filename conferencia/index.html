@@ -697,6 +697,11 @@
   .ps-btn:active{border-color:var(--vermelho);}
   .ps-selecionado{min-width:0;}
   .ps-nome{font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .ps-parte-badge{
+    display:inline-block; margin-left:6px; padding:2px 8px;
+    background:var(--vermelho); color:#fff; border-radius:5px;
+    font-size:10.5px; font-weight:800; letter-spacing:0.3px; vertical-align:1px;
+  }
   .ps-formula{font-size:11px; color:var(--ambar); margin-top:2px; font-weight:600;}
   .ps-placeholder{font-size:13px; color:#6b6456;}
   .ps-arrow{color:var(--cinza); font-size:11px; flex-shrink:0;}
@@ -713,15 +718,41 @@
   .mr-remove:active{ background:rgba(217,54,42,0.12); border-color:var(--erro); }
 
   /* ---- SELETOR (modal de busca) ---- */
+  .seletor-breadcrumb{
+    position:sticky; top:0; z-index:2; background:var(--carvao);
+    padding:14px 10px 12px; border-bottom:1.5px solid var(--linha);
+    font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .bc-link{
+    background:rgba(226,35,26,0.12); border:1.5px solid var(--vermelho); color:var(--vermelho);
+    font-family:inherit; font-weight:700; font-size:12px;
+    padding:6px 12px; border-radius:6px; cursor:pointer;
+  }
+  .bc-link:active{ background:rgba(226,35,26,0.25); }
+  .bc-sep{ color:var(--cinza); font-size:14px; }
+  .bc-atual{ font-weight:800; color:var(--osso); font-size:13.5px; }
   .seletor-grupo{
     font-size:10.5px; text-transform:uppercase; letter-spacing:1.5px; font-weight:800;
     color:var(--vermelho); padding:12px 8px 6px; position:sticky; top:0; background:var(--carvao);
   }
+  .seletor-prod-info{
+    background:var(--preto); border:1px solid var(--linha); border-radius:8px;
+    padding:10px 12px; margin:10px 6px 6px;
+  }
+  .spi-form{ font-size:13px; font-weight:800; color:var(--ambar); }
+  .spi-meta{ font-size:11.5px; color:var(--cinza); margin-top:3px; }
   .seletor-item{
     display:block; width:100%; text-align:left; background:transparent;
     border:none; border-bottom:1px solid var(--linha); padding:12px 8px; cursor:pointer; color:var(--osso); font-family:inherit;
   }
   .seletor-item:active{background:rgba(226,35,26,0.08);}
+  .seletor-parte-item{ display:flex !important; align-items:center; gap:12px; }
+  .parte-circle{
+    flex-shrink:0; min-width:54px; height:38px; padding:0 10px;
+    border-radius:8px; background:var(--vermelho); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; letter-spacing:0.5px;
+  }
   .si-nome{font-size:13.5px; font-weight:700;}
   .si-formula{font-size:11.5px; color:var(--ambar); margin-top:2px; font-weight:600;}
 
@@ -781,7 +812,15 @@
     padding:16px; margin-bottom:12px;
   }
   .estoque-card .ec-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
-  .estoque-card .ec-nome{font-size:15px; font-weight:800; line-height:1.3;}
+  .estoque-card .ec-nome{font-size:15px; font-weight:800; line-height:1.3; flex:1; min-width:0;}
+  .estoque-card .ec-parte-badge{
+    display:inline-block; padding:3px 9px; background:var(--vermelho); color:#fff;
+    border-radius:5px; font-size:10.5px; font-weight:800; letter-spacing:0.3px;
+    vertical-align:2px;
+  }
+  .estoque-card .ec-formula{
+    font-size:11px; color:var(--ambar); font-weight:600; margin-top:3px;
+  }
   .estoque-card .ec-saldo{text-align:right; flex-shrink:0;}
   .estoque-card .ec-saldo .num{font-size:24px; font-weight:900;}
   .estoque-card .ec-saldo .num.positivo{color:#4FCC85;}
@@ -1854,12 +1893,17 @@
   async function garantirAdmin(){ /* não é mais necessário criar na planilha */ }
 
   // entrar no app sem definir tipo ainda (será escolhido no menu lateral)
-  function entrarNoApp(usuario){
+  async function entrarNoApp(usuario){
     usuarioAtual = usuario;
     operador = usuario.nome;
     $('opName').textContent = operador;
     $('topbar').style.display = 'flex';
     tipoOperacao = 'entrada';
+    // Carrega o catálogo da planilha
+    const ok = await carregarCatalogo();
+    if(!ok){
+      toast('Aviso: não foi possível carregar o catálogo da planilha. Verifique a aba "estoque".');
+    }
     iniciarTabelaManual();
     aplicarTextosPorTipo();
     showScreen('screen-scan');
@@ -1987,83 +2031,51 @@
     }
   });
 
-  // ---------- catálogo de produtos (lista fixa) ----------
-  const PRODUTOS_CONCENTRADOS = [
-    {nome:'Coca Cola sem Açúcar (3028563)', formula:'DS-2110.88'},
-    {nome:'Guaraná Kuat (3295556) QX', formula:'GU/B-73.00'},
-    {nome:'Sprite Fresh (3296962)', formula:'SP/D-1570.50'},
-    {nome:'Sprite Original (3078647) QX', formula:'SP-1565.01'},
-    {nome:'Sprite Zero (3086508)', formula:'SP/D-0215.50'},
-    {nome:'Fanta Uva (2065095) QX', formula:'GR/B - 385.00'},
-    {nome:'Fanta Uva (3362082) QX', formula:'GR/B - 385.00'},
-    {nome:'Fanta Uva (3405297) QX', formula:'GR/B - 385.00'},
-    {nome:'Fanta Carmesin (3401992) QX', formula:'ST/B-342.10'},
-    {nome:'Fanta Guaraná (3063905) QX', formula:'GU-71.00'},
-    {nome:'Fanta Maracujá (3386609) QX', formula:'PF-113.00'},
-    {nome:'Del Valle Frut Uva (3196792)', formula:'GR/A/B/-437.00'},
-    {nome:'Del Valle Frut Laranja (2026)', formula:'OR/A/B-1929.00'},
-    {nome:'Del Valle Frutas Cítricas (3087638)', formula:'CI/A/B-0218.00'},
-    {nome:'DV Frut Limão (3123098)', formula:'LE/D/V-0848.50'},
-    {nome:'Crystal Sabores Limão (2004519)', formula:'WA/LI/M-1200'},
-    {nome:'Crystal Sabores Frutas Verm (2003653)', formula:'WA/BK/M-3.000'},
-    {nome:'Crystal Sabores Tangerina (3031159)', formula:'WA/MA/M-2.00'},
-    {nome:'Crystal Sabores Melancia (3068175)', formula:'WA/ME/M-5.00'},
-    {nome:'Ice Tea Pessego (3024501)', formula:'TE/PE/B-0032.20'},
-    {nome:'Ice Tea Pessego Zero (3024640)', formula:'TE/PE/D-0032.52'},
-    {nome:'Ice Tea Limão (2098608)', formula:'TE/LE/B-0098.30'},
-    {nome:'Ice Tea Limão Zero (2096854)', formula:'TE/LE/D-0283.50'},
-    {nome:'Cha Verde Limão Zero (3016311)', formula:'TE/LE/D-1.60'},
-    {nome:'Chá Branco Lichia (3076001)', formula:'TE/LY/D-8.50'},
-    {nome:'Fanta Laranja (3292163) QX (Suco 267,30 KG)', formula:'OR - 1982.00'},
-    {nome:'Fanta Laranja (3292163) QX (Suco 66,84 KG)', formula:'OR - 1982.00'},
-    {nome:'Coca Cola (1770799)', formula:'CC - 0099'},
-    {nome:'CCMA - Sucralose (3405902)', formula:'CC/B-1.00'},
-    {nome:'Kapo Laranja (3087340)', formula:'OR/V-1924.00'},
-    {nome:'Kapo Maracuja (3031479)', formula:'PF/V-0117.00'},
-    {nome:'Kapo Maçã (3031584)', formula:'AP/V-0802.20'},
-    {nome:'Kapo Abacaxi (3089151)', formula:'PA/V-1567.00'},
-    {nome:'Kapo Citrus (3031161)', formula:'CI/V-0220.00'},
-    {nome:'Kapo Uva (3100267)', formula:'GR/V-0274.30'},
-    {nome:'Kapo Morango (3100076)', formula:'ST/V-0323.00'},
-    {nome:'Kapo Melância (3331978)', formula:'ME/V-0108.00'},
-    {nome:'Powerade Pro Uva (3010338)', formula:'GR/B/Q/V-0218.22'},
-    {nome:'Powerade Pro Mountain Blast (3010411)', formula:'FP/B/Q/V-0794.00'},
-    {nome:'Powerade Laranja (3053553)', formula:'OR/Q/V-1197.50'},
-    {nome:'Powerade Limão (3066869)', formula:'LE/B/Q/V-546.11'},
-    {nome:'Powerade Frutas Tropicais (3055282)', formula:'FP/Q/V-567.00'},
-    {nome:'Powerade Tangerina (30118663)', formula:'MA/Q/V/B-170.00'},
-    {nome:'Powerade Citrus Maracuja (3079476)', formula:'OR/PF/Q-1.00'},
-    {nome:'Powerade Abacaxi (3105236)', formula:'PA/Q/B/V-1569.00'},
-    {nome:'Powerade Maçã Verde (3286341)', formula:'AP/Q/V-0874.00-B01'},
-    {nome:'Powerade Mountain Blast Zero (3359455)', formula:'AP/Q/V-0874.00-B01'},
-    {nome:'Powerade Ataque (3391515)', formula:'FP/D/Q/V-0876.50'},
-    {nome:'Powerade Contra Ataque (3393341)', formula:'CI/FL/V-0003.00-B01'},
-    {nome:'Powerade Ataque', formula:'CI/V/B-233.00'},
-    {nome:'Powerade Abacaxi (Gold Rush)', formula:'PA/Q/B/V-1569.00'},
-    {nome:'Powerade Maçã Verde', formula:'AP/Q/V-0874.00-B01'},
-    {nome:'Powerade Mountain Blast Zero', formula:'FP/D/Q/V-0876.50'},
-    {nome:'Powerade Contra Ataque', formula:'CI/FL/V-0003.00-B01'}
-  ];
+  // ---------- catálogo de produtos (carregado dinamicamente da planilha) ----------
+  // Estrutura: CATALOGO_PRODUTOS = [{categoria, tipo, produto, formula, sap_produto, total_kit, partes:[{nome, sap_parte}]}]
+  let CATALOGO_PRODUTOS = [];
+  // TODOS_PRODUTOS é construído a partir do catálogo para retrocompatibilidade
+  let TODOS_PRODUTOS = [];
 
-  const PRODUTOS_SUCOS = [
-    {nome:'Maçã 17,58 KG', formula:'30102323'},
-    {nome:'Maçã 20,84 KG', formula:'30101062'},
-    {nome:'Maçã 23,45 KG', formula:'30102818'},
-    {nome:'Maçã 70,35 KG', formula:'30102322'},
-    {nome:'Maçã 26,15 KG', formula:'30116494'},
-    {nome:'Laranja 66,84 KG', formula:'30102501'},
-    {nome:'Laranja 267,36 KG', formula:'30100005'},
-    {nome:'Limão 17,42 KG', formula:'30100634'},
-    {nome:'Limão 69,68 KG', formula:'30100635'},
-    {nome:'Morango 6,21 KG', formula:'30101063'},
-    {nome:'Uva 82,78 KG', formula:'30101054'},
-    {nome:'Base Kapo 107,1 KG', formula:'30101061'}
-  ];
+  // Carrega o catálogo da aba 'estoque' da planilha
+  async function carregarCatalogo(){
+    try{
+      const res = await apiGet({ acao:'listarCatalogoEstoque' });
+      if(!res.ok){ console.error('Erro catalogo:', res.erro); return false; }
+      CATALOGO_PRODUTOS = res.catalogo || [];
+      // monta TODOS_PRODUTOS pra retrocompatibilidade (1 entrada por produto)
+      TODOS_PRODUTOS = CATALOGO_PRODUTOS.map(p => ({
+        nome: p.produto,
+        formula: p.formula,
+        sap_produto: p.sap_produto,
+        grupo: p.categoria,
+        tipo: p.tipo,
+        partes: p.partes || []
+      }));
+      console.log('Catálogo carregado:', CATALOGO_PRODUTOS.length, 'produtos');
+      return true;
+    }catch(e){
+      console.error('Falha carregando catálogo:', e);
+      return false;
+    }
+  }
 
-  const TODOS_PRODUTOS = [
-    ...PRODUTOS_CONCENTRADOS.map(p => ({...p, grupo:'Concentrados'})),
-    ...PRODUTOS_SUCOS.map(p => ({...p, grupo:'Sucos'}))
-  ];
+  // helper: pegar partes de um produto pelo nome
+  function partesDoProduto(nomeProduto){
+    const p = CATALOGO_PRODUTOS.find(x => x.produto === nomeProduto);
+    return p ? (p.partes || []) : [];
+  }
+
+  // helper: pegar categoria de um produto
+  function categoriaDoProduto(nomeProduto){
+    const p = CATALOGO_PRODUTOS.find(x => x.produto === nomeProduto);
+    return p ? p.categoria : '';
+  }
+
+  // helper: pegar info completa de um produto
+  function infoProduto(nomeProduto){
+    return CATALOGO_PRODUTOS.find(x => x.produto === nomeProduto) || null;
+  }
 
   // ---------- tabela manual de produtos ----------
   let manualRows = [];
@@ -2080,7 +2092,7 @@
 
   function adicionarLinhaManual(){
     manualRowCounter++;
-    manualRows.push({ id: 'm' + manualRowCounter, produto: '', formula: '', quantidade: '', validade: '' });
+    manualRows.push({ id: 'm' + manualRowCounter, produto: '', formula: '', sap:'', parte:'', categoria:'', quantidade: '', validade: '' });
   }
 
   function renderTabelaManual(){
@@ -2089,21 +2101,26 @@
 
     manualRows.forEach((row, i) => {
       const div = document.createElement('div');
-      // detecta categoria pelo nome (produto está em PRODUTOS_CONCENTRADOS ou PRODUTOS_SUCOS)
-      let categoria = '';
+      // categoria visual (concentrado vs suco)
+      let categoriaCss = '';
       if(row.produto){
-        if(PRODUTOS_CONCENTRADOS.find(p => p.nome === row.produto)) categoria = ' tem-produto';
-        else if(PRODUTOS_SUCOS.find(p => p.nome === row.produto)) categoria = ' tem-suco';
+        const inf = infoProduto(row.produto);
+        if(inf){
+          categoriaCss = inf.tipo === 'suco' ? ' tem-suco' : ' tem-produto';
+        }
       }
-      div.className = 'produto-row' + categoria;
+      div.className = 'produto-row' + categoriaCss;
       const sinal = calcularSinalValidade(row.validade);
       const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
       const produtoSelecionado = row.produto
         ? `<div class="ps-selecionado">
-             <div class="ps-nome">${escapeHtml(row.produto)}</div>
-             <div class="ps-formula">${escapeHtml(row.formula || '')}</div>
+             <div class="ps-nome">
+               ${escapeHtml(row.produto)}
+               ${row.parte ? `<span class="ps-parte-badge">Parte ${escapeHtml(row.parte)}</span>` : ''}
+             </div>
+             <div class="ps-formula">${escapeHtml(row.formula || '')} ${row.sap ? '· SAP ' + escapeHtml(row.sap) : ''}</div>
            </div>`
-        : `<div class="ps-placeholder">Toque para escolher o produto</div>`;
+        : `<div class="ps-placeholder">Toque para escolher o produto e a parte</div>`;
       div.innerHTML = `
         <div class="pr-top">
           <div class="pr-num-circle">${i + 1}</div>
@@ -2144,10 +2161,17 @@
     });
   }
 
-  // ---------- seletor de produto (modal de busca) ----------
+  // ---------- seletor de produto (modal de busca em 3 níveis) ----------
   let seletorLinhaId = null;
+  let seletorNivel = 'categoria';  // 'categoria' | 'produto' | 'parte'
+  let seletorCategoria = null;
+  let seletorProduto = null;
+
   function abrirSeletorProduto(linhaId){
     seletorLinhaId = linhaId;
+    seletorNivel = 'categoria';
+    seletorCategoria = null;
+    seletorProduto = null;
     $('seletorBusca').value = '';
     renderListaSeletor('');
     $('seletorOverlay').classList.add('show');
@@ -2156,45 +2180,162 @@
   function fecharSeletorProduto(){
     $('seletorOverlay').classList.remove('show');
     seletorLinhaId = null;
+    seletorNivel = 'categoria';
+    seletorCategoria = null;
+    seletorProduto = null;
+  }
+
+  function voltarNivelSeletor(){
+    if(seletorNivel === 'parte'){
+      seletorNivel = 'produto';
+      seletorProduto = null;
+    } else if(seletorNivel === 'produto'){
+      seletorNivel = 'categoria';
+      seletorCategoria = null;
+    }
+    $('seletorBusca').value = '';
+    renderListaSeletor('');
   }
 
   function renderListaSeletor(filtro){
     const lista = $('seletorLista');
-    const termo = filtro.trim().toLowerCase();
+    const termo = (filtro||'').trim().toLowerCase();
     lista.innerHTML = '';
 
-    ['Concentrados', 'Sucos'].forEach(grupo => {
-      const itensGrupo = TODOS_PRODUTOS.filter(p =>
-        p.grupo === grupo &&
-        (termo === '' || p.nome.toLowerCase().includes(termo) || (p.formula && p.formula.toLowerCase().includes(termo)))
-      );
-      if(itensGrupo.length === 0) return;
+    // título dinâmico com breadcrumb e botão de voltar
+    const breadcrumb = document.createElement('div');
+    breadcrumb.className = 'seletor-breadcrumb';
+    let trilha = '';
+    if(seletorNivel === 'categoria'){
+      trilha = '<span class="bc-atual">Escolha a categoria</span>';
+    } else if(seletorNivel === 'produto'){
+      trilha = `<button class="bc-link" id="bcVoltarCat">← Categorias</button> <span class="bc-sep">›</span> <span class="bc-atual">${escapeHtml(seletorCategoria)}</span>`;
+    } else if(seletorNivel === 'parte'){
+      trilha = `<button class="bc-link" id="bcVoltarProd">← ${escapeHtml(seletorCategoria)}</button> <span class="bc-sep">›</span> <span class="bc-atual">${escapeHtml(seletorProduto)}</span>`;
+    }
+    breadcrumb.innerHTML = trilha;
+    lista.appendChild(breadcrumb);
+    if($('bcVoltarCat')) $('bcVoltarCat').addEventListener('click', voltarNivelSeletor);
+    if($('bcVoltarProd')) $('bcVoltarProd').addEventListener('click', voltarNivelSeletor);
 
-      const header = document.createElement('div');
-      header.className = 'seletor-grupo';
-      header.textContent = grupo;
-      lista.appendChild(header);
+    // mensagem se catálogo vazio
+    if(CATALOGO_PRODUTOS.length === 0){
+      lista.innerHTML += `<div class="empty-state" style="padding:30px;"><div class="ic">📦</div>Catálogo vazio. Verifique a aba "estoque" da planilha.</div>`;
+      return;
+    }
 
-      itensGrupo.forEach(p => {
+    if(seletorNivel === 'categoria'){
+      // lista todas as categorias únicas
+      const cats = [...new Set(CATALOGO_PRODUTOS.map(p => p.categoria))].sort();
+      cats.forEach(cat => {
+        if(termo && !cat.toLowerCase().includes(termo)) return;
+        const count = CATALOGO_PRODUTOS.filter(p => p.categoria === cat).length;
         const item = document.createElement('button');
         item.className = 'seletor-item';
         item.innerHTML = `
-          <div class="si-nome">${escapeHtml(p.nome)}</div>
-          <div class="si-formula">${escapeHtml(p.formula)}</div>
+          <div class="si-nome">${escapeHtml(cat)}</div>
+          <div class="si-formula">${count} produto${count!==1?'s':''}</div>
         `;
         item.addEventListener('click', () => {
-          const row = manualRows.find(r => r.id === seletorLinhaId);
-          if(row){ row.produto = p.nome; row.formula = p.formula; }
-          fecharSeletorProduto();
-          renderTabelaManual();
+          seletorCategoria = cat;
+          seletorNivel = 'produto';
+          $('seletorBusca').value = '';
+          renderListaSeletor('');
         });
         lista.appendChild(item);
       });
-    });
-
-    if(lista.children.length === 0){
-      lista.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">🔍</div>Nenhum produto encontrado</div>`;
+    } else if(seletorNivel === 'produto'){
+      // lista produtos da categoria escolhida
+      const produtos = CATALOGO_PRODUTOS.filter(p => p.categoria === seletorCategoria);
+      produtos.forEach(p => {
+        const blob = `${p.produto} ${p.formula||''} ${p.sap_produto||''}`.toLowerCase();
+        if(termo && !blob.includes(termo)) return;
+        const partes = p.partes || [];
+        const item = document.createElement('button');
+        item.className = 'seletor-item';
+        item.innerHTML = `
+          <div class="si-nome">${escapeHtml(p.produto)}</div>
+          <div class="si-formula">${escapeHtml(p.formula||'sem fórmula')} ${p.sap_produto ? '· SAP ' + escapeHtml(p.sap_produto) : ''} · ${partes.length} parte${partes.length!==1?'s':''}</div>
+        `;
+        item.addEventListener('click', () => {
+          // Se só tem 1 parte (ou nenhuma), pula direto pra seleção
+          if(partes.length <= 1){
+            const parteUnica = partes[0] ? partes[0].nome : '';
+            atribuirProdutoParte(p, parteUnica);
+            return;
+          }
+          seletorProduto = p.produto;
+          seletorNivel = 'parte';
+          $('seletorBusca').value = '';
+          renderListaSeletor('');
+        });
+        lista.appendChild(item);
+      });
+    } else if(seletorNivel === 'parte'){
+      const p = CATALOGO_PRODUTOS.find(x => x.produto === seletorProduto);
+      if(!p) { fecharSeletorProduto(); return; }
+      const partes = p.partes || [];
+      // pequeno header informativo do produto
+      const info = document.createElement('div');
+      info.className = 'seletor-prod-info';
+      info.innerHTML = `
+        <div class="spi-form">${escapeHtml(p.formula||'sem fórmula')}</div>
+        <div class="spi-meta">SAP ${escapeHtml(p.sap_produto||'—')} · Kit total: ${escapeHtml(String(p.total_kit||'—'))} partes</div>
+      `;
+      lista.appendChild(info);
+      partes.forEach(parte => {
+        const nomeParte = parte.nome || '(sem nome)';
+        if(termo && !nomeParte.toLowerCase().includes(termo)) return;
+        const item = document.createElement('button');
+        item.className = 'seletor-item seletor-parte-item';
+        item.innerHTML = `
+          <div class="parte-circle">${escapeHtml(nomeParte)}</div>
+          <div style="flex:1;">
+            <div class="si-nome">Parte ${escapeHtml(nomeParte)}</div>
+            <div class="si-formula">SAP ${escapeHtml(parte.sap_parte || p.sap_produto || '—')}</div>
+          </div>
+        `;
+        item.addEventListener('click', () => {
+          atribuirProdutoParte(p, nomeParte);
+        });
+        lista.appendChild(item);
+      });
     }
+  }
+
+  function atribuirProdutoParte(produtoInfo, parteNome){
+    if(seletorLinhaId === '__solic__'){
+      // modo solicitação F1→F2
+      solicProdutoSel = {
+        nome: produtoInfo.produto,
+        formula: produtoInfo.formula || '',
+        sap: produtoInfo.sap_produto || '',
+        parte: parteNome || '',
+        categoria: produtoInfo.categoria || ''
+      };
+      const html = `
+        <div class="ps-selecionado" id="solicProdutoLabel">
+          <div class="ps-nome">
+            ${escapeHtml(produtoInfo.produto)}
+            ${parteNome ? `<span class="ps-parte-badge">Parte ${escapeHtml(parteNome)}</span>` : ''}
+          </div>
+          <div class="ps-formula">${escapeHtml(produtoInfo.formula||'')} ${produtoInfo.sap_produto ? '· SAP ' + escapeHtml(produtoInfo.sap_produto) : ''}</div>
+        </div>`;
+      $('solicProdutoLabel').outerHTML = html;
+      fecharSeletorProduto();
+      return;
+    }
+    // modo padrão (linhas manuais de entrada/saída)
+    const row = manualRows.find(r => r.id === seletorLinhaId);
+    if(row){
+      row.produto = produtoInfo.produto;
+      row.formula = produtoInfo.formula || '';
+      row.sap = produtoInfo.sap_produto || '';
+      row.parte = parteNome || '';
+      row.categoria = produtoInfo.categoria || '';
+    }
+    fecharSeletorProduto();
+    renderTabelaManual();
   }
 
   $('btnAddRow').addEventListener('click', () => {
@@ -2245,6 +2386,9 @@
         id: 'p' + Date.now() + '_' + i,
         produto: r.produto.trim(),
         formula: r.formula || '',
+        parte: r.parte || '',
+        sap: r.sap || '',
+        categoria: r.categoria || '',
         lote: r.formula || '—',
         validade: r.validade || '',
         quantidade_esperada: Number(r.quantidade) || 0,
@@ -2261,6 +2405,7 @@
         operador, timestamp, tipo: 'saida',
         produto: r.produto.trim(),
         formula: r.formula || '',
+        parte: r.parte || '',
         lote: r.formula || '—',
         validade: r.validade || '',
         quantidade_esperada: Number(r.quantidade) || 0,
@@ -2388,6 +2533,7 @@
       operador, timestamp, tipo: 'entrada',
       produto: p.produto, lote: p.formula || p.lote,
       formula: p.formula || '',
+      parte: p.parte || '',
       validade: p.validade || '',
       quantidade_esperada: p.quantidade_esperada,
       quantidade_guardada: p.quantidade_guardada,
@@ -2444,10 +2590,11 @@
       item.className = 'log-item';
       const sinal = calcularSinalValidade(r.validade);
       const sinalHtml = sinal ? `<span class="sinal-badge sinal-${sinal.cor}" style="margin-top:4px; display:inline-block;">Val. ${formatarDataBR(r.validade)} · ${sinal.label}</span>` : (r.validade ? `<div class="li-meta">Val. ${formatarDataBR(r.validade)}</div>` : '');
+      const parteBadge = r.parte ? `<span class="ps-parte-badge">Parte ${escapeHtml(r.parte)}</span>` : '';
       if(ehSaida){
         item.innerHTML = `
           <div>
-            <div class="li-name">${escapeHtml(r.produto)}</div>
+            <div class="li-name">${escapeHtml(r.produto)} ${parteBadge}</div>
             <div class="li-meta">${r.quantidade_guardada} ${escapeHtml(r.unidade)} retirado(s)</div>
             ${sinalHtml}
           </div>
@@ -2458,7 +2605,7 @@
         const tagText = r.status === 'ok' ? 'OK' : (r.status === 'insuf' ? 'Insuficiente' : 'A maior');
         item.innerHTML = `
           <div>
-            <div class="li-name">${escapeHtml(r.produto)}</div>
+            <div class="li-name">${escapeHtml(r.produto)} ${parteBadge}</div>
             <div class="li-meta">Lote ${escapeHtml(r.lote)} · ${r.quantidade_guardada}/${r.quantidade_esperada} ${escapeHtml(r.unidade)}</div>
             ${sinalHtml}
           </div>
@@ -2498,11 +2645,25 @@
         container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Nenhum registro de entrada ou saída ainda</div>`;
         return;
       }
+      // chave: produto + "|" + parte (parte pode ser vazia)
       const saldos = {};
       logCompleto.forEach(r => {
-        const chave = r.produto.trim().toLowerCase();
+        const nomeProduto = (r.produto||'').trim();
+        const parte = (r.parte || '').trim();
+        if(!nomeProduto) return;
+        const chave = nomeProduto.toLowerCase() + '||' + parte.toLowerCase();
         if(!saldos[chave]){
-          saldos[chave] = { nome: r.produto.trim(), saldo: 0, unidade: r.unidade || 'unid.', validadeMaisProxima: null, totalEntradas: 0, totalSaidas: 0 };
+          saldos[chave] = {
+            nome: nomeProduto,
+            parte,
+            formula: r.formula || '',
+            saldo: 0,
+            unidade: r.unidade || 'unid.',
+            validadeMaisProxima: null,
+            totalEntradas: 0,
+            totalSaidas: 0,
+            lotes: []   // {validade, qtd, lote, tipo}
+          };
         }
         const qtd = Number(r.quantidade_guardada) || 0;
         if(r.tipo === 'entrada'){
@@ -2511,13 +2672,20 @@
           if(r.validade && (!saldos[chave].validadeMaisProxima || r.validade < saldos[chave].validadeMaisProxima)){
             saldos[chave].validadeMaisProxima = r.validade;
           }
+          if(r.validade){
+            saldos[chave].lotes.push({ validade: r.validade, qtd, lote: r.lote || '', tipo:'entrada' });
+          }
         } else if(r.tipo === 'saida'){
           saldos[chave].saldo -= qtd;
           saldos[chave].totalSaidas += qtd;
         }
       });
 
-      const lista = Object.values(saldos).sort((a, b) => a.nome.localeCompare(b.nome));
+      const lista = Object.values(saldos).sort((a, b) => {
+        const c = a.nome.localeCompare(b.nome);
+        if(c !== 0) return c;
+        return (a.parte||'').localeCompare(b.parte||'');
+      });
       container.innerHTML = '';
       lista.forEach(item => {
         const card = document.createElement('div');
@@ -2525,11 +2693,17 @@
         const saldoClasse = item.saldo > 0 ? 'positivo' : (item.saldo === 0 ? 'zero' : 'negativo');
         const sinal = calcularSinalValidade(item.validadeMaisProxima);
         const sinalHtml = sinal
-          ? `<span class="sinal-badge sinal-${sinal.cor}">Lote mais próx.: ${formatarDataBR(item.validadeMaisProxima)} · ${sinal.label}</span>`
-          : (item.validadeMaisProxima ? `<span>Lote mais próx.: ${formatarDataBR(item.validadeMaisProxima)}</span>` : '');
+          ? `<span class="sinal-badge sinal-${sinal.cor}">Vence em: ${formatarDataBR(item.validadeMaisProxima)} · ${sinal.label}</span>`
+          : (item.validadeMaisProxima ? `<span>Vence em: ${formatarDataBR(item.validadeMaisProxima)}</span>` : '');
+        const parteBadge = item.parte
+          ? `<span class="ec-parte-badge">Parte ${escapeHtml(item.parte)}</span>`
+          : '';
         card.innerHTML = `
           <div class="ec-head">
-            <div class="ec-nome">${escapeHtml(item.nome)}</div>
+            <div class="ec-nome">
+              ${escapeHtml(item.nome)} ${parteBadge}
+              ${item.formula ? `<div class="ec-formula">${escapeHtml(item.formula)}</div>` : ''}
+            </div>
             <div class="ec-saldo">
               <div class="num ${saldoClasse}">${item.saldo}</div>
               <div class="unit">${escapeHtml(item.unidade)}</div>
@@ -2662,64 +2836,17 @@
     });
   });
 
-  // seletor de produto (reutiliza o modal genérico do app)
+  // seletor de produto (usa o seletor genérico em 3 níveis com flag __solic__)
   $('solicBtnProduto').addEventListener('click', () => {
-    abrirSeletorParaSolic();
-  });
-  function abrirSeletorParaSolic(){
-    // usa o seletor existente, mas o callback é diferente
-    seletorLinhaId = '__solic__'; // marca especial pra detectar
+    seletorLinhaId = '__solic__';
+    seletorNivel = 'categoria';
+    seletorCategoria = null;
+    seletorProduto = null;
     $('seletorBusca').value = '';
     renderListaSeletor('');
     $('seletorOverlay').classList.add('show');
     setTimeout(() => $('seletorBusca').focus(), 100);
-  }
-  // hook: depois da função original renderListaSeletor escolher um produto, ela já chama renderTabelaManual.
-  // precisamos interceptar quando seletorLinhaId === '__solic__'
-  // a melhor forma: sobrescrever o comportamento no clique
-  document.addEventListener('click', (e) => {
-    // capturado depois (já tratado no renderListaSeletor)
-  }, true);
-
-  // sobrescreve renderListaSeletor pra também tratar o caso de solicitação
-  const _origRenderListaSeletor = renderListaSeletor;
-  renderListaSeletor = function(filtro){
-    const lista = $('seletorLista');
-    const termo = filtro.trim().toLowerCase();
-    lista.innerHTML = '';
-    ['Concentrados', 'Sucos'].forEach(grupo => {
-      const itensGrupo = TODOS_PRODUTOS.filter(p =>
-        p.grupo === grupo &&
-        (termo === '' || p.nome.toLowerCase().includes(termo) || (p.formula && p.formula.toLowerCase().includes(termo)))
-      );
-      if(itensGrupo.length === 0) return;
-      const header = document.createElement('div');
-      header.className = 'seletor-grupo';
-      header.textContent = grupo;
-      lista.appendChild(header);
-      itensGrupo.forEach(p => {
-        const item = document.createElement('button');
-        item.className = 'seletor-item';
-        item.innerHTML = `<div class="si-nome">${escapeHtml(p.nome)}</div><div class="si-formula">${escapeHtml(p.formula)}</div>`;
-        item.addEventListener('click', () => {
-          if(seletorLinhaId === '__solic__'){
-            solicProdutoSel = { nome: p.nome, formula: p.formula };
-            $('solicProdutoLabel').outerHTML = `<div class="ps-selecionado" id="solicProdutoLabel"><div class="ps-nome">${escapeHtml(p.nome)}</div><div class="ps-formula">${escapeHtml(p.formula)}</div></div>`;
-            fecharSeletorProduto();
-            return;
-          }
-          const row = manualRows.find(r => r.id === seletorLinhaId);
-          if(row){ row.produto = p.nome; row.formula = p.formula; }
-          fecharSeletorProduto();
-          renderTabelaManual();
-        });
-        lista.appendChild(item);
-      });
-    });
-    if(lista.children.length === 0){
-      lista.innerHTML = `<div class="empty-state" style="padding:30px;"><div class="ic">🔍</div>Nenhum produto encontrado</div>`;
-    }
-  };
+  });
 
   $('btnEnviarSolicitacao').addEventListener('click', async () => {
     if(!solicProdutoSel){ toast('Escolha o produto primeiro'); return; }
@@ -2737,6 +2864,7 @@
         solicitante: usuarioAtual ? usuarioAtual.nome : '—',
         produto: solicProdutoSel.nome,
         formula: solicProdutoSel.formula,
+        parte: solicProdutoSel.parte || '',
         quantidade: qtd,
         observacao: obs
       });
@@ -2791,9 +2919,10 @@
       const acaoHtml = atendido
         ? `<div class="sc-atendido">✓ Atendido por ${escapeHtml(s.atendido_por||'—')}<br><small>${escapeHtml(s.atendido_em||'')}</small></div>`
         : `<button class="btn btn-primary sc-btn-atender" data-id="${s.id}" style="width:auto; padding:9px 16px; font-size:13px;">Marcar como atendido</button>`;
+      const parteBadge = s.parte ? `<span class="ps-parte-badge">Parte ${escapeHtml(s.parte)}</span>` : '';
       card.innerHTML = `
         <div class="sc-head">
-          <div class="sc-produto">${escapeHtml(s.produto || '—')}</div>
+          <div class="sc-produto">${escapeHtml(s.produto || '—')} ${parteBadge}</div>
           <div class="sc-qtd">${escapeHtml(String(s.quantidade||0))}</div>
         </div>
         <div class="sc-formula">${escapeHtml(s.formula || '')}</div>
@@ -3401,7 +3530,7 @@
         : '';
       item.innerHTML = `
         <div>
-          <div class="li-name">${escapeHtml(r.produto)}</div>
+          <div class="li-name">${escapeHtml(r.produto)} ${r.parte ? `<span class="ps-parte-badge">Parte ${escapeHtml(r.parte)}</span>` : ''}</div>
           <div class="li-meta">${escapeHtml(r.operador)} · ${escapeHtml(r.timestamp)}</div>
           <div class="li-meta">${loteHtml}${detalheQtd}</div>
           ${sinalHtml}
