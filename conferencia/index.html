@@ -812,6 +812,19 @@
     padding:16px; margin-bottom:12px;
   }
   .estoque-card .ec-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .estoque-card.zerado{ opacity:0.55; }
+  .estoque-resumo{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:10px;
+    padding:12px 16px; margin-bottom:16px; display:flex; gap:24px; flex-wrap:wrap;
+    font-size:13px; color:var(--cinza);
+  }
+  .estoque-resumo b{ color:var(--osso); font-weight:800; font-size:16px; }
+  .estoque-cat-head{
+    grid-column: 1 / -1;
+    font-size:11px; text-transform:uppercase; letter-spacing:2px; font-weight:800;
+    color:var(--vermelho); padding:16px 4px 8px; border-bottom:1.5px solid var(--linha);
+    margin-bottom:8px;
+  }
   .estoque-card .ec-nome{font-size:15px; font-weight:800; line-height:1.3; flex:1; min-width:0;}
   .estoque-card .ec-parte-badge{
     display:inline-block; padding:3px 9px; background:var(--vermelho); color:#fff;
@@ -1361,12 +1374,13 @@
     <section class="screen" id="screen-estoque">
       <div class="section-label">Saldo calculado</div>
       <h1 class="title" style="font-size:24px; margin-bottom:8px;">Estoque atual</h1>
-      <p class="lead" style="margin-bottom:22px;">Total de entradas menos saídas registradas neste aparelho, por produto.</p>
+      <p class="lead" style="margin-bottom:22px;">Todas as partes do catálogo com seus saldos atuais (entradas menos saídas).</p>
 
       <div id="estoqueList"></div>
 
       <div class="stack" style="margin-top:24px;">
         <button class="btn btn-ghost" id="btnVoltarInicioEstoque">← Voltar ao início</button>
+        <button class="btn btn-outline" id="btnLimparLog" style="display:none; border-color:var(--erro); color:var(--erro);">🗑 Apagar todo o histórico (admin)</button>
       </div>
     </section>
 
@@ -1698,7 +1712,10 @@
       div.addEventListener('click', () => {
         if(step.id === 'screen-log'){ carregarLog(); }
         if(step.id === 'screen-config'){ renderConfiguracoes(); }
-        if(step.id === 'screen-estoque'){ renderEstoque(); }
+        if(step.id === 'screen-estoque'){
+          renderEstoque();
+          $('btnLimparLog').style.display = (usuarioAtual && usuarioAtual.isAdmin) ? 'inline-flex' : 'none';
+        }
         if(step.id === 'screen-rnc'){ renderRNC(); }
         if(step.id === 'screen-fab1'){ renderFab1(); }
         if(step.id === 'screen-qrcode'){ renderQRCode(); }
@@ -2635,17 +2652,13 @@
   });
 
   // ---------- configurações (admin) ----------
-  // ---------- estoque atual (saldo = entradas - saídas) ----------
+  // ---------- estoque atual (mostra todas as partes do catálogo + saldo calculado) ----------
   function renderEstoque(){
     const container = $('estoqueList');
     container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Calculando estoque...</p></div>';
 
     carregarLog().then(() => {
-      if(logCompleto.length === 0){
-        container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Nenhum registro de entrada ou saída ainda</div>`;
-        return;
-      }
-      // chave: produto + "|" + parte (parte pode ser vazia)
+      // 1) Calcula saldos pelos logs (entradas - saidas) — chave = produto+parte
       const saldos = {};
       logCompleto.forEach(r => {
         const nomeProduto = (r.produto||'').trim();
@@ -2654,15 +2667,16 @@
         const chave = nomeProduto.toLowerCase() + '||' + parte.toLowerCase();
         if(!saldos[chave]){
           saldos[chave] = {
-            nome: nomeProduto,
-            parte,
+            nome: nomeProduto, parte,
             formula: r.formula || '',
+            sap: '',
+            categoria: '',
             saldo: 0,
             unidade: r.unidade || 'unid.',
             validadeMaisProxima: null,
             totalEntradas: 0,
             totalSaidas: 0,
-            lotes: []   // {validade, qtd, lote, tipo}
+            noCatalogo: false
           };
         }
         const qtd = Number(r.quantidade_guardada) || 0;
@@ -2672,24 +2686,82 @@
           if(r.validade && (!saldos[chave].validadeMaisProxima || r.validade < saldos[chave].validadeMaisProxima)){
             saldos[chave].validadeMaisProxima = r.validade;
           }
-          if(r.validade){
-            saldos[chave].lotes.push({ validade: r.validade, qtd, lote: r.lote || '', tipo:'entrada' });
-          }
         } else if(r.tipo === 'saida'){
           saldos[chave].saldo -= qtd;
           saldos[chave].totalSaidas += qtd;
         }
       });
 
-      const lista = Object.values(saldos).sort((a, b) => {
-        const c = a.nome.localeCompare(b.nome);
+      // 2) Adiciona TODAS as partes do catálogo (saldo 0 se não tem entrada)
+      const lista = [];
+      CATALOGO_PRODUTOS.forEach(p => {
+        const partes = (p.partes && p.partes.length > 0) ? p.partes : [{nome:'', sap_parte:p.sap_produto}];
+        partes.forEach(parte => {
+          const chave = p.produto.toLowerCase() + '||' + (parte.nome||'').toLowerCase();
+          let item = saldos[chave];
+          if(item){
+            item.noCatalogo = true;
+            item.formula = p.formula || item.formula;
+            item.sap = p.sap_produto || '';
+            item.categoria = p.categoria || '';
+          } else {
+            item = {
+              nome: p.produto, parte: parte.nome || '',
+              formula: p.formula || '',
+              sap: p.sap_produto || '',
+              categoria: p.categoria || '',
+              saldo: 0, unidade: 'unid.',
+              validadeMaisProxima: null,
+              totalEntradas: 0, totalSaidas: 0,
+              noCatalogo: true
+            };
+            saldos[chave] = item;
+          }
+          lista.push(item);
+        });
+      });
+
+      // 3) Inclui itens do log que NÃO estão no catálogo (legados)
+      Object.values(saldos).forEach(item => {
+        if(!item.noCatalogo) lista.push(item);
+      });
+
+      // Ordena por categoria > produto > parte
+      lista.sort((a,b) => {
+        const c = (a.categoria||'').localeCompare(b.categoria||'');
         if(c !== 0) return c;
+        const n = a.nome.localeCompare(b.nome);
+        if(n !== 0) return n;
         return (a.parte||'').localeCompare(b.parte||'');
       });
+
       container.innerHTML = '';
+
+      // Resumo no topo
+      const totalPartes = lista.length;
+      const comSaldo = lista.filter(x => x.saldo > 0).length;
+      const resumo = document.createElement('div');
+      resumo.className = 'estoque-resumo';
+      resumo.innerHTML = `
+        <div><b>${totalPartes}</b> partes no catálogo</div>
+        <div><b>${comSaldo}</b> com estoque positivo</div>
+      `;
+      container.appendChild(resumo);
+
+      let categoriaAtual = null;
       lista.forEach(item => {
+        // Cabeçalho de categoria
+        if(item.categoria && item.categoria !== categoriaAtual){
+          categoriaAtual = item.categoria;
+          const head = document.createElement('div');
+          head.className = 'estoque-cat-head';
+          head.textContent = categoriaAtual;
+          container.appendChild(head);
+        }
+
         const card = document.createElement('div');
         card.className = 'estoque-card';
+        if(item.saldo === 0) card.classList.add('zerado');
         const saldoClasse = item.saldo > 0 ? 'positivo' : (item.saldo === 0 ? 'zero' : 'negativo');
         const sinal = calcularSinalValidade(item.validadeMaisProxima);
         const sinalHtml = sinal
@@ -2698,11 +2770,14 @@
         const parteBadge = item.parte
           ? `<span class="ec-parte-badge">Parte ${escapeHtml(item.parte)}</span>`
           : '';
+        const metaLinha = (item.formula || item.sap)
+          ? `<div class="ec-formula">${escapeHtml(item.formula||'')} ${item.sap ? '· SAP ' + escapeHtml(item.sap) : ''}</div>`
+          : '';
         card.innerHTML = `
           <div class="ec-head">
             <div class="ec-nome">
               ${escapeHtml(item.nome)} ${parteBadge}
-              ${item.formula ? `<div class="ec-formula">${escapeHtml(item.formula)}</div>` : ''}
+              ${metaLinha}
             </div>
             <div class="ec-saldo">
               <div class="num ${saldoClasse}">${item.saldo}</div>
@@ -2717,12 +2792,39 @@
         `;
         container.appendChild(card);
       });
+
+      if(lista.length === 0){
+        container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Catálogo vazio</div>`;
+      }
     });
   }
 
   $('btnVoltarInicioEstoque').addEventListener('click', () => {
     iniciarTabelaManual();
     showScreen('screen-scan');
+  });
+
+  $('btnLimparLog').addEventListener('click', async () => {
+    if(!usuarioAtual || !usuarioAtual.isAdmin){ toast('Apenas admin'); return; }
+    const senha = prompt('Senha de admin para APAGAR TODO o histórico:');
+    if(senha === null) return;
+    if(senha !== SENHA_ADMIN){ toast('Senha incorreta'); return; }
+    if(!confirm('Apagar TODOS os registros de entrada e saída? Esta ação não pode ser desfeita.')) return;
+    $('btnLimparLog').disabled = true; $('btnLimparLog').textContent = 'Apagando...';
+    try{
+      const res = await apiPost({ acao:'limparLog' });
+      if(res.ok){
+        toast('Histórico apagado');
+        logCompleto = [];
+        renderEstoque();
+      } else {
+        toast('Erro: ' + (res.erro||''));
+      }
+    }catch(e){ toast('Erro de rede'); }
+    finally{
+      $('btnLimparLog').disabled = false;
+      $('btnLimparLog').textContent = '🗑 Apagar todo o histórico (admin)';
+    }
   });
 
   $('btnVoltarInicioRNC').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
