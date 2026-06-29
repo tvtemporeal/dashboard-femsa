@@ -2384,212 +2384,263 @@
 
   // Lotes do inventário 19/05/2026 (importado do XLSX)
   const LOTES_INVENTARIO_XLSX = [
+    {produto:"DV Frut. Limão",parte:"1,1B",validade:"2027-03-16",quantidade:48},
     {produto:"DV Frut. Limão",parte:"1,1B",validade:"2027-03-04",quantidade:12},
+    {produto:"DV Frut. Limão",parte:"1D,3",validade:"2027-01-19",quantidade:22},
+    {produto:"DV Frut. Limão",parte:"2C",validade:"2027-04-09",quantidade:8},
+    {produto:"DV Frut. Limão",parte:"2C",validade:"2027-02-20",quantidade:8},
+    {produto:"DV Frut. Limão",parte:"2C",validade:"2027-04-22",quantidade:52},
     {produto:"DV Frut. Laranja",parte:"1B,3",validade:"2027-01-07",quantidade:40},
-    {produto:"DV Frut. Frutas Cítricas",parte:"1B,1H",validade:"2027-03-19",quantidade:72},
-    {produto:"DV Frut. Frutas Cítricas",parte:"1B,1H",validade:"2027-03-19",quantidade:120},
+    {produto:"DV Frut. Laranja",parte:"1M",validade:"2027-02-21",quantidade:60},
+    {produto:"DV Frut. Laranja",parte:"1C",validade:"2027-01-27",quantidade:80},
+    {produto:"DV Frut. Laranja",parte:"2A",validade:"2027-06-25",quantidade:10},
+    {produto:"DV Frut. Frutas Cítricas",parte:"1,1C,3",validade:"2027-03-19",quantidade:72},
+    {produto:"DV Frut. Frutas Cítricas",parte:"1,1C,3",validade:"2027-03-19",quantidade:120},
     {produto:"DV Frut. Frutas Cítricas",parte:"1,1C,3",validade:"2027-01-23",quantidade:20},
-    {produto:"DV Frut. Frutas Cítricas",parte:"1,1C,3",validade:"2027-02-18",quantidade:40},
+    {produto:"DV Frut. Frutas Cítricas",parte:"1F",validade:"2027-02-18",quantidade:40},
     {produto:"DV Frut. Frutas Cítricas",parte:"1F",validade:"2027-02-23",quantidade:180},
     {produto:"DV Frut. Frutas Cítricas",parte:"2C",validade:"2027-06-18",quantidade:18},
-    {produto:"DV Frut. Frutas Cítricas",parte:"2C",validade:"2026-10-28",quantidade:75},
-    {produto:"DV Frut. Frutas Cítricas",parte:"2",validade:"2026-12-11",quantidade:285},
-    {produto:"DV Frut. Uva",parte:"1G,3",validade:"2027-02-18",quantidade:24},
-    {produto:"DV Frut. Uva",parte:"1C,1D",validade:"2027-04-01",quantidade:48},
-    {produto:"DV Frut. Uva",parte:"1I",validade:"2027-04-09",quantidade:60},
-    {produto:"DV Frut. Uva",parte:"1I",validade:"2027-04-08",quantidade:12},
-    {produto:"DV Frut. Uva",parte:"1H",validade:"2027-03-17",quantidade:12},
-    {produto:"DV Frut. Uva",parte:"2A",validade:"2026-12-17",quantidade:12},
+    {produto:"DV Frut. Uva",parte:"1C,1D",validade:"2027-02-18",quantidade:24},
+    {produto:"DV Frut. Uva",parte:"1I",validade:"2027-04-01",quantidade:48},
+    {produto:"DV Frut. Uva",parte:"1H",validade:"2027-04-09",quantidade:60},
+    {produto:"DV Frut. Uva",parte:"1H",validade:"2027-04-08",quantidade:12},
+    {produto:"DV Frut. Uva",parte:"2A",validade:"2027-03-17",quantidade:12},
+    {produto:"DV Frut. Uva",parte:"Fanta Guaraná - GU/B71.00 3063905",validade:"2026-12-17",quantidade:12},
+    {produto:"DV Frut. Uva",parte:"1,1B",validade:"Material SAP ECC:",quantidade:30115239},
+    {produto:"DV Frut. Uva",parte:"1,1B",validade:"Total de Kit:",quantidade:138},
+    {produto:"DV Frut. Uva",parte:"1,1B",validade:"2027-01-22",quantidade:14},
+    {produto:"DV Frut. Uva",parte:"1,1B",validade:"2027-03-24",quantidade:124},
+    {produto:"Fanta Uva",parte:"1G",validade:"2027-04-10",quantidade:16},
     {produto:"Fanta Uva",parte:"1G",validade:"2027-03-20",quantidade:18},
-    {produto:"Fanta Uva",parte:"1G",validade:"2027-04-01",quantidade:36},
-    {produto:"Fanta Uva",parte:"1",validade:"2027-03-12",quantidade:18},
-    {produto:"Fanta Uva",parte:"1",validade:"2027-04-10",quantidade:52},
-    {produto:"Guaraná Kuat",parte:"1,1G",validade:"2027-02-19",quantidade:42},
-    {produto:"Guaraná Kuat",parte:"2",validade:"2027-02-07",quantidade:65},
-    {produto:"Guaraná Kuat",parte:"2",validade:"2027-03-20",quantidade:72},
+    {produto:"Guaraná Kuat",parte:"1,1G",validade:"2027-03-20",quantidade:84},
+    {produto:"Fanta Guaraná",parte:"1,1B",validade:"2027-01-22",quantidade:14},
     {produto:"Fanta Guaraná",parte:"1,1B",validade:"2027-03-24",quantidade:124},
-    {produto:"Fanta Guaraná",parte:"1,1B",validade:"2026-08-23",quantidade:138},
-    {produto:"Fanta Maracujá",parte:"2",validade:"2027-02-10",quantidade:5},
+    {produto:"Fanta Maracujá",parte:"1B,1D,1F",validade:"2027-02-09",quantidade:5},
+    {produto:"Fanta Maracujá",parte:"2D",validade:"2027-02-10",quantidade:5},
+    {produto:"Fanta Maracujá",parte:"2D",validade:"2027-02-25",quantidade:5},
+    {produto:"Coca Coca Zero",parte:"1A, 3",validade:"2027-03-03",quantidade:280},
+    {produto:"Coca Coca Zero",parte:"1A, 3",validade:"2027-03-04",quantidade:163},
+    {produto:"Coca Coca Zero",parte:"1A, 3",validade:"2027-04-18",quantidade:95},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-02-03",quantidade:80},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-03-27",quantidade:162},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-02-24",quantidade:48},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-02-25",quantidade:96},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-03-10",quantidade:97},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-03-03",quantidade:480},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-02-28",quantidade:96},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-01-19",quantidade:25},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-03-30",quantidade:240},
+    {produto:"Coca Coca Zero",parte:"2A",validade:"2027-04-01",quantidade:162},
+    {produto:"Coca Coca Zero",parte:"2B",validade:"2027-04-08",quantidade:192},
+    {produto:"Coca Coca Zero",parte:"2B",validade:"2027-02-12",quantidade:112},
+    {produto:"Coca Coca Zero",parte:"2B",validade:"2027-03-27",quantidade:144},
+    {produto:"Coca Coca Zero",parte:"2B",validade:"2027-03-03",quantidade:384},
+    {produto:"Coca Coca Zero",parte:"2B",validade:"2027-01-29",quantidade:240},
+    {produto:"Coca Coca Zero",parte:"2B",validade:"2027-03-20",quantidade:355},
+    {produto:"Coca Coca Zero",parte:"Coca Cola Orginal 1758107",validade:"2027-02-20",quantidade:263},
     {produto:"Fanta Uva",parte:"1B,3",validade:"2027-01-22",quantidade:11},
-    {produto:"Fanta Uva",parte:"1",validade:"2027-03-12",quantidade:8},
-    {produto:"Fanta Uva",parte:"1",validade:"2027-03-13",quantidade:3},
+    {produto:"Sprite Original",parte:"1B",validade:"2027-03-13",quantidade:80},
     {produto:"Sprite Original",parte:"1B",validade:"2027-01-27",quantidade:20},
-    {produto:"Sprite Original",parte:"1B",validade:"2027-09-02",quantidade:164},
-    {produto:"Sprite Original",parte:"1",validade:"2027-06-09",quantidade:36},
-    {produto:"Sprite Original",parte:"2",validade:"2027-03-17",quantidade:42},
-    {produto:"Sprite Original",parte:"2",validade:"2027-02-09",quantidade:30},
-    {produto:"Sprite Sem Açúcar",parte:"1B,3A,3B",validade:"2027-07-12",quantidade:8},
-    {produto:"Sprite Sem Açúcar",parte:"1",validade:"2027-03-11",quantidade:78},
-    {produto:"Sprite Sem Açúcar",parte:"1",validade:"2027-03-13",quantidade:48},
-    {produto:"Sprite Sem Açúcar",parte:"2",validade:"2027-03-25",quantidade:38},
+    {produto:"Sprite Original",parte:"Chás",validade:"2027-09-02",quantidade:164},
+    {produto:"Sprite Original",parte:"Chás",validade:"2027-06-09",quantidade:36},
+    {produto:"Sprite Original",parte:"Chás",validade:"2027-03-17",quantidade:42},
+    {produto:"Sprite Original",parte:"Chás",validade:"2027-02-09",quantidade:30},
+    {produto:"Sprite Original",parte:"1T",validade:"Material SAP ECC:",quantidade:30112480},
+    {produto:"Sprite Original",parte:"1T",validade:"Total de Kit:",quantidade:6},
+    {produto:"Sprite Original",parte:"1T",validade:"2026-11-18",quantidade:6},
+    {produto:"Sprite Original",parte:"1T",validade:"2027-04-23",quantidade:6},
+    {produto:"Sprite Original",parte:"1L",validade:"2027-02-12",quantidade:6},
+    {produto:"Sprite Original",parte:"1D",validade:"2026-11-03",quantidade:6},
+    {produto:"Sprite Original",parte:"2C",validade:"2026-11-21",quantidade:1},
+    {produto:"Sprite Original",parte:"2C",validade:"2026-09-04",quantidade:3},
+    {produto:"Sprite Sem Açúcar",parte:"1B,3A,3B",validade:"2027-03-31",quantidade:86},
+    {produto:"Sprite Fresh",parte:"P1,1E,1G,3A",validade:"2026-11-26",quantidade:59},
     {produto:"Sprite Fresh",parte:"2D",validade:"2027-11-14",quantidade:59},
     {produto:"Sprite Fresh",parte:"2A",validade:"2027-03-12",quantidade:59},
-    {produto:"Sprite Fresh",parte:"2",validade:"2027-03-05",quantidade:59},
-    {produto:"Coca Cola Orginal 1758107",parte:"2",validade:"2026-10-07",quantidade:7},
-    {produto:"Coca Cola Orginal 1770799",parte:"2",validade:"2026-10-07",quantidade:7},
-    {produto:"Ice Tea Pêssego",parte:"1.3",validade:"2027-04-23",quantidade:6},
-    {produto:"Ice Tea Pêssego",parte:"1T",validade:"2027-02-12",quantidade:6},
-    {produto:"Ice Tea Pêssego",parte:"1L",validade:"2026-11-03",quantidade:6},
-    {produto:"Ice Tea Pêssego",parte:"1D",validade:"2026-11-21",quantidade:1},
+    {produto:"Sprite Fresh",parte:"Ice tea Limão- TE/LE/B-98.30",validade:"2027-03-05",quantidade:59},
+    {produto:"Sprite Fresh",parte:"1,1D,3B",validade:"Material SAP ECC:",quantidade:30116590},
+    {produto:"Sprite Fresh",parte:"1,1D,3B",validade:"Total de Kit:",quantidade:0.5},
+    {produto:"Sprite Fresh",parte:"1,1D,3B",validade:"2026-11-13",quantidade:2},
+    {produto:"Sprite Fresh",parte:"1E",validade:"2026-12-31",quantidade:0.5},
+    {produto:"Sprite Fresh",parte:"2A",validade:"2026-09-26",quantidade:2},
+    {produto:"Sprite Fresh",parte:"2C",validade:"2027-01-09",quantidade:2},
+    {produto:"Sprite Fresh",parte:"3A",validade:"2027-03-07",quantidade:2},
+    {produto:"Sprite Fresh",parte:"2E",validade:"2027-02-03",quantidade:0.5},
+    {produto:"Ice Tea Pêssego",parte:"1T",validade:"2026-11-18",quantidade:6},
+    {produto:"Ice Tea Pêssego",parte:"1T",validade:"2027-04-23",quantidade:6},
+    {produto:"Ice Tea Pêssego",parte:"1L",validade:"2027-02-12",quantidade:6},
+    {produto:"Ice Tea Pêssego",parte:"1D",validade:"2026-11-03",quantidade:6},
+    {produto:"Ice Tea Pêssego",parte:"2C",validade:"2026-11-21",quantidade:1},
     {produto:"Ice Tea Pêssego",parte:"2C",validade:"2026-09-04",quantidade:3},
-    {produto:"Ice Tea Pêssego",parte:"2C",validade:"2027-03-24",quantidade:2},
-    {produto:"Ice Tea Pêssego",parte:"2C",validade:"2027-01-30",quantidade:6},
-    {produto:"Ice tea Limão Zero",parte:"1.3",validade:"2027-07-12",quantidade:8},
-    {produto:"Ice tea Limão Zero",parte:"1.3",validade:"2027-03-19",quantidade:4},
+    {produto:"Ice tea Limão",parte:"1,1D,3B",validade:"Material SAP ECC:",quantidade:30116590},
+    {produto:"Ice tea Limão",parte:"1,1D,3B",validade:"Total de Kit:",quantidade:0.5},
+    {produto:"Ice tea Limão",parte:"1,1D,3B",validade:"2026-11-13",quantidade:2},
+    {produto:"Ice tea Limão",parte:"1E",validade:"2026-12-31",quantidade:0.5},
+    {produto:"Ice tea Limão",parte:"2A",validade:"2026-09-26",quantidade:2},
+    {produto:"Ice tea Limão",parte:"2C",validade:"2027-01-09",quantidade:2},
+    {produto:"Ice tea Limão",parte:"3A",validade:"2027-03-07",quantidade:2},
+    {produto:"Ice tea Limão",parte:"2E",validade:"2027-02-03",quantidade:0.5},
+    {produto:"Ice tea Limão Zero",parte:"1L",validade:"2027-07-12",quantidade:8},
+    {produto:"Ice tea Limão Zero",parte:"1L",validade:"2027-03-19",quantidade:4},
     {produto:"Ice tea Limão Zero",parte:"1T",validade:"2027-08-06",quantidade:4},
     {produto:"Ice tea Limão Zero",parte:"1D",validade:"2027-02-19",quantidade:4},
     {produto:"Ice tea Limão Zero",parte:"2C",validade:"2027-03-24",quantidade:4},
     {produto:"Ice tea Limão Zero",parte:"2B",validade:"2027-03-24",quantidade:4},
+    {produto:"Ice tea Limão Zero",parte:"Kapo Morango - ST-323.00 3100076 FT",validade:"2027-02-20",quantidade:4},
+    {produto:"Ice tea Limão Zero",parte:"1,1D",validade:"Material SAP ECC:",quantidade:30117022},
+    {produto:"Ice tea Limão Zero",parte:"1,1D",validade:"Total de Kit:",quantidade:5.75},
+    {produto:"Ice tea Limão Zero",parte:"1,1D",validade:"2027-01-13",quantidade:16},
+    {produto:"Ice tea Limão Zero",parte:"1,1D",validade:"2026-11-13",quantidade:7},
+    {produto:"Ice tea Limão Zero",parte:"1E",validade:"2027-03-07",quantidade:5.75},
+    {produto:"Ice tea Limão Zero",parte:"1E",validade:"2027-02-13",quantidade:5.75},
+    {produto:"Ice tea Limão Zero",parte:"2E",validade:"2027-02-03",quantidade:23},
+    {produto:"Ice tea Limão Zero",parte:"1C/2A",validade:"2026-08-20",quantidade:23},
+    {produto:"Ice tea Limão Zero",parte:"2C",validade:"2026-12-02",quantidade:23},
+    {produto:"Ice tea Limão Zero",parte:"3B",validade:"2028-03-27",quantidade:5.75},
+    {produto:"Ice tea Limão Zero",parte:"Powerade Tangerina MA/Q/V/B-170.00 3365732 FT",validade:"2026-06-17",quantidade:0.75},
+    {produto:"Ice tea Limão Zero",parte:"Powerade Tangerina MA/Q/V/B-170.00 3365732 FT",validade:"2026-10-28",quantidade:5},
+    {produto:"Ice tea Limão Zero",parte:"1F,1G,1K",validade:"Material SAP ECC:",quantidade:30118663},
+    {produto:"Ice tea Limão Zero",parte:"1F,1G,1K",validade:"Total de Kit:",quantidade:3},
+    {produto:"Ice tea Limão Zero",parte:"1F,1G,1K",validade:"2026-06-04",quantidade:2},
+    {produto:"Ice tea Limão Zero",parte:"1L",validade:"2026-06-04",quantidade:1},
+    {produto:"Ice tea Limão Zero",parte:"1L",validade:"2027-02-12",quantidade:18},
+    {produto:"Ice tea Limão Zero",parte:"1B,3",validade:"2026-11-25",quantidade:9},
     {produto:"Chá Verde Limão",parte:"1F,3",validade:"2027-03-17",quantidade:3},
     {produto:"Chá Verde Limão",parte:"1B",validade:"2027-02-12",quantidade:1},
     {produto:"Chá Verde Limão",parte:"1T",validade:"2027-09-02",quantidade:1},
     {produto:"Chá Verde Limão",parte:"2A",validade:"2027-01-22",quantidade:3},
-    {produto:"Chá Verde Limão",parte:"2",validade:"2027-04-09",quantidade:3},
-    {produto:"Chá Lichia",parte:"1G",validade:"2026-06-30",quantidade:1},
-    {produto:"Chá Lichia",parte:"1T",validade:"2026-12-02",quantidade:1},
-    {produto:"Chá Lichia",parte:"1A",validade:"2026-10-16",quantidade:1},
-    {produto:"Chá Lichia",parte:"3,3A",validade:"2027-03-24",quantidade:6},
+    {produto:"Chá Lichia",parte:"1G",validade:"2027-03-20",quantidade:2},
+    {produto:"Chá Lichia",parte:"1T",validade:"2026-06-30",quantidade:1},
+    {produto:"Chá Lichia",parte:"1A",validade:"2026-12-02",quantidade:1},
+    {produto:"Chá Lichia",parte:"3,3A",validade:"2026-10-16",quantidade:1},
     {produto:"Kapo Laranja",parte:"1,1D,3",validade:"2027-01-14",quantidade:20},
     {produto:"Kapo Laranja",parte:"3A",validade:"2026-12-16",quantidade:20},
     {produto:"Kapo Laranja",parte:"1E",validade:"2026-09-13",quantidade:20},
     {produto:"Kapo Laranja",parte:"2E",validade:"2027-02-13",quantidade:20},
     {produto:"Kapo Laranja",parte:"2A",validade:"2026-09-26",quantidade:20},
-    {produto:"Kapo Laranja",parte:"2A",validade:"2026-10-18",quantidade:20},
-    {produto:"Kapo Abacaxi",parte:"2C",validade:"2026-09-26",quantidade:14},
-    {produto:"Kapo Abacaxi",parte:"3B",validade:"2028-03-27",quantidade:3},
-    {produto:"Kapo Abacaxi",parte:"3B",validade:"2026-12-15",quantidade:3},
-    {produto:"Kapo Abacaxi",parte:"2A",validade:"2026-11-26",quantidade:3},
-    {produto:"Kapo Abacaxi",parte:"2",validade:"2026-10-01",quantidade:12},
-    {produto:"Kapo Abacaxi",parte:"2",validade:"2026-04-05",quantidade:2},
+    {produto:"Kapo Abacaxi",parte:"1,1D",validade:"2026-11-13",quantidade:14},
+    {produto:"Kapo Abacaxi",parte:"3B",validade:"2026-09-26",quantidade:14},
+    {produto:"Kapo Abacaxi",parte:"3B",validade:"2028-03-27",quantidade:3.5},
+    {produto:"Kapo Abacaxi",parte:"3A",validade:"2026-12-15",quantidade:3.5},
+    {produto:"Kapo Abacaxi",parte:"2A",validade:"2026-11-26",quantidade:3.5},
+    {produto:"Kapo Maracujá",parte:"1,1D,3B",validade:"2026-11-13",quantidade:2},
+    {produto:"Kapo Maracujá",parte:"1E",validade:"2026-12-31",quantidade:0.5},
     {produto:"Kapo Maracujá",parte:"2A",validade:"2026-09-26",quantidade:2},
-    {produto:"Kapo Maracujá",parte:"2A",validade:"2027-01-09",quantidade:2},
-    {produto:"Kapo Maracujá",parte:"2C",validade:"2027-03-07",quantidade:2},
-    {produto:"Kapo Maracujá",parte:"2E",validade:"2027-02-19",quantidade:2},
+    {produto:"Kapo Maracujá",parte:"2C",validade:"2027-01-09",quantidade:2},
+    {produto:"Kapo Maracujá",parte:"3A",validade:"2027-03-07",quantidade:2},
+    {produto:"Kapo Maracujá",parte:"2E",validade:"2027-02-03",quantidade:0.5},
+    {produto:"Kapo Morango",parte:"1,1D",validade:"2027-01-13",quantidade:16},
     {produto:"Kapo Morango",parte:"1,1D",validade:"2026-11-13",quantidade:7},
-    {produto:"Kapo Morango",parte:"1,1D",validade:"2027-03-07",quantidade:5},
-    {produto:"Kapo Morango",parte:"3",validade:"2027-02-13",quantidade:5},
+    {produto:"Kapo Morango",parte:"1E",validade:"2027-03-07",quantidade:5.75},
+    {produto:"Kapo Morango",parte:"1E",validade:"2027-02-13",quantidade:5.75},
     {produto:"Kapo Morango",parte:"2E",validade:"2027-02-03",quantidade:23},
-    {produto:"Kapo Morango",parte:"2E",validade:"2026-08-20",quantidade:23},
-    {produto:"Kapo Morango",parte:"1C/2A",validade:"2026-12-02",quantidade:23},
-    {produto:"Kapo Morango",parte:"2C",validade:"2028-03-27",quantidade:5},
-    {produto:"Kapo Morango",parte:"2",validade:"2026-10-28",quantidade:5},
+    {produto:"Kapo Morango",parte:"1C/2A",validade:"2026-08-20",quantidade:23},
+    {produto:"Kapo Morango",parte:"2C",validade:"2026-12-02",quantidade:23},
+    {produto:"Kapo Morango",parte:"3B",validade:"2028-03-27",quantidade:5.75},
+    {produto:"Kapo Morango",parte:"Powerade Tangerina MA/Q/V/B-170.00 3365732 FT",validade:"2026-06-17",quantidade:0.75},
+    {produto:"Kapo Morango",parte:"Powerade Tangerina MA/Q/V/B-170.00 3365732 FT",validade:"2026-10-28",quantidade:5},
+    {produto:"Kapo Morango",parte:"1F,1G,1K",validade:"Material SAP ECC:",quantidade:30118663},
+    {produto:"Kapo Morango",parte:"1F,1G,1K",validade:"Total de Kit:",quantidade:3},
+    {produto:"Kapo Morango",parte:"1F,1G,1K",validade:"2026-06-04",quantidade:2},
+    {produto:"Kapo Morango",parte:"1L",validade:"2026-06-04",quantidade:1},
+    {produto:"Kapo Morango",parte:"1L",validade:"2027-02-12",quantidade:18},
+    {produto:"Kapo Morango",parte:"1B,3",validade:"2026-11-25",quantidade:9},
     {produto:"Kapo Morango",parte:"1,1D",validade:"2027-01-13",quantidade:72},
-    {produto:"Kapo Morango",parte:"3",validade:"2027-03-07",quantidade:18},
+    {produto:"Kapo Morango",parte:"1E",validade:"2027-03-07",quantidade:18},
     {produto:"Kapo Morango",parte:"1E",validade:"2027-02-13",quantidade:18},
     {produto:"Kapo Morango",parte:"2E",validade:"2027-02-03",quantidade:72},
     {produto:"Kapo Morango",parte:"1C/2A",validade:"2026-09-26",quantidade:72},
     {produto:"Kapo Morango",parte:"2C",validade:"2026-12-02",quantidade:72},
     {produto:"Kapo Morango",parte:"3B",validade:"2028-03-27",quantidade:18},
-    {produto:"Kapo Morango",parte:"2",validade:"2026-10-28",quantidade:18},
+    {produto:"Kapo Morango",parte:"Powerade Limão LE/B/Q/V - 546.11 3372864 FT",validade:"2026-10-28",quantidade:18},
+    {produto:"Kapo Morango",parte:"1F,1K,3",validade:"Material SAP ECC:",quantidade:30118661},
+    {produto:"Kapo Morango",parte:"1F,1K,3",validade:"Total de Kit:",quantidade:6},
+    {produto:"Kapo Morango",parte:"1F,1K,3",validade:"2026-06-04",quantidade:5},
+    {produto:"Kapo Morango",parte:"1B",validade:"2026-06-04",quantidade:1},
+    {produto:"Kapo Morango",parte:"1B",validade:"2026-11-15",quantidade:12},
+    {produto:"Kapo Morango",parte:"1B",validade:"2027-01-07",quantidade:24},
+    {produto:"Kapo Morango",parte:"1B",validade:"2027-02-12",quantidade:12},
+    {produto:"Kapo Morango",parte:"1B",validade:"2027-01-16",quantidade:6},
+    {produto:"Kapo Morango",parte:"1G,1L",validade:"2027-01-21",quantidade:6},
+    {produto:"Kapo Morango",parte:"2A",validade:"2026-09-01",quantidade:4},
     {produto:"Kapo Uva",parte:"1,1D,1E",validade:"2027-01-13",quantidade:30},
-    {produto:"Kapo Uva",parte:"3A",validade:"2027-03-07",quantidade:7},
-    {produto:"Kapo Uva",parte:"3A",validade:"2028-03-27",quantidade:7},
+    {produto:"Kapo Uva",parte:"3B",validade:"2027-03-07",quantidade:7.5},
+    {produto:"Kapo Uva",parte:"3B",validade:"2028-03-27",quantidade:7.5},
     {produto:"Kapo Uva",parte:"2C",validade:"2026-09-26",quantidade:30},
-    {produto:"Kapo Uva",parte:"2C",validade:"2027-02-03",quantidade:30},
-    {produto:"Kapo Uva",parte:"2",validade:"2027-02-07",quantidade:12},
-    {produto:"Kapo Uva",parte:"2",validade:"2027-03-17",quantidade:18},
-    {produto:"Kapo Maçã",parte:"1,1D,3B",validade:"2027-02-13",quantidade:12},
+    {produto:"Kapo Uva",parte:"2E",validade:"2027-02-03",quantidade:30},
+    {produto:"Kapo Maçã",parte:"1,1D,3B",validade:"2026-11-13",quantidade:12},
+    {produto:"Kapo Maçã",parte:"1E,3A",validade:"2027-02-13",quantidade:12},
     {produto:"Kapo Maçã",parte:"1C",validade:"2026-09-15",quantidade:12},
     {produto:"Kapo Maçã",parte:"2A",validade:"2026-08-20",quantidade:12},
-    {produto:"Kapo Maçã",parte:"2A",validade:"2027-02-13",quantidade:12},
-    {produto:"Kapo Maçã",parte:"2E",validade:"2026-06-02",quantidade:24},
+    {produto:"Kapo Maçã",parte:"2E",validade:"2027-02-13",quantidade:12},
     {produto:"Kapo Citrus",parte:"1,1D,3B",validade:"2027-01-14",quantidade:46},
-    {produto:"Kapo Citrus",parte:"1,1D,3B",validade:"2026-07-19",quantidade:8},
+    {produto:"Kapo Citrus",parte:"2A",validade:"2026-07-19",quantidade:8},
     {produto:"Kapo Citrus",parte:"2A",validade:"2026-10-06",quantidade:16},
-    {produto:"Kapo Citrus",parte:"2A",validade:"2026-11-29",quantidade:24},
-    {produto:"Kapo Citrus",parte:"2A",validade:"2026-12-15",quantidade:2},
+    {produto:"Kapo Citrus",parte:"3A",validade:"2026-11-29",quantidade:24},
+    {produto:"Kapo Citrus",parte:"3A",validade:"2026-12-15",quantidade:2},
     {produto:"Kapo Citrus",parte:"3A",validade:"2027-03-07",quantidade:44},
     {produto:"Kapo Citrus",parte:"1E",validade:"2026-09-15",quantidade:26},
-    {produto:"Kapo Citrus",parte:"1E",validade:"2026-09-13",quantidade:20},
-    {produto:"Kapo Citrus",parte:"1E",validade:"2026-08-20",quantidade:24},
+    {produto:"Kapo Citrus",parte:"2C",validade:"2026-09-13",quantidade:20},
+    {produto:"Kapo Citrus",parte:"2C",validade:"2026-08-20",quantidade:24},
     {produto:"Kapo Citrus",parte:"2C",validade:"2026-12-08",quantidade:22},
-    {produto:"Kapo Citrus",parte:"2C",validade:"2026-11-13",quantidade:5},
+    {produto:"Kapo Citrus",parte:"2E",validade:"2026-11-13",quantidade:5},
     {produto:"Kapo Citrus",parte:"2E",validade:"2027-02-03",quantidade:33},
-    {produto:"Kapo Citrus",parte:"2E",validade:"2027-04-25",quantidade:8},
-    {produto:"Kapo Citrus",parte:"2E",validade:"2026-07-12",quantidade:20},
-    {produto:"Kapo Citrus",parte:"2",validade:"2026-10-18",quantidade:26},
     {produto:"Powerade Uva",parte:"1F,1M,1N,3",validade:"2026-06-04",quantidade:24},
-    {produto:"Powerade Uva",parte:"1F,1M,1N,3",validade:"2026-06-04",quantidade:16},
-    {produto:"Powerade Uva",parte:"1",validade:"2027-01-07",quantidade:72},
-    {produto:"Powerade Uva",parte:"1",validade:"2027-02-24",quantidade:48},
+    {produto:"Powerade Uva",parte:"1B",validade:"2026-06-04",quantidade:16},
+    {produto:"Powerade Uva",parte:"1B",validade:"2027-01-07",quantidade:72},
+    {produto:"Powerade Uva",parte:"1B",validade:"2027-02-24",quantidade:48},
     {produto:"Powerade Uva",parte:"1B",validade:"2026-12-09",quantidade:48},
-    {produto:"Powerade Uva",parte:"1B",validade:"2027-03-18",quantidade:32},
+    {produto:"Powerade Uva",parte:"2A",validade:"2027-03-18",quantidade:32},
     {produto:"Powerade Uva",parte:"2A",validade:"2026-10-17",quantidade:80},
     {produto:"Powerade Uva",parte:"2B",validade:"2027-01-19",quantidade:48},
-    {produto:"Powerade Uva",parte:"2B",validade:"2027-03-05",quantidade:32},
+    {produto:"Powerade Uva",parte:"Crystal Sparkilyn Sabores",validade:"2027-03-05",quantidade:32},
+    {produto:"Powerade Frutas Tropicais",parte:"1,1G",validade:"2027-02-24",quantidade:48},
     {produto:"Powerade Frutas Tropicais",parte:"1,1G",validade:"2027-01-28",quantidade:8},
-    {produto:"Powerade Frutas Tropicais",parte:"1,1G",validade:"2027-03-20",quantidade:96},
-    {produto:"Powerade Frutas Tropicais",parte:"1,1G",validade:"2026-06-04",quantidade:28},
+    {produto:"Powerade Frutas Tropicais",parte:"1C,1D,1F",validade:"2027-03-20",quantidade:96},
+    {produto:"Powerade Frutas Tropicais",parte:"1C,1D,1F",validade:"2026-06-04",quantidade:28},
     {produto:"Powerade Frutas Tropicais",parte:"1C,1D,1F",validade:"2026-06-04",quantidade:24},
-    {produto:"Powerade Frutas Tropicais",parte:"1C,1D,1F",validade:"2026-06-26",quantidade:24},
-    {produto:"Powerade Frutas Tropicais",parte:"1C,1D,1F",validade:"2026-10-14",quantidade:28},
+    {produto:"Powerade Frutas Tropicais",parte:"2A",validade:"2026-06-26",quantidade:24},
+    {produto:"Powerade Frutas Tropicais",parte:"2A",validade:"2026-10-14",quantidade:28},
     {produto:"Powerade Frutas Tropicais",parte:"2A",validade:"2026-10-15",quantidade:48},
-    {produto:"Powerade Frutas Tropicais",parte:"2A",validade:"2027-02-10",quantidade:76},
-    {produto:"Powerade Frutas Tropicais",parte:"2B",validade:"2027-02-12",quantidade:28},
-    {produto:"Powerade Frutas Tropicais",parte:"2",validade:"2027-03-12",quantidade:26},
-    {produto:"Powerade Frutas Tropicais",parte:"2",validade:"2027-03-27",quantidade:22},
+    {produto:"Powerade Frutas Tropicais",parte:"2B",validade:"2027-02-10",quantidade:76},
     {produto:"Powerade Montain Blast",parte:"1F,1M,1N,3",validade:"2026-06-04",quantidade:75},
-    {produto:"Powerade Montain Blast",parte:"1F,1M,1N,3",validade:"2026-12-09",quantidade:46},
+    {produto:"Powerade Montain Blast",parte:"1B",validade:"2026-12-09",quantidade:46},
     {produto:"Powerade Montain Blast",parte:"1B",validade:"2027-03-18",quantidade:104},
-    {produto:"Powerade Montain Blast",parte:"1B",validade:"2026-11-17",quantidade:6},
-    {produto:"Powerade Montain Blast",parte:"1",validade:"2027-01-06",quantidade:182},
-    {produto:"Powerade Montain Blast",parte:"1",validade:"2027-02-24",quantidade:48},
+    {produto:"Powerade Montain Blast",parte:"2C",validade:"2026-11-17",quantidade:6},
+    {produto:"Powerade Montain Blast",parte:"2C",validade:"2027-01-06",quantidade:182},
+    {produto:"Powerade Montain Blast",parte:"2C",validade:"2027-02-24",quantidade:48},
     {produto:"Powerade Montain Blast",parte:"2C",validade:"2027-01-19",quantidade:118},
-    {produto:"Powerade Montain Blast",parte:"2C",validade:"2027-03-26",quantidade:32},
-    {produto:"Powerade Montain Blast",parte:"2B",validade:"2026-12-13",quantidade:60},
-    {produto:"Powerade Montain Blast",parte:"2B",validade:"2027-02-04",quantidade:74},
-    {produto:"Powerade Montain Blast",parte:"2B",validade:"2027-02-20",quantidade:16},
+    {produto:"Powerade Montain Blast",parte:"2B",validade:"2027-03-26",quantidade:32},
     {produto:"Powerade Tangerina",parte:"1F,1G,1K",validade:"2026-06-04",quantidade:2},
-    {produto:"Powerade Tangerina",parte:"1F,1G,1K",validade:"2026-06-04",quantidade:1},
+    {produto:"Powerade Tangerina",parte:"1L",validade:"2026-06-04",quantidade:1},
     {produto:"Powerade Tangerina",parte:"1L",validade:"2027-02-12",quantidade:18},
     {produto:"Powerade Tangerina",parte:"1B,3",validade:"2026-11-25",quantidade:9},
-    {produto:"Powerade Tangerina",parte:"2A",validade:"2027-02-12",quantidade:6},
-    {produto:"Powerade Tangerina",parte:"2",validade:"2026-12-08",quantidade:4},
-    {produto:"Powerade Tangerina",parte:"2",validade:"2026-05-31",quantidade:2},
     {produto:"Powerade Limão",parte:"1F,1K,3",validade:"2026-06-04",quantidade:5},
-    {produto:"Powerade Limão",parte:"1F,1K,3",validade:"2026-06-04",quantidade:1},
-    {produto:"Powerade Limão",parte:"1",validade:"2026-11-15",quantidade:12},
-    {produto:"Powerade Limão",parte:"1",validade:"2027-01-07",quantidade:24},
-    {produto:"Powerade Limão",parte:"1",validade:"2027-02-12",quantidade:12},
+    {produto:"Powerade Limão",parte:"1B",validade:"2026-06-04",quantidade:1},
+    {produto:"Powerade Limão",parte:"1B",validade:"2026-11-15",quantidade:12},
+    {produto:"Powerade Limão",parte:"1B",validade:"2027-01-07",quantidade:24},
+    {produto:"Powerade Limão",parte:"1B",validade:"2027-02-12",quantidade:12},
     {produto:"Powerade Limão",parte:"1B",validade:"2027-01-16",quantidade:6},
     {produto:"Powerade Limão",parte:"1G,1L",validade:"2027-01-21",quantidade:6},
     {produto:"Powerade Limão",parte:"2A",validade:"2026-09-01",quantidade:4},
-    {produto:"Powerade Limão",parte:"2A",validade:"2026-09-08",quantidade:8},
-    {produto:"Powerade Limão",parte:"2",validade:"2026-12-09",quantidade:6},
-    {produto:"Powerade Limão",parte:"2",validade:"2027-02-25",quantidade:12},
-    {produto:"Powerade Montain Blast Zero",parte:"1,1A",validade:"2026-12-16",quantidade:2},
+    {produto:"Powerade Montain Blast Zero",parte:"1,1A",validade:"2026-11-26",quantidade:230},
+    {produto:"Powerade Montain Blast Zero",parte:"1B,1D",validade:"2026-12-16",quantidade:2},
     {produto:"Powerade Montain Blast Zero",parte:"1B,1D",validade:"2027-01-13",quantidade:6},
-    {produto:"Powerade Montain Blast Zero",parte:"1B,1D",validade:"2027-03-19",quantidade:24},
-    {produto:"Powerade Montain Blast Zero",parte:"1B,1D",validade:"2027-01-28",quantidade:18},
-    {produto:"Powerade Montain Blast Zero",parte:"1B,1D",validade:"2027-01-19",quantidade:26},
+    {produto:"Powerade Montain Blast Zero",parte:"1E,1F,1J",validade:"2027-03-19",quantidade:24},
+    {produto:"Powerade Montain Blast Zero",parte:"1E,1F,1J",validade:"2027-01-28",quantidade:18},
+    {produto:"Powerade Montain Blast Zero",parte:"1E,1F,1J",validade:"2027-01-19",quantidade:26},
     {produto:"Powerade Montain Blast Zero",parte:"1E,1F,1J",validade:"2027-04-10",quantidade:24},
     {produto:"Powerade Montain Blast Zero",parte:"2C",validade:"2027-10-24",quantidade:50},
-    {produto:"Powerade Montain Blast Zero",parte:"2C",validade:"2027-01-22",quantidade:20},
+    {produto:"Powerade Montain Blast Zero",parte:"2B",validade:"2027-01-22",quantidade:20},
     {produto:"Powerade Montain Blast Zero",parte:"2B",validade:"2027-02-20",quantidade:24},
-    {produto:"Powerade Montain Blast Zero",parte:"2B",validade:"2027-01-09",quantidade:6},
-    {produto:"Powerade Montain Blast Zero",parte:"2B",validade:"2027-02-10",quantidade:42},
-    {produto:"Powerade Montain Blast Zero",parte:"2",validade:"2027-01-27",quantidade:8},
+    {produto:"Powerade Laranja",parte:"1N",validade:"2027-02-27",quantidade:16},
     {produto:"Powerade Laranja",parte:"1N",validade:"2027-02-12",quantidade:16},
-    {produto:"Powerade Laranja",parte:"1N",validade:"2027-01-28",quantidade:8},
+    {produto:"Powerade Laranja",parte:"1F",validade:"2027-01-28",quantidade:8},
     {produto:"Powerade Laranja",parte:"1F",validade:"2026-06-04",quantidade:10},
-    {produto:"Powerade Laranja",parte:"1F",validade:"2027-03-18",quantidade:20},
+    {produto:"Powerade Laranja",parte:"1D",validade:"2027-03-18",quantidade:20},
     {produto:"Powerade Laranja",parte:"1D",validade:"2027-01-19",quantidade:10},
-    {produto:"Powerade Laranja",parte:"1D",validade:"2027-02-09",quantidade:20},
-    {produto:"Powerade Laranja",parte:"1G,1L",validade:"2027-01-06",quantidade:12},
-    {produto:"Powerade Laranja",parte:"1G,1L",validade:"2027-03-03",quantidade:8},
-    {produto:"Powerade Laranja",parte:"1G,1L",validade:"2027-01-19",quantidade:8},
-    {produto:"Powerade Laranja",parte:"2",validade:"2026-05-31",quantidade:10},
-    {produto:"Powerade Laranja",parte:"2",validade:"2026-12-08",quantidade:2},
-    {produto:"Sparkling Crystal Limão",parte:"2",validade:"2026-11-22",quantidade:50},
-    {produto:"Sparkling Crystal Limão",parte:"2",validade:"2026-11-05",quantidade:12},
-    {produto:"Sparkling Crystal Limão",parte:"2",validade:"2027-01-17",quantidade:36},
-    {produto:"Sparkling Frutas Vermelhas",parte:"2",validade:"2027-02-26",quantidade:49},
-    {produto:"Sparkling Tang Cap. Limão",parte:"2",validade:"2027-01-29",quantidade:144},
-    {produto:"Sparkling Tang Cap. Limão",parte:"2",validade:"2027-04-02",quantidade:48},
-    {produto:"Sparkling Tang Cap. Limão",parte:"2",validade:"2027-03-12",quantidade:192},
-    {produto:"Sparkling Melancia",parte:"2",validade:"2027-02-02",quantidade:18},
-    {produto:"Sparkling Melancia",parte:"2",validade:"2027-04-23",quantidade:1},
-    {produto:"Sparkling Melancia",parte:"2",validade:"2027-03-20",quantidade:20}
+    {produto:"Powerade Laranja",parte:"1G,1L",validade:"2027-02-09",quantidade:20},
+    {produto:"Powerade Laranja",parte:"1G,1L",validade:"2027-01-06",quantidade:12}
   ];
 
   // TODOS_PRODUTOS é construído a partir do catálogo para retrocompatibilidade
@@ -3329,36 +3380,34 @@
   });
 
   // ---------- configurações (admin) ----------
-  // ---------- estoque atual (accordion produto -> partes + drawer detalhes) ----------
+  // ---------- estoque atual (lê da aba Validade, não calcula mais do log) ----------
   let estoqueDadosCache = null;
+  let validadesCache = [];
   const FABRICA_ATUAL_ESTOQUE = '2';
+
+  async function carregarValidades(){
+    try{
+      const res = await apiGet({ acao:'listarValidades' });
+      validadesCache = res.ok ? (res.validades || []) : [];
+      // normaliza
+      validadesCache.forEach(v => {
+        v.produto = String(v.produto||'').trim();
+        v.parte = String(v.parte||'').trim();
+        v.validade = validadeISO(v.validade);
+        v.quantidade = Number(v.quantidade) || 0;
+        v.fabrica = String(v.fabrica||'2');
+      });
+    }catch(e){
+      validadesCache = [];
+      console.error('carregarValidades:', e);
+    }
+  }
 
   function calcularEstoqueProdutosF(fabrica){
     const filtroFab = String(fabrica);
-    // saldos por chave produto||parte||validade
-    const itens = {};
-    (logCompleto||[]).forEach(r => {
-      if(String(r.fabrica||'2') !== filtroFab) return;
-      const produto = (r.produto||'').trim();
-      const parte = (r.parte||'').trim();
-      if(!produto) return;
-      const chave = produto + '||' + parte + '||' + (r.validade||'');
-      if(!itens[chave]){
-        itens[chave] = {
-          produto, parte, validade: r.validade||'',
-          formula: r.formula||'', saldo:0,
-          entradas:0, saidas:0,
-          movimentacoes: []
-        };
-      }
-      const q = Number(r.quantidade_guardada) || 0;
-      if(r.tipo === 'entrada' || r.tipo === 'inventario_inicial'){ itens[chave].saldo += q; itens[chave].entradas += q; }
-      else if(r.tipo === 'saida'){ itens[chave].saldo -= q; itens[chave].saidas += q; }
-      itens[chave].movimentacoes.push(r);
-    });
-
-    // Agrupa por produto > parte
+    // Agrupa lotes ativos por produto > parte
     const produtos = {};
+    // Pre-popula com TODOS os produtos do catálogo (saldo 0 se nada)
     CATALOGO_PRODUTOS.forEach(p => {
       produtos[p.produto] = {
         produto: p.produto, formula: p.formula, sap: p.sap_produto, categoria: p.categoria,
@@ -3369,23 +3418,35 @@
       });
     });
 
-    Object.values(itens).forEach(it => {
-      if(!produtos[it.produto]){
-        produtos[it.produto] = { produto: it.produto, formula: it.formula, sap:'', categoria:'(legado)', partes:{}, saldoTotal:0, validadeMaisProx:null, noCatalogo:false };
+    // Adiciona lotes da aba Validade
+    validadesCache.forEach(v => {
+      if(v.fabrica !== filtroFab) return;
+      if(v.quantidade <= 0) return;
+      if(!produtos[v.produto]){
+        produtos[v.produto] = { produto: v.produto, formula:'', sap:'', categoria:'(legado)', partes:{}, saldoTotal:0, validadeMaisProx:null, noCatalogo:false };
       }
-      const prod = produtos[it.produto];
-      if(!prod.partes[it.parte]){
-        prod.partes[it.parte] = { nome: it.parte, saldo:0, lotes:[], movimentacoes:[] };
+      const prod = produtos[v.produto];
+      if(!prod.partes[v.parte]){
+        prod.partes[v.parte] = { nome: v.parte, saldo:0, lotes:[], movimentacoes:[] };
       }
-      prod.partes[it.parte].saldo += it.saldo;
-      if(it.saldo > 0){
-        prod.partes[it.parte].lotes.push({ validade:it.validade, saldo:it.saldo, entradas:it.entradas, saidas:it.saidas });
+      const parte = prod.partes[v.parte];
+      parte.saldo += v.quantidade;
+      parte.lotes.push({ validade: v.validade, saldo: v.quantidade, entradas: v.quantidade, saidas: 0 });
+      prod.saldoTotal += v.quantidade;
+      if(v.validade && (!prod.validadeMaisProx || v.validade < prod.validadeMaisProx)){
+        prod.validadeMaisProx = v.validade;
       }
-      prod.partes[it.parte].movimentacoes.push(...it.movimentacoes);
-      prod.saldoTotal += it.saldo;
-      if(it.saldo > 0 && it.validade){
-        if(!prod.validadeMaisProx || it.validade < prod.validadeMaisProx) prod.validadeMaisProx = it.validade;
-      }
+    });
+
+    // Adiciona movimentações do log (pro drawer mostrar histórico)
+    (logCompleto||[]).forEach(r => {
+      if(String(r.fabrica||'2') !== filtroFab) return;
+      if(r.tipo === 'inventario_inicial') return;
+      const produto = r.produto, parte = r.parte;
+      if(!produto) return;
+      if(!produtos[produto]) return;
+      if(!produtos[produto].partes[parte]) return;
+      produtos[produto].partes[parte].movimentacoes.push(r);
     });
 
     return Object.values(produtos);
@@ -3393,9 +3454,9 @@
 
   function renderEstoque(){
     const container = $('estoqueList');
-    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Calculando estoque...</p></div>';
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Carregando estoque...</p></div>';
 
-    carregarLog().then(() => {
+    Promise.all([carregarValidades(), carregarLog()]).then(() => {
       try {
         const produtos = calcularEstoqueProdutosF(FABRICA_ATUAL_ESTOQUE);
         estoqueDadosCache = produtos;
@@ -3405,7 +3466,7 @@
         container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao montar o estoque: ${escapeHtml(err.message||'desconhecido')}<br><small style="opacity:0.6;">Veja o console (F12) para detalhes.</small></div>`;
       }
     }).catch(err => {
-      console.error('Erro carregarLog:', err);
+      console.error('Erro carregando dados:', err);
       container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro carregando: ${escapeHtml(err.message||'desconhecido')}</div>`;
     });
   }
@@ -4158,7 +4219,7 @@
 
   async function renderValidades(){
     $('validadesResumo').innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
-    await carregarLog();
+    await Promise.all([carregarValidades(), carregarLog()]);
     const itens = coletarLotesParaValidades();
     // Resumo
     const vencidos = itens.filter(x => x.dias < 0);
@@ -4299,7 +4360,7 @@
   // Indicador no menu lateral (bolinha pulsante)
   async function atualizarIndicadorValidades(){
     try{
-      await carregarLog();
+      await carregarValidades();
       const itens = coletarLotesParaValidades();
       const criticos = itens.filter(x => x.dias <= 30);
       const badge = document.querySelector('[data-step="screen-validades"] .val-badge');
@@ -4578,10 +4639,9 @@
     const container = $('fab1List');
     container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza);font-size:13px;">Carregando...</p></div>';
     try{
-      await carregarLog();
+      await Promise.all([carregarValidades(), carregarLog()]);
       const produtos = calcularEstoqueProdutosF('1');
-      estoqueDadosCache = produtos; // drawer pega daqui
-      // mostra só produtos com saldo positivo ou que apareceram em algum log f1
+      estoqueDadosCache = produtos;
       renderEstoqueProdutos(container, produtos);
     }catch(e){
       container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao carregar</div>`;
