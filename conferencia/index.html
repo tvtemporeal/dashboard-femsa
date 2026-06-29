@@ -903,18 +903,41 @@
   .prod-ac-toggle{ background:transparent; border:1px solid var(--linha); color:var(--osso); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; flex-shrink:0; }
   .prod-ac-body{ border-top:1px solid var(--linha); padding:8px; background:rgba(0,0,0,0.2); }
   .parte-linha{
-    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    display:flex; flex-direction:column; gap:8px; padding:12px 14px;
     background:transparent; border:none; border-radius:8px;
     color:var(--osso); width:100%; text-align:left; cursor:pointer;
     font-family:inherit;
   }
   .parte-linha:hover{ background:rgba(255,255,255,0.04); }
+  .parte-linha-topo{ display:flex; align-items:center; gap:10px; }
   .parte-linha .parte-tag{ flex-shrink:0; min-width:54px; text-align:center; }
   .parte-saldo{ font-family:'JetBrains Mono', monospace; font-size:18px; font-weight:900; min-width:50px; text-align:right; }
   .parte-saldo.positivo{ color:var(--verde); }
   .parte-saldo.zero{ color:var(--cinza); }
   .parte-info{ font-size:11px; color:var(--cinza); flex:1; }
-  .parte-arrow{ color:var(--cinza); font-size:16px; }
+  .parte-arrow{ color:var(--cinza); font-size:18px; font-weight:700; }
+
+  .parte-lotes-chips{
+    display:flex; flex-wrap:wrap; gap:6px; padding-left:62px;
+  }
+  .parte-lotes-chips.vazio{
+    font-size:11px; color:var(--cinza); font-style:italic; padding-left:62px;
+  }
+  .lote-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--carvao); border:1px solid var(--linha);
+    padding:4px 9px; border-radius:6px; font-size:11px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .lote-chip b{ font-weight:700; color:var(--osso); }
+  .lote-chip .chip-qtd{
+    background:rgba(31,138,76,0.18); color:#4FCC85;
+    padding:1px 6px; border-radius:4px; font-weight:800; font-size:10px;
+  }
+  .lote-chip.chip-verm{ border-color:var(--erro); background:rgba(217,54,42,0.08); }
+  .lote-chip.chip-verm b{ color:#F08176; }
+  .lote-chip.chip-amar{ border-color:var(--ambar); background:rgba(217,142,4,0.08); }
+  .lote-chip.chip-amar b{ color:var(--ambar); }
 
   /* ============ DRAWER LATERAL ============ */
   #drawerParteOverlay{
@@ -936,13 +959,22 @@
   }
   .drawer-parte.aberto{ transform:translateX(0); }
   .drawer-head{
-    display:flex; justify-content:space-between; align-items:flex-start;
-    padding:18px 20px; border-bottom:1px solid var(--linha); background:var(--carvao);
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; border-bottom:1px solid var(--linha); background:var(--carvao);
   }
-  .drawer-titulo{ font-size:16px; font-weight:800; }
-  .drawer-sub{ font-size:11.5px; color:var(--cinza); margin-top:3px; }
-  .drawer-close{ background:transparent; border:1px solid var(--linha); color:var(--osso); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:18px; flex-shrink:0; }
+  .drawer-back{
+    background:transparent; border:1px solid var(--linha); color:var(--osso);
+    padding:8px 14px; border-radius:8px; cursor:pointer; font-family:inherit;
+    font-size:13px; font-weight:700;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .drawer-back:hover{ background:rgba(255,255,255,0.04); border-color:var(--vermelho); color:var(--vermelho); }
+  .drawer-tit-bar{ padding:14px 20px 10px; border-bottom:1px solid var(--linha); }
+  .drawer-titulo{ font-size:18px; font-weight:800; line-height:1.2; }
+  .drawer-sub{ font-size:12px; color:var(--cinza); margin-top:4px; }
+  .drawer-close{ background:transparent; border:1px solid var(--linha); color:var(--osso); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:20px; flex-shrink:0; }
   .drawer-corpo{ flex:1; overflow-y:auto; padding:18px 20px; }
+  .drawer-footer{ padding:14px 20px; border-top:1px solid var(--linha); background:var(--carvao); }
   .drawer-resumo{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; }
   .drawer-resumo > div{ background:var(--carvao); border:1px solid var(--linha); border-radius:8px; padding:10px; text-align:center; }
   .dr-label{ font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); margin-bottom:4px; }
@@ -1589,16 +1621,23 @@
     </section>
 
     <!-- Drawer lateral de detalhes de parte -->
-    <div id="drawerParteOverlay" onclick="document.getElementById('drawerParte').classList.remove('aberto')"></div>
+    <div id="drawerParteOverlay" onclick="fecharDrawerParteSeguro()"></div>
     <aside id="drawerParte" class="drawer-parte">
       <div class="drawer-head">
-        <div>
-          <div class="drawer-titulo" id="drawerParteTitulo">—</div>
-          <div class="drawer-sub" id="drawerParteSub">—</div>
-        </div>
-        <button class="drawer-close" onclick="document.getElementById('drawerParte').classList.remove('aberto')">×</button>
+        <button class="drawer-back" id="drawerParteVoltar" onclick="fecharDrawerParteSeguro()" title="Voltar">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 14L5 9l6-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Voltar</span>
+        </button>
+        <button class="drawer-close" onclick="fecharDrawerParteSeguro()" title="Fechar">×</button>
+      </div>
+      <div class="drawer-tit-bar">
+        <div class="drawer-titulo" id="drawerParteTitulo">—</div>
+        <div class="drawer-sub" id="drawerParteSub">—</div>
       </div>
       <div id="drawerParteCorpo" class="drawer-corpo"></div>
+      <div class="drawer-footer">
+        <button class="btn btn-ghost" onclick="fecharDrawerParteSeguro()" style="width:100%;">← Voltar para o estoque</button>
+      </div>
     </aside>
 
     <section class="screen" id="screen-config">
@@ -3205,15 +3244,36 @@
         </div>
         <div class="prod-ac-body" style="display:none;">
           ${partes.map(p => {
-            const sinPa = calcularSinalValidade(p.lotes[0]?.validade);
+            // ordena lotes por validade
+            const lotesOrd = (p.lotes||[]).slice().sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
+            const proxima = lotesOrd[0] ? lotesOrd[0].validade : '';
+            const sinPa = calcularSinalValidade(proxima);
             const sinPaHtml = sinPa ? `<span class="sinal-badge sinal-${sinPa.cor}">${sinPa.label}</span>` : '';
+
+            // Chips com cada lote ativo
+            const chipsHtml = lotesOrd.length > 0
+              ? `<div class="parte-lotes-chips">
+                   ${lotesOrd.map(l => {
+                     const s = calcularSinalValidade(l.validade);
+                     const corCls = s ? 'chip-' + s.cor : '';
+                     return `<span class="lote-chip ${corCls}" title="Validade ${formatarDataBR(l.validade)} · saldo ${l.saldo}">
+                       <b>${formatarDataBR(l.validade) || '—'}</b>
+                       <span class="chip-qtd">${l.saldo}</span>
+                     </span>`;
+                   }).join('')}
+                 </div>`
+              : `<div class="parte-lotes-chips vazio">sem lotes em estoque</div>`;
+
             return `
               <button class="parte-linha" data-produto="${escapeHtml(prod.produto)}" data-parte="${escapeHtml(p.nome||'')}">
-                <span class="parte-tag">${escapeHtml(p.nome||'—')}</span>
-                <span class="parte-saldo ${p.saldo>0?'positivo':'zero'}">${p.saldo}</span>
-                <span class="parte-info">${p.lotes.length} lote${p.lotes.length!==1?'s':''} ativo${p.lotes.length!==1?'s':''}</span>
-                ${sinPaHtml}
-                <span class="parte-arrow">›</span>
+                <div class="parte-linha-topo">
+                  <span class="parte-tag">${escapeHtml(p.nome||'—')}</span>
+                  <span class="parte-saldo ${p.saldo>0?'positivo':'zero'}">${p.saldo}</span>
+                  <span class="parte-info">${lotesOrd.length} lote${lotesOrd.length!==1?'s':''}</span>
+                  ${sinPaHtml}
+                  <span class="parte-arrow">›</span>
+                </div>
+                ${chipsHtml}
               </button>
             `;
           }).join('')}
@@ -3255,7 +3315,6 @@
     const corpo = $('drawerParteCorpo');
     $('drawerParteTitulo').textContent = produto;
     $('drawerParteSub').innerHTML = `Parte <b>${escapeHtml(parte||'—')}</b> · ${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''}`;
-
     // Lotes ativos
     const lotesAtivos = (dados.lotes||[]).filter(l => l.saldo > 0)
       .sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
@@ -3323,11 +3382,48 @@
       </div>
     `;
     drawer.classList.add('aberto');
+    // Empilha estado pro botão voltar do telefone fechar o drawer em vez de sair
+    try { history.pushState({ drawerAberto:true }, '', location.href); } catch(e){}
   }
 
   function fecharDrawerParte(){
     $('drawerParte').classList.remove('aberto');
   }
+  // Fechar com guarda contra duplo popstate
+  function fecharDrawerParteSeguro(){
+    if(!$('drawerParte').classList.contains('aberto')) return;
+    fecharDrawerParte();
+    // se há estado empilhado pelo drawer, faz back pra remover do histórico
+    if(history.state && history.state.drawerAberto){
+      history.back();
+    }
+  }
+  window.fecharDrawerParteSeguro = fecharDrawerParteSeguro;
+  window.fecharDrawerParte = fecharDrawerParte;
+
+  // Intercepta o botão voltar do telefone
+  window.addEventListener('popstate', (e) => {
+    // Se o drawer estiver aberto, fecha em vez de sair
+    if($('drawerParte') && $('drawerParte').classList.contains('aberto')){
+      fecharDrawerParte();
+      return;
+    }
+    // Se o seletor estiver aberto, fecha
+    if($('seletorOverlay') && $('seletorOverlay').classList.contains('show')){
+      fecharSeletorProduto();
+      return;
+    }
+    // Se o drawer-nav estiver aberto, fecha
+    if($('drawer') && $('drawer').classList.contains('open')){
+      $('drawer').classList.remove('open');
+      $('drawerScrim').classList.remove('show');
+      return;
+    }
+    // Caso contrário deixa o navegador navegar (mas re-empilha pra não sair direto)
+    history.pushState({}, '', location.href);
+  });
+  // Empilha um estado inicial pra ter onde voltar
+  try { history.pushState({}, '', location.href); } catch(e){}
 
   $('btnVoltarInicioEstoque').addEventListener('click', () => {
     iniciarTabelaManual();
