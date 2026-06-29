@@ -3396,9 +3396,17 @@
     container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Calculando estoque...</p></div>';
 
     carregarLog().then(() => {
-      const produtos = calcularEstoqueProdutosF(FABRICA_ATUAL_ESTOQUE);
-      estoqueDadosCache = produtos;
-      renderEstoqueProdutos(container, produtos);
+      try {
+        const produtos = calcularEstoqueProdutosF(FABRICA_ATUAL_ESTOQUE);
+        estoqueDadosCache = produtos;
+        renderEstoqueProdutos(container, produtos);
+      } catch(err) {
+        console.error('Erro renderEstoque:', err);
+        container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao montar o estoque: ${escapeHtml(err.message||'desconhecido')}<br><small style="opacity:0.6;">Veja o console (F12) para detalhes.</small></div>`;
+      }
+    }).catch(err => {
+      console.error('Erro carregarLog:', err);
+      container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro carregando: ${escapeHtml(err.message||'desconhecido')}</div>`;
     });
   }
 
@@ -4808,15 +4816,56 @@
     showScreen('screen-scan');
   });
 
+  // Normaliza qualquer formato de validade para YYYY-MM-DD (ou '' se não der)
+  function validadeISO(v){
+    if(v === null || v === undefined || v === '') return '';
+    if(v instanceof Date){
+      if(isNaN(v.getTime())) return '';
+      return v.getFullYear() + '-' + String(v.getMonth()+1).padStart(2,'0') + '-' + String(v.getDate()).padStart(2,'0');
+    }
+    const s = String(v).trim();
+    if(!s) return '';
+    // já está em ISO
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m) return `${m[1]}-${m[2]}-${m[3]}`;
+    // DD/MM/YYYY
+    m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+    if(m) return `${m[3]}-${m[2]}-${m[1]}`;
+    // tenta Date()
+    const d = new Date(s);
+    if(!isNaN(d.getTime())){
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+    return '';
+  }
+
   async function carregarLog(){
     try{
       const res = await apiGet({ acao:'listarLog' });
-      logCompleto = res.ok ? res.log : [];
+      const bruto = res.ok ? (res.log || []) : [];
+      // Normaliza tudo: validade vira string ISO, quantidades viram número, campos texto vira string
+      logCompleto = bruto.map(r => ({
+        ...r,
+        tipo: String(r.tipo||'').trim(),
+        produto: String(r.produto||'').trim(),
+        parte: String(r.parte||'').trim(),
+        formula: String(r.formula||''),
+        operador: String(r.operador||''),
+        timestamp: r.timestamp instanceof Date ? r.timestamp.toLocaleString('pt-BR') : String(r.timestamp||''),
+        validade: validadeISO(r.validade),
+        quantidade_esperada: Number(r.quantidade_esperada) || 0,
+        quantidade_guardada: Number(r.quantidade_guardada) || 0,
+        unidade: String(r.unidade||'unid.'),
+        status: String(r.status||''),
+        fabrica: String(r.fabrica||'2'),
+        justificativa_fefo: String(r.justificativa_fefo||'')
+      }));
     }catch(e){
       logCompleto = [];
       toast('Erro ao carregar histórico. Verifique sua internet.');
+      console.error('carregarLog:', e);
     }
-    renderLog('todos', 'todos');
+    try { renderLog('todos', 'todos'); } catch(e){ console.error('renderLog erro:', e); }
   }
 
   function renderLog(filtro, filtroTipo){
