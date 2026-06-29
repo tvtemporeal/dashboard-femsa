@@ -2820,7 +2820,7 @@
       const v = r.validade || '';
       if(!mapa[v]) mapa[v] = { validade:v, saldo:0 };
       const q = Number(r.quantidade_guardada) || 0;
-      if(r.tipo === 'entrada') mapa[v].saldo += q;
+      if(r.tipo === 'entrada' || r.tipo === 'inventario_inicial') mapa[v].saldo += q;
       else if(r.tipo === 'saida') mapa[v].saldo -= q;
     });
     return Object.values(mapa).filter(x => x.saldo > 0).sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
@@ -2837,7 +2837,7 @@
       const chave = (r.parte||'') + '||' + (r.validade||'');
       if(!saldosPorChave[chave]) saldosPorChave[chave] = { validade:r.validade, saldo:0 };
       const q = Number(r.quantidade_guardada) || 0;
-      if(r.tipo === 'entrada') saldosPorChave[chave].saldo += q;
+      if(r.tipo === 'entrada' || r.tipo === 'inventario_inicial') saldosPorChave[chave].saldo += q;
       else if(r.tipo === 'saida') saldosPorChave[chave].saldo -= q;
     });
     Object.values(saldosPorChave).forEach(x => {
@@ -3005,7 +3005,7 @@
   // do que a que está sendo retirada agora — alerta de FEFO (primeiro que vence, primeiro que sai)
   function verificarFEFO(registrosSaida){
     // usa logCompleto que já foi carregado do backend
-    const entradas = logCompleto.filter(r => r.tipo === 'entrada' && r.validade);
+    const entradas = logCompleto.filter(r => (r.tipo === 'entrada' || r.tipo === 'inventario_inicial') && r.validade);
     const avisos = [];
     registrosSaida.forEach(saida => {
       if(!saida.validade) return;
@@ -3352,7 +3352,7 @@
         };
       }
       const q = Number(r.quantidade_guardada) || 0;
-      if(r.tipo === 'entrada'){ itens[chave].saldo += q; itens[chave].entradas += q; }
+      if(r.tipo === 'entrada' || r.tipo === 'inventario_inicial'){ itens[chave].saldo += q; itens[chave].entradas += q; }
       else if(r.tipo === 'saida'){ itens[chave].saldo -= q; itens[chave].saidas += q; }
       itens[chave].movimentacoes.push(r);
     });
@@ -3555,7 +3555,9 @@
     }
 
     // Histórico (todas as movimentações ordenadas por data desc)
-    const movs = (dados.movimentacoes||[]).slice().sort((a,b) => {
+    const movs = (dados.movimentacoes||[])
+      .filter(m => m.tipo !== 'inventario_inicial')
+      .slice().sort((a,b) => {
       const da = parseData(a.timestamp || a.registradoEm) || new Date(0);
       const db = parseData(b.timestamp || b.registradoEm) || new Date(0);
       return db - da;
@@ -4819,7 +4821,8 @@
 
   function renderLog(filtro, filtroTipo){
     const container = $('logContainer');
-    let dados = logCompleto.slice().reverse();
+    // Esconde registros do tipo "inventario_inicial" — eles contam pro estoque mas não aparecem no histórico
+    let dados = logCompleto.filter(r => r.tipo !== 'inventario_inicial').slice().reverse();
     if(filtroTipo === 'entrada') dados = dados.filter(r => r.tipo === 'entrada');
     if(filtroTipo === 'saida') dados = dados.filter(r => r.tipo === 'saida');
     if(filtro === 'erro') dados = dados.filter(r => r.tipo === 'entrada' && r.status !== 'ok');
