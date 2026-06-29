@@ -852,6 +852,209 @@
   .log-del-btn:active{ background:rgba(217,54,42,0.12); border-color:var(--erro); }
 
   /* ---- CARDS AUDITORIA ---- */
+
+  /* ============ PRODUTO COM PARTES (entrada/saída) ============ */
+  .produto-card{ background:var(--carvao); border:1.5px solid var(--linha); border-radius:14px; padding:14px; margin-bottom:14px; }
+  .produto-card .pr-top{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .produto-card .pr-num-circle{ width:28px; height:28px; border-radius:50%; background:var(--vermelho); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; flex-shrink:0; }
+  .produto-card .prod-info{ flex:1; min-width:0; }
+  .produto-card .prod-nome{ font-size:15px; font-weight:800; }
+  .produto-card .prod-meta{ font-size:11.5px; color:var(--ambar); margin-top:2px; font-weight:600; }
+
+  .parte-bloco{
+    background:rgba(255,255,255,0.03); border:1px solid var(--linha);
+    border-radius:10px; padding:10px 12px; margin-bottom:8px;
+    border-left:3px solid var(--ambar);
+  }
+  .parte-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .parte-tag{ font-size:11px; font-weight:800; padding:3px 9px; background:var(--vermelho); color:#fff; border-radius:5px; letter-spacing:0.3px; }
+  .link-btn{ background:none; border:none; color:var(--ambar); font-size:12px; font-weight:700; cursor:pointer; padding:4px 8px; border-radius:5px; }
+  .link-btn:hover{ background:rgba(217,142,4,0.1); }
+
+  .lote-row{ display:flex; gap:8px; align-items:flex-end; margin-bottom:6px; }
+  .lote-field{ flex:1; min-width:0; }
+  .lote-field label{ display:block; font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); margin-bottom:3px; font-weight:700; }
+  .lote-field input, .lote-field select{ width:100%; background:var(--preto); border:1.5px solid var(--linha); color:var(--osso); padding:8px 10px; border-radius:7px; font-family:inherit; font-size:13px; }
+
+  .fefo-aviso{
+    background:rgba(217,54,42,0.1); border:1.5px solid var(--erro); color:#F08176;
+    border-radius:8px; padding:10px 12px; margin:8px 0;
+  }
+  .fefo-aviso-tit{ font-weight:800; font-size:13px; margin-bottom:3px; }
+  .fefo-aviso-txt{ font-size:12px; line-height:1.4; }
+
+  /* ============ ACCORDION ESTOQUE ============ */
+  .prod-accordion{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
+    margin-bottom:10px; overflow:hidden;
+  }
+  .prod-accordion.zerado{ opacity:0.5; }
+  .prod-accordion.aberto{ border-color:var(--vermelho); }
+  .prod-ac-head{ display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer; }
+  .prod-ac-head:hover{ background:rgba(255,255,255,0.02); }
+  .prod-ac-info{ flex:1; min-width:0; }
+  .prod-ac-nome{ font-size:15px; font-weight:800; }
+  .prod-ac-meta{ font-size:11.5px; color:var(--ambar); margin-top:2px; font-weight:600; }
+  .prod-ac-saldo{ text-align:right; flex-shrink:0; }
+  .prod-ac-saldo .num{ font-size:22px; font-weight:900; }
+  .prod-ac-saldo .num.positivo{ color:var(--verde); }
+  .prod-ac-saldo .num.zero{ color:var(--cinza); }
+  .prod-ac-saldo .unit{ font-size:10px; color:var(--cinza); text-transform:uppercase; }
+  .prod-ac-toggle{ background:transparent; border:1px solid var(--linha); color:var(--osso); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; flex-shrink:0; }
+  .prod-ac-body{ border-top:1px solid var(--linha); padding:8px; background:rgba(0,0,0,0.2); }
+  .parte-linha{
+    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    background:transparent; border:none; border-radius:8px;
+    color:var(--osso); width:100%; text-align:left; cursor:pointer;
+    font-family:inherit;
+  }
+  .parte-linha:hover{ background:rgba(255,255,255,0.04); }
+  .parte-linha .parte-tag{ flex-shrink:0; min-width:54px; text-align:center; }
+  .parte-saldo{ font-family:'JetBrains Mono', monospace; font-size:18px; font-weight:900; min-width:50px; text-align:right; }
+  .parte-saldo.positivo{ color:var(--verde); }
+  .parte-saldo.zero{ color:var(--cinza); }
+  .parte-info{ font-size:11px; color:var(--cinza); flex:1; }
+  .parte-arrow{ color:var(--cinza); font-size:16px; }
+
+  /* ============ DRAWER LATERAL ============ */
+  #drawerParteOverlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.55); opacity:0; pointer-events:none;
+    transition:opacity 0.25s; z-index:50;
+  }
+  #drawerParte.aberto ~ #drawerParteOverlay,
+  body:has(#drawerParte.aberto) #drawerParteOverlay{ opacity:1; pointer-events:auto; }
+  /* fallback sem :has */
+  .drawer-parte.aberto + #drawerParteOverlay { opacity:1; pointer-events:auto; }
+
+  .drawer-parte{
+    position:fixed; top:0; right:0; bottom:0;
+    width:min(440px, 100vw);
+    background:var(--preto); border-left:1.5px solid var(--linha);
+    z-index:51; display:flex; flex-direction:column;
+    transform:translateX(100%); transition:transform 0.3s ease;
+    box-shadow:-10px 0 30px rgba(0,0,0,0.6);
+  }
+  .drawer-parte.aberto{ transform:translateX(0); }
+  .drawer-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:18px 20px; border-bottom:1px solid var(--linha); background:var(--carvao);
+  }
+  .drawer-titulo{ font-size:16px; font-weight:800; }
+  .drawer-sub{ font-size:11.5px; color:var(--cinza); margin-top:3px; }
+  .drawer-close{ background:transparent; border:1px solid var(--linha); color:var(--osso); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:18px; flex-shrink:0; }
+  .drawer-corpo{ flex:1; overflow-y:auto; padding:18px 20px; }
+  .drawer-resumo{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px; }
+  .drawer-resumo > div{ background:var(--carvao); border:1px solid var(--linha); border-radius:8px; padding:10px; text-align:center; }
+  .dr-label{ font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--cinza); margin-bottom:4px; }
+  .dr-val{ font-family:'JetBrains Mono', monospace; font-size:20px; font-weight:900; }
+  .dr-val.positivo{ color:var(--verde); }
+  .dr-val.zero{ color:var(--cinza); }
+  .drawer-secao{ margin-bottom:20px; }
+
+  .lote-card{ background:var(--carvao); border:1px solid var(--linha); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+  .lote-card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:4px; }
+  .lote-val{ font-size:14px; font-weight:800; }
+  .lote-info{ font-size:11px; color:var(--cinza); margin-top:2px; }
+  .lote-saldo{ font-family:'JetBrains Mono', monospace; font-size:22px; font-weight:900; color:var(--verde); }
+  .fefo-tag{ display:inline-block; background:var(--verde); color:#000; font-size:9px; font-weight:800; padding:2px 6px; border-radius:3px; letter-spacing:1px; margin-left:6px; vertical-align:2px; }
+
+  .hist-item{ display:flex; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .hist-icon{ width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0; }
+  .hist-icon.entrou{ background:rgba(31,138,76,0.18); color:#4FCC85; }
+  .hist-icon.saiu{ background:rgba(217,142,4,0.18); color:#F0B33E; }
+  .hist-meta{ flex:1; min-width:0; font-size:12.5px; }
+  .hist-sub{ font-size:10.5px; color:var(--cinza); margin-top:2px; }
+  .hist-just{ font-size:11px; color:#F08176; margin-top:3px; font-style:italic; }
+
+  .empty-state.small{ padding:18px 12px; font-size:12px; }
+  .empty-state.small .ic{ font-size:24px; margin-bottom:6px; }
+
+  /* ---- CARDS AUDITORIA OLD ---- */
+
+  /* ============ PAINEL DE VALIDADES ============ */
+  .val-resumo{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px;
+  }
+  @media (max-width:600px){ .val-resumo{ grid-template-columns:repeat(2,1fr); } }
+  .val-card{
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
+    padding:14px 16px; text-align:left; position:relative; overflow:hidden;
+  }
+  .val-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:currentColor; }
+  .val-card-vermelho{ color:var(--erro); }
+  .val-card-laranja{ color:var(--ambar); }
+  .val-card-amarelo{ color:#F0CC4E; }
+  .val-card-verde{ color:var(--verde); }
+  .vc-num{ font-family:'JetBrains Mono', monospace; font-size:32px; font-weight:900; line-height:1; color:currentColor; }
+  .vc-label{ font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--cinza); margin-top:6px; font-weight:700; }
+  .vc-qtd{ font-size:11px; color:var(--cinza); margin-top:2px; }
+
+  .val-secao{ margin-bottom:18px; }
+  .val-secao-titulo{ font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--cinza); font-weight:800; margin-bottom:10px; }
+
+  .val-timeline{ background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px; padding:14px 10px; overflow-x:auto; }
+  .tl-track{ display:flex; gap:3px; min-width:max-content; align-items:flex-end; }
+  .tl-day{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:30px; cursor:default; }
+  .tl-day.has-items{ cursor:pointer; }
+  .tl-day.has-items:hover{ opacity:0.8; }
+  .tl-bar{
+    width:8px; height:8px; border-radius:2px; background:rgba(255,255,255,0.05);
+    transition:all 0.2s;
+  }
+  .tl-bar.tl-dot-1{ height:14px; }
+  .tl-bar.tl-dot-2{ height:24px; }
+  .tl-bar.tl-dot-3{ height:36px; }
+  .tl-bar.tl-dot-4{ height:50px; }
+  .tl-bar.tl-dot-5{ height:64px; }
+  .tl-cor-vermelho{ background:var(--erro); }
+  .tl-cor-laranja{ background:var(--ambar); }
+  .tl-cor-amarelo{ background:#F0CC4E; }
+  .tl-cor-verde{ background:var(--verde); }
+  .tl-tick{ font-size:9px; color:var(--cinza); font-family:'JetBrains Mono', monospace; }
+
+  .val-mes-head{
+    font-size:11px; text-transform:uppercase; letter-spacing:2px; font-weight:800;
+    color:var(--vermelho); padding:14px 6px 6px; border-bottom:1px solid var(--linha); margin-bottom:8px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .val-mes-count{ background:var(--linha); color:var(--osso); padding:2px 8px; border-radius:10px; font-size:11px; }
+  .val-item{
+    display:flex; gap:12px; align-items:center; justify-content:space-between;
+    background:var(--carvao); border:1px solid var(--linha); border-radius:10px;
+    padding:10px 14px; margin-bottom:6px; border-left:3px solid var(--cinza);
+  }
+  .val-item.val-vencido{ border-left-color:var(--erro); background:rgba(217,54,42,0.05); }
+  .val-item.val-30{ border-left-color:var(--ambar); }
+  .val-item.val-60{ border-left-color:#F0CC4E; }
+  .val-item.val-90{ border-left-color:var(--verde); }
+  .val-item-info{ flex:1; min-width:0; }
+  .val-item-prod{ font-size:14px; font-weight:800; }
+  .val-item-meta{ font-size:11px; color:var(--cinza); margin-top:2px; }
+  .val-item-qtd{ text-align:right; flex-shrink:0; }
+  .vi-data{ font-family:'JetBrains Mono', monospace; font-weight:800; font-size:13px; }
+  .vi-dias{ font-size:11px; color:var(--cinza); }
+  .val-item.val-vencido .vi-dias{ color:var(--erro); font-weight:800; }
+  .val-item.val-30 .vi-dias{ color:var(--ambar); font-weight:800; }
+  .vi-saldo{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--cinza); margin-top:2px; }
+
+  /* Indicador (bolinha) no menu */
+  .val-badge{
+    display:none; align-items:center; justify-content:center;
+    background:var(--erro); color:#fff;
+    min-width:18px; height:18px; padding:0 6px; border-radius:9px;
+    font-size:11px; font-weight:800; margin-left:8px; vertical-align:middle;
+    animation:pulse-val 2s infinite;
+  }
+  @keyframes pulse-val { 0%,100% { box-shadow:0 0 0 0 rgba(217,54,42,0.4); } 50% { box-shadow:0 0 0 6px rgba(217,54,42,0); } }
+
+  /* Tag de direção das solicitações */
+  .dir-tag{
+    display:inline-block; margin-left:8px; padding:2px 8px;
+    background:rgba(31,138,76,0.18); color:#4FCC85;
+    border-radius:5px; font-size:10px; font-weight:800; letter-spacing:0.5px;
+    vertical-align:2px;
+  }
+  .dir-tag.rev{ background:rgba(217,142,4,0.18); color:#F0B33E; }
   .aud-sala-card{
     background:var(--carvao); border:1.5px solid var(--linha); border-radius:14px;
     padding:16px; margin-bottom:14px; border-left:4px solid var(--cinza);
@@ -1381,8 +1584,22 @@
       <div class="stack" style="margin-top:24px;">
         <button class="btn btn-ghost" id="btnVoltarInicioEstoque">← Voltar ao início</button>
         <button class="btn btn-outline" id="btnLimparLog" style="display:none; border-color:var(--erro); color:var(--erro);">🗑 Apagar todo o histórico (admin)</button>
+        <button class="btn btn-outline" id="btnLimparLegado" style="display:none;">🧹 Apagar só registros legados (admin)</button>
       </div>
     </section>
+
+    <!-- Drawer lateral de detalhes de parte -->
+    <div id="drawerParteOverlay" onclick="document.getElementById('drawerParte').classList.remove('aberto')"></div>
+    <aside id="drawerParte" class="drawer-parte">
+      <div class="drawer-head">
+        <div>
+          <div class="drawer-titulo" id="drawerParteTitulo">—</div>
+          <div class="drawer-sub" id="drawerParteSub">—</div>
+        </div>
+        <button class="drawer-close" onclick="document.getElementById('drawerParte').classList.remove('aberto')">×</button>
+      </div>
+      <div id="drawerParteCorpo" class="drawer-corpo"></div>
+    </aside>
 
     <section class="screen" id="screen-config">
       <div class="section-label">Acesso restrito</div>
@@ -1449,16 +1666,20 @@
     <!-- ===== TELA SOLICITAÇÕES F1 -> F2 ===== -->
     <section class="screen" id="screen-solic">
       <div class="section-label">Pedidos entre fábricas</div>
-      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Solicitações F1 → F2</h1>
-      <p class="lead" style="margin-bottom:18px;">A Fábrica 1 solicita concentrados aqui. A Fábrica 2 vê a lista e marca como atendido.</p>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Solicitações</h1>
+      <p class="lead" style="margin-bottom:18px;">Pedidos entre Fábrica 1 e Fábrica 2 (xaroparia). Ao atender, lance as partes/validades enviadas.</p>
 
       <div class="nav-tabs">
-        <button class="active" data-solic-aba="lista">Lista de pedidos</button>
+        <button class="active" data-solic-aba="lista">Pedidos recebidos</button>
         <button data-solic-aba="novo">Novo pedido</button>
       </div>
 
       <!-- Lista de pedidos -->
       <div id="solicListaWrap">
+        <div class="nav-tabs" style="margin-bottom:8px;">
+          <button class="active" data-solic-dir="f1_para_f2">F1 → F2</button>
+          <button data-solic-dir="f2_para_f1">F2 → F1</button>
+        </div>
         <div class="nav-tabs" style="margin-bottom:12px;">
           <button class="active" data-solic-filtro="pendente">Pendentes</button>
           <button data-solic-filtro="atendido">Atendidos</button>
@@ -1469,13 +1690,27 @@
 
       <!-- Novo pedido -->
       <div id="solicNovoWrap" style="display:none;">
+        <label class="field-label">Origem → Destino</label>
+        <div class="tipo-toggle" style="margin-top:0; margin-bottom:14px;">
+          <button type="button" class="tipo-btn active" id="dirBtnF1F2" data-dir="f1_para_f2">
+            <span class="tipo-ic">F1→F2</span>
+            <span>Fábrica 1 pede</span>
+            <small>Pra xaroparia atender</small>
+          </button>
+          <button type="button" class="tipo-btn" id="dirBtnF2F1" data-dir="f2_para_f1">
+            <span class="tipo-ic">F2→F1</span>
+            <span>Xaroparia pede</span>
+            <small>Pra F1 atender</small>
+          </button>
+        </div>
+
         <label class="field-label">Produto</label>
         <button class="ps-btn" id="solicBtnProduto" style="width:100%; margin-bottom:14px;">
           <div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>
           <span class="ps-arrow">▾</span>
         </button>
 
-        <label class="field-label">Quantidade desejada</label>
+        <label class="field-label">Quantidade (kits)</label>
         <input type="number" id="solicQtd" inputmode="numeric" placeholder="0">
 
         <label class="field-label" style="margin-top:16px;">Observação (opcional)</label>
@@ -1488,6 +1723,55 @@
 
       <div class="stack" style="margin-top:18px;">
         <button class="btn btn-ghost" id="btnVoltarInicioSolic">← Voltar ao início</button>
+      </div>
+    </section>
+
+    <!-- Tela de atendimento de solicitação (formulário com partes) -->
+    <section class="screen" id="screen-solic-atender">
+      <div class="section-label">Atender pedido</div>
+      <h1 class="title" style="font-size:22px; margin-bottom:6px;" id="atenderTitulo">—</h1>
+      <p class="lead" style="margin-bottom:6px;" id="atenderSub">—</p>
+      <div id="atenderInfoExtra" style="font-size:12px; color:var(--cinza); margin-bottom:18px;"></div>
+
+      <div id="atenderFormPartes"></div>
+
+      <div class="stack" style="margin-top:24px;">
+        <button class="btn btn-primary" id="btnConfirmarAtendimento">✓ Confirmar envio</button>
+        <button class="btn btn-ghost" id="btnCancelarAtendimento">← Cancelar</button>
+      </div>
+    </section>
+
+    <!-- ===== TELA VALIDADES (PAINEL DE VENCIMENTOS) ===== -->
+    <section class="screen" id="screen-validades">
+      <div class="section-label">Painel de qualidade</div>
+      <h1 class="title" style="font-size:24px; margin-bottom:8px;">Validades</h1>
+      <p class="lead" style="margin-bottom:20px;">Espelho de vencimentos do estoque atual. Atenção redobrada nos lotes em vermelho.</p>
+
+      <div id="validadesResumo" class="val-resumo"></div>
+
+      <div class="val-secao">
+        <div class="val-secao-titulo">📅 Próximos 30 dias</div>
+        <div id="validadesTimeline" class="val-timeline"></div>
+      </div>
+
+      <div class="nav-tabs" style="margin-top:18px;">
+        <button class="active" data-val-filtro="todos">Todos</button>
+        <button data-val-filtro="vencidos">Vencidos</button>
+        <button data-val-filtro="30">≤ 30d</button>
+        <button data-val-filtro="60">≤ 60d</button>
+        <button data-val-filtro="90">≤ 90d</button>
+      </div>
+      <div class="nav-tabs" style="margin-top:6px;">
+        <button class="active" data-val-fab="2">Fábrica 2</button>
+        <button data-val-fab="1">Fábrica 1</button>
+        <button data-val-fab="todas">Todas</button>
+      </div>
+
+      <div id="validadesLista" style="margin-top:12px;"></div>
+
+      <div class="stack" style="margin-top:20px;">
+        <button class="btn btn-ghost" id="btnVoltarInicioValidades">← Voltar ao início</button>
+        <button class="btn btn-outline" id="btnExportarVencidos">⬇ Exportar vencidos (CSV)</button>
       </div>
     </section>
 
@@ -1664,7 +1948,8 @@
   const STEPS = [
     { id:'screen-log',         label:'Histórico',             hint:'Entradas e saídas' },
     { id:'screen-estoque',     label:'Estoque atual',         hint:'Saldo por produto' },
-    { id:'screen-solic',       label:'Solicitações F1 → F2',  hint:'Pedidos da Fábrica 1' },
+    { id:'screen-validades',   label:'Validades',             hint:'Painel de vencimentos' },
+    { id:'screen-solic',       label:'Solicitações F1 ↔ F2',  hint:'Pedidos entre fábricas' },
     { id:'screen-auditoria',   label:'Auditoria das salas',   hint:'7 salas · ciclo de 15 dias' },
     { id:'registrar-rnc',      label:'Registrar RNC',         hint:'Reportar não conformidade' },
     { id:'screen-rnc',         label:'Concentrados em RNC',   hint:'Histórico de não conformidades' },
@@ -1708,19 +1993,23 @@
       if(step.adminOnly && (!usuarioAtual || !usuarioAtual.isAdmin)) return;
       const div = document.createElement('div');
       div.className = 'step-item' + (step.id === currentId ? ' current' : '');
-      div.innerHTML = `<div class="step-dot"></div><div class="step-text">${step.label}<small>${step.hint}</small></div>`;
+      div.setAttribute('data-step', step.id);
+      const badgeHtml = step.id === 'screen-validades' ? '<span class="val-badge" style="display:none;"></span>' : '';
+      div.innerHTML = `<div class="step-dot"></div><div class="step-text">${step.label}${badgeHtml}<small>${step.hint}</small></div>`;
       div.addEventListener('click', () => {
         if(step.id === 'screen-log'){ carregarLog(); }
         if(step.id === 'screen-config'){ renderConfiguracoes(); }
         if(step.id === 'screen-estoque'){
           renderEstoque();
           $('btnLimparLog').style.display = (usuarioAtual && usuarioAtual.isAdmin) ? 'inline-flex' : 'none';
+          $('btnLimparLegado').style.display = (usuarioAtual && usuarioAtual.isAdmin) ? 'inline-flex' : 'none';
         }
         if(step.id === 'screen-rnc'){ renderRNC(); }
         if(step.id === 'screen-fab1'){ renderFab1(); }
         if(step.id === 'screen-qrcode'){ renderQRCode(); }
         if(step.id === 'screen-solic'){ renderSolicitacoes(); }
         if(step.id === 'screen-auditoria'){ renderAuditoria(); }
+        if(step.id === 'screen-validades'){ renderValidades(); }
         if(step.id === 'registrar-rnc'){
           // abre formulário de RNC em modo interno (com cabeçalho do app)
           resetarFormularioRNC();
@@ -2094,7 +2383,9 @@
     return CATALOGO_PRODUTOS.find(x => x.produto === nomeProduto) || null;
   }
 
-  // ---------- tabela manual de produtos ----------
+  // ---------- tabela manual de produtos (NOVO MODELO POR PARTES) ----------
+  // Cada "linha" agora é UM PRODUTO INTEIRO com array de partes.
+  // partes = [{nome, lotes:[{qtd, validade}]}]
   let manualRows = [];
   let manualRowCounter = 0;
 
@@ -2102,80 +2393,230 @@
     if(manualRows && manualRows.length > 0) { renderTabelaManual(); return; }
     manualRows = [];
     manualRowCounter = 0;
-    adicionarLinhaManual();
-    adicionarLinhaManual();
     renderTabelaManual();
   }
 
-  function adicionarLinhaManual(){
+  function novaLinhaProduto(produtoInfo){
     manualRowCounter++;
-    manualRows.push({ id: 'm' + manualRowCounter, produto: '', formula: '', sap:'', parte:'', categoria:'', quantidade: '', validade: '' });
+    const partes = (produtoInfo && produtoInfo.partes && produtoInfo.partes.length)
+      ? produtoInfo.partes.map(p => ({ nome: p.nome || '', lotes: [{ qtd: '', validade: '', loteSelecionado: '' }] }))
+      : [{ nome:'', lotes: [{ qtd:'', validade:'', loteSelecionado:'' }] }];
+    return {
+      id: 'm' + manualRowCounter,
+      produto: produtoInfo ? produtoInfo.produto : '',
+      formula: produtoInfo ? (produtoInfo.formula || '') : '',
+      sap: produtoInfo ? (produtoInfo.sap_produto || '') : '',
+      categoria: produtoInfo ? (produtoInfo.categoria || '') : '',
+      tipo: produtoInfo ? (produtoInfo.tipo || 'concentrado') : 'concentrado',
+      partes
+    };
+  }
+
+  function adicionarLinhaManual(){
+    // Não cria automaticamente — agora só após escolher produto
+    abrirSeletorProduto(null);
   }
 
   function renderTabelaManual(){
     const wrap = $('manualTable');
     wrap.innerHTML = '';
 
+    if(manualRows.length === 0){
+      wrap.innerHTML = `
+        <div class="empty-state" style="padding:32px 16px; background:var(--carvao); border:1.5px dashed var(--linha); border-radius:14px;">
+          <div class="ic">📦</div>
+          <div style="font-weight:700; margin-bottom:4px;">Nenhum produto adicionado</div>
+          <div style="font-size:12px; color:var(--cinza);">Toque em "Adicionar produto" para começar</div>
+        </div>`;
+      return;
+    }
+
     manualRows.forEach((row, i) => {
       const div = document.createElement('div');
-      // categoria visual (concentrado vs suco)
-      let categoriaCss = '';
-      if(row.produto){
-        const inf = infoProduto(row.produto);
-        if(inf){
-          categoriaCss = inf.tipo === 'suco' ? ' tem-suco' : ' tem-produto';
-        }
+      div.className = 'produto-row produto-card' + (row.tipo === 'suco' ? ' tem-suco' : ' tem-produto');
+
+      // Para saída: avalia FEFO globalmente do produto
+      let avisoFefoHtml = '';
+      if(tipoOperacao === 'saida' && row.produto){
+        const aviso = avaliarFefoProduto(row);
+        if(aviso) avisoFefoHtml = aviso;
       }
-      div.className = 'produto-row' + categoriaCss;
-      const sinal = calcularSinalValidade(row.validade);
-      const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
-      const produtoSelecionado = row.produto
-        ? `<div class="ps-selecionado">
-             <div class="ps-nome">
-               ${escapeHtml(row.produto)}
-               ${row.parte ? `<span class="ps-parte-badge">Parte ${escapeHtml(row.parte)}</span>` : ''}
-             </div>
-             <div class="ps-formula">${escapeHtml(row.formula || '')} ${row.sap ? '· SAP ' + escapeHtml(row.sap) : ''}</div>
-           </div>`
-        : `<div class="ps-placeholder">Toque para escolher o produto e a parte</div>`;
+
+      // Partes
+      let partesHtml = '';
+      row.partes.forEach((parte, pIdx) => {
+        let lotesHtml = '';
+        parte.lotes.forEach((lote, lIdx) => {
+          const sinal = calcularSinalValidade(lote.validade);
+          const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
+
+          if(tipoOperacao === 'saida'){
+            // Saída: dropdown com lotes disponíveis na fábrica atual
+            const lotesDisp = lotesDisponiveis(row.produto, parte.nome);
+            const opts = lotesDisp.length === 0
+              ? '<option value="">(sem estoque)</option>'
+              : '<option value="">— escolha o lote —</option>' +
+                lotesDisp.map(ld => {
+                  const sel = (lote.validade === ld.validade) ? ' selected' : '';
+                  return `<option value="${escapeHtml(ld.validade)}" data-qtd="${ld.saldo}"${sel}>Validade ${formatarDataBR(ld.validade)} · saldo ${ld.saldo}</option>`;
+                }).join('');
+            lotesHtml += `
+              <div class="lote-row">
+                <div class="lote-field">
+                  <label>Lote disponível ${badge}</label>
+                  <select data-field="validade" data-row="${row.id}" data-parte="${pIdx}" data-lote="${lIdx}" style="background:var(--preto);color:var(--osso);border:1.5px solid var(--linha);padding:9px;border-radius:7px;width:100%;font-family:inherit;font-size:13px;">
+                    ${opts}
+                  </select>
+                </div>
+                <div class="lote-field" style="flex-basis:110px; flex-grow:0;">
+                  <label>Qtd. retirada</label>
+                  <input type="number" inputmode="numeric" min="0" placeholder="0" data-field="qtd" data-row="${row.id}" data-parte="${pIdx}" data-lote="${lIdx}" value="${escapeHtml(String(lote.qtd))}">
+                </div>
+                ${parte.lotes.length > 1 ? `<button class="mr-remove lote-remove" data-row="${row.id}" data-parte="${pIdx}" data-lote="${lIdx}" title="Remover lote">×</button>` : ''}
+              </div>`;
+          } else {
+            // Entrada: campos livres validade + qtd
+            lotesHtml += `
+              <div class="lote-row">
+                <div class="lote-field" style="flex-basis:130px; flex-grow:0;">
+                  <label>Qtd.</label>
+                  <input type="number" inputmode="numeric" min="0" placeholder="0" data-field="qtd" data-row="${row.id}" data-parte="${pIdx}" data-lote="${lIdx}" value="${escapeHtml(String(lote.qtd))}">
+                </div>
+                <div class="lote-field">
+                  <label>Validade ${badge}</label>
+                  <input type="date" data-field="validade" data-row="${row.id}" data-parte="${pIdx}" data-lote="${lIdx}" value="${escapeHtml(lote.validade)}" style="color-scheme:dark;">
+                </div>
+                ${parte.lotes.length > 1 ? `<button class="mr-remove lote-remove" data-row="${row.id}" data-parte="${pIdx}" data-lote="${lIdx}" title="Remover lote">×</button>` : ''}
+              </div>`;
+          }
+        });
+
+        partesHtml += `
+          <div class="parte-bloco">
+            <div class="parte-head">
+              <span class="parte-tag">Parte ${escapeHtml(parte.nome || '—')}</span>
+              <button class="link-btn add-lote" data-row="${row.id}" data-parte="${pIdx}">+ outro lote</button>
+            </div>
+            ${lotesHtml}
+          </div>`;
+      });
+
       div.innerHTML = `
         <div class="pr-top">
           <div class="pr-num-circle">${i + 1}</div>
-          <button class="ps-btn" data-id="${row.id}">${produtoSelecionado}<span class="ps-arrow">▾</span></button>
-          <button class="mr-remove" data-id="${row.id}" title="Remover">×</button>
-        </div>
-        <div class="pr-bottom">
-          <div class="pr-field">
-            <label>${tipoOperacao === 'entrada' ? 'Quantidade' : 'Qtd. retirada'}</label>
-            <input type="number" inputmode="numeric" placeholder="0" data-field="quantidade" data-id="${row.id}" value="${escapeHtml(String(row.quantidade))}">
+          <div class="prod-info">
+            <div class="prod-nome">${escapeHtml(row.produto || '—')}</div>
+            <div class="prod-meta">${escapeHtml(row.formula || '')} ${row.sap ? '· SAP ' + escapeHtml(row.sap) : ''} ${row.categoria ? '· ' + escapeHtml(row.categoria) : ''}</div>
           </div>
-          <div class="pr-field">
-            <label>Validade ${badge}</label>
-            <input type="date" data-field="validade" data-id="${row.id}" value="${escapeHtml(row.validade)}" style="color-scheme:dark;">
-          </div>
+          <button class="mr-remove" data-id="${row.id}" title="Remover produto">×</button>
         </div>
+        ${avisoFefoHtml}
+        <div class="partes-wrap">${partesHtml}</div>
       `;
       wrap.appendChild(div);
     });
 
-    wrap.querySelectorAll('input').forEach(inp => {
+    // Eventos
+    wrap.querySelectorAll('input, select').forEach(inp => {
       inp.addEventListener('input', (e) => {
-        const row = manualRows.find(r => r.id === e.target.dataset.id);
+        const row = manualRows.find(r => r.id === e.target.dataset.row);
         if(!row) return;
-        row[e.target.dataset.field] = e.target.value;
+        const pIdx = Number(e.target.dataset.parte);
+        const lIdx = Number(e.target.dataset.lote);
+        const parte = row.partes[pIdx];
+        if(!parte || !parte.lotes[lIdx]) return;
+        parte.lotes[lIdx][e.target.dataset.field] = e.target.value;
         if(e.target.dataset.field === 'validade') renderTabelaManual();
       });
     });
-    wrap.querySelectorAll('.ps-btn').forEach(btn => {
-      btn.addEventListener('click', () => abrirSeletorProduto(btn.dataset.id));
-    });
-    wrap.querySelectorAll('.mr-remove').forEach(btn => {
+    wrap.querySelectorAll('.add-lote').forEach(btn => {
       btn.addEventListener('click', () => {
-        manualRows = manualRows.filter(r => r.id !== btn.dataset.id);
-        if(manualRows.length === 0) adicionarLinhaManual();
+        const row = manualRows.find(r => r.id === btn.dataset.row);
+        if(!row) return;
+        const parte = row.partes[Number(btn.dataset.parte)];
+        parte.lotes.push({ qtd:'', validade:'' });
         renderTabelaManual();
       });
     });
+    wrap.querySelectorAll('.lote-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const row = manualRows.find(r => r.id === btn.dataset.row);
+        if(!row) return;
+        const parte = row.partes[Number(btn.dataset.parte)];
+        parte.lotes.splice(Number(btn.dataset.lote), 1);
+        if(parte.lotes.length === 0) parte.lotes.push({ qtd:'', validade:'' });
+        renderTabelaManual();
+      });
+    });
+    wrap.querySelectorAll('.mr-remove:not(.lote-remove)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(!confirm('Remover este produto inteiro?')) return;
+        manualRows = manualRows.filter(r => r.id !== btn.dataset.id);
+        renderTabelaManual();
+      });
+    });
+  }
+
+  // Devolve lotes disponíveis (saldo > 0) para um produto+parte na fábrica atual
+  function lotesDisponiveis(produto, parte){
+    const fabAtual = '2'; // entrada/saida principal é F2
+    const mapa = {};
+    (logCompleto || []).forEach(r => {
+      if((r.produto||'').trim() !== produto) return;
+      if((r.parte||'').trim() !== parte) return;
+      if(String(r.fabrica||'2') !== fabAtual) return;
+      const v = r.validade || '';
+      if(!mapa[v]) mapa[v] = { validade:v, saldo:0 };
+      const q = Number(r.quantidade_guardada) || 0;
+      if(r.tipo === 'entrada') mapa[v].saldo += q;
+      else if(r.tipo === 'saida') mapa[v].saldo -= q;
+    });
+    return Object.values(mapa).filter(x => x.saldo > 0).sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
+  }
+
+  // FEFO por PRODUTO: pega a validade mais antiga entre todas as partes do produto na fábrica
+  function validadeMaisAntigaDoProduto(produto){
+    const fabAtual = '2';
+    let antiga = null;
+    const saldosPorChave = {};
+    (logCompleto || []).forEach(r => {
+      if((r.produto||'').trim() !== produto) return;
+      if(String(r.fabrica||'2') !== fabAtual) return;
+      const chave = (r.parte||'') + '||' + (r.validade||'');
+      if(!saldosPorChave[chave]) saldosPorChave[chave] = { validade:r.validade, saldo:0 };
+      const q = Number(r.quantidade_guardada) || 0;
+      if(r.tipo === 'entrada') saldosPorChave[chave].saldo += q;
+      else if(r.tipo === 'saida') saldosPorChave[chave].saldo -= q;
+    });
+    Object.values(saldosPorChave).forEach(x => {
+      if(x.saldo > 0 && x.validade){
+        if(!antiga || x.validade < antiga) antiga = x.validade;
+      }
+    });
+    return antiga;
+  }
+
+  function avaliarFefoProduto(row){
+    const maisAntiga = validadeMaisAntigaDoProduto(row.produto);
+    if(!maisAntiga) return '';
+    // procura algum lote selecionado mais novo que a "maisAntiga"
+    let furada = false;
+    let validadeSelecionada = null;
+    row.partes.forEach(p => p.lotes.forEach(l => {
+      if(l.validade && Number(l.qtd) > 0 && l.validade > maisAntiga) {
+        furada = true;
+        if(!validadeSelecionada || l.validade < validadeSelecionada) validadeSelecionada = l.validade;
+      }
+    }));
+    if(!furada) return '';
+    return `
+      <div class="fefo-aviso">
+        <div class="fefo-aviso-tit">⚠️ Data fura FEFO</div>
+        <div class="fefo-aviso-txt">
+          Existe lote mais antigo do produto <b>${escapeHtml(row.produto)}</b> com vencimento <b>${formatarDataBR(maisAntiga)}</b>.
+          Selecione esse lote primeiro ou peça liberação ao admin.
+        </div>
+      </div>`;
   }
 
   // ---------- seletor de produto (modal de busca em 3 níveis) ----------
@@ -2203,10 +2644,7 @@
   }
 
   function voltarNivelSeletor(){
-    if(seletorNivel === 'parte'){
-      seletorNivel = 'produto';
-      seletorProduto = null;
-    } else if(seletorNivel === 'produto'){
+    if(seletorNivel === 'produto'){
       seletorNivel = 'categoria';
       seletorCategoria = null;
     }
@@ -2219,7 +2657,6 @@
     const termo = (filtro||'').trim().toLowerCase();
     lista.innerHTML = '';
 
-    // título dinâmico com breadcrumb e botão de voltar
     const breadcrumb = document.createElement('div');
     breadcrumb.className = 'seletor-breadcrumb';
     let trilha = '';
@@ -2227,22 +2664,17 @@
       trilha = '<span class="bc-atual">Escolha a categoria</span>';
     } else if(seletorNivel === 'produto'){
       trilha = `<button class="bc-link" id="bcVoltarCat">← Categorias</button> <span class="bc-sep">›</span> <span class="bc-atual">${escapeHtml(seletorCategoria)}</span>`;
-    } else if(seletorNivel === 'parte'){
-      trilha = `<button class="bc-link" id="bcVoltarProd">← ${escapeHtml(seletorCategoria)}</button> <span class="bc-sep">›</span> <span class="bc-atual">${escapeHtml(seletorProduto)}</span>`;
     }
     breadcrumb.innerHTML = trilha;
     lista.appendChild(breadcrumb);
     if($('bcVoltarCat')) $('bcVoltarCat').addEventListener('click', voltarNivelSeletor);
-    if($('bcVoltarProd')) $('bcVoltarProd').addEventListener('click', voltarNivelSeletor);
 
-    // mensagem se catálogo vazio
     if(CATALOGO_PRODUTOS.length === 0){
       lista.innerHTML += `<div class="empty-state" style="padding:30px;"><div class="ic">📦</div>Catálogo vazio. Verifique a aba "estoque" da planilha.</div>`;
       return;
     }
 
     if(seletorNivel === 'categoria'){
-      // lista todas as categorias únicas
       const cats = [...new Set(CATALOGO_PRODUTOS.map(p => p.categoria))].sort();
       cats.forEach(cat => {
         if(termo && !cat.toLowerCase().includes(termo)) return;
@@ -2262,7 +2694,6 @@
         lista.appendChild(item);
       });
     } else if(seletorNivel === 'produto'){
-      // lista produtos da categoria escolhida
       const produtos = CATALOGO_PRODUTOS.filter(p => p.categoria === seletorCategoria);
       produtos.forEach(p => {
         const blob = `${p.produto} ${p.formula||''} ${p.sap_produto||''}`.toLowerCase();
@@ -2275,85 +2706,37 @@
           <div class="si-formula">${escapeHtml(p.formula||'sem fórmula')} ${p.sap_produto ? '· SAP ' + escapeHtml(p.sap_produto) : ''} · ${partes.length} parte${partes.length!==1?'s':''}</div>
         `;
         item.addEventListener('click', () => {
-          // Se só tem 1 parte (ou nenhuma), pula direto pra seleção
-          if(partes.length <= 1){
-            const parteUnica = partes[0] ? partes[0].nome : '';
-            atribuirProdutoParte(p, parteUnica);
-            return;
-          }
-          seletorProduto = p.produto;
-          seletorNivel = 'parte';
-          $('seletorBusca').value = '';
-          renderListaSeletor('');
-        });
-        lista.appendChild(item);
-      });
-    } else if(seletorNivel === 'parte'){
-      const p = CATALOGO_PRODUTOS.find(x => x.produto === seletorProduto);
-      if(!p) { fecharSeletorProduto(); return; }
-      const partes = p.partes || [];
-      // pequeno header informativo do produto
-      const info = document.createElement('div');
-      info.className = 'seletor-prod-info';
-      info.innerHTML = `
-        <div class="spi-form">${escapeHtml(p.formula||'sem fórmula')}</div>
-        <div class="spi-meta">SAP ${escapeHtml(p.sap_produto||'—')} · Kit total: ${escapeHtml(String(p.total_kit||'—'))} partes</div>
-      `;
-      lista.appendChild(info);
-      partes.forEach(parte => {
-        const nomeParte = parte.nome || '(sem nome)';
-        if(termo && !nomeParte.toLowerCase().includes(termo)) return;
-        const item = document.createElement('button');
-        item.className = 'seletor-item seletor-parte-item';
-        item.innerHTML = `
-          <div class="parte-circle">${escapeHtml(nomeParte)}</div>
-          <div style="flex:1;">
-            <div class="si-nome">Parte ${escapeHtml(nomeParte)}</div>
-            <div class="si-formula">SAP ${escapeHtml(parte.sap_parte || p.sap_produto || '—')}</div>
-          </div>
-        `;
-        item.addEventListener('click', () => {
-          atribuirProdutoParte(p, nomeParte);
+          atribuirProdutoCompleto(p);
         });
         lista.appendChild(item);
       });
     }
   }
 
-  function atribuirProdutoParte(produtoInfo, parteNome){
+  function atribuirProdutoCompleto(produtoInfo){
     if(seletorLinhaId === '__solic__'){
-      // modo solicitação F1→F2
       solicProdutoSel = {
         nome: produtoInfo.produto,
         formula: produtoInfo.formula || '',
         sap: produtoInfo.sap_produto || '',
-        parte: parteNome || '',
         categoria: produtoInfo.categoria || ''
       };
       const html = `
         <div class="ps-selecionado" id="solicProdutoLabel">
-          <div class="ps-nome">
-            ${escapeHtml(produtoInfo.produto)}
-            ${parteNome ? `<span class="ps-parte-badge">Parte ${escapeHtml(parteNome)}</span>` : ''}
-          </div>
+          <div class="ps-nome">${escapeHtml(produtoInfo.produto)}</div>
           <div class="ps-formula">${escapeHtml(produtoInfo.formula||'')} ${produtoInfo.sap_produto ? '· SAP ' + escapeHtml(produtoInfo.sap_produto) : ''}</div>
         </div>`;
       $('solicProdutoLabel').outerHTML = html;
       fecharSeletorProduto();
       return;
     }
-    // modo padrão (linhas manuais de entrada/saída)
-    const row = manualRows.find(r => r.id === seletorLinhaId);
-    if(row){
-      row.produto = produtoInfo.produto;
-      row.formula = produtoInfo.formula || '';
-      row.sap = produtoInfo.sap_produto || '';
-      row.parte = parteNome || '';
-      row.categoria = produtoInfo.categoria || '';
-    }
+    // modo padrão: adiciona uma nova linha (produto inteiro com suas partes)
+    manualRows.push(novaLinhaProduto(produtoInfo));
     fecharSeletorProduto();
     renderTabelaManual();
   }
+  // mantém alias antigo
+  const atribuirProdutoParte = atribuirProdutoCompleto;
 
   $('btnAddRow').addEventListener('click', () => {
     adicionarLinhaManual();
@@ -2387,56 +2770,97 @@
     return avisos;
   }
 
-  $('btnContinuarManual').addEventListener('click', () => {
-    const validas = manualRows.filter(r => r.produto.trim().length > 0 && String(r.quantidade).trim().length > 0);
+  $('btnContinuarManual').addEventListener('click', async () => {
+    // Achata o modelo em registros individuais (1 por lote preenchido)
+    const registros = [];
+    manualRows.forEach(row => {
+      if(!row.produto) return;
+      row.partes.forEach(parte => {
+        parte.lotes.forEach(lote => {
+          const qtd = Number(lote.qtd) || 0;
+          if(qtd <= 0) return;
+          registros.push({
+            produto: row.produto,
+            formula: row.formula || '',
+            sap: row.sap || '',
+            categoria: row.categoria || '',
+            parte: parte.nome || '',
+            validade: lote.validade || '',
+            quantidade: qtd
+          });
+        });
+      });
+    });
 
-    if(validas.length === 0){
-      toast('Preencha pelo menos um produto com quantidade');
+    if(registros.length === 0){
+      toast('Preencha quantidade > 0 em pelo menos uma parte');
       return;
-    }
-    if(validas.length < manualRows.length){
-      toast('Algumas linhas vazias foram ignoradas');
     }
 
     if(tipoOperacao === 'entrada'){
-      produtos = validas.map((r, i) => ({
+      // Valida que todo lote tem validade
+      const semValidade = registros.filter(r => !r.validade);
+      if(semValidade.length > 0){
+        toast('Preencha a validade de todos os lotes informados');
+        return;
+      }
+      produtos = registros.map((r, i) => ({
         id: 'p' + Date.now() + '_' + i,
-        produto: r.produto.trim(),
-        formula: r.formula || '',
-        parte: r.parte || '',
-        sap: r.sap || '',
-        categoria: r.categoria || '',
-        lote: r.formula || '—',
-        validade: r.validade || '',
-        quantidade_esperada: Number(r.quantidade) || 0,
-        unidade: 'unid.',
-        quantidade_guardada: null,
-        status: null
+        produto: r.produto, formula: r.formula, parte: r.parte, sap: r.sap, categoria: r.categoria,
+        lote: r.formula || '—', validade: r.validade,
+        quantidade_esperada: r.quantidade,
+        unidade: 'unid.', quantidade_guardada: null, status: null
       }));
       renderConfirmacao();
       showScreen('screen-confirm');
     } else {
-      // saída: a quantidade digitada já É o registro final, não precisa etapa de conferência
-      const timestamp = new Date().toLocaleString('pt-BR');
-      const registros = validas.map(r => ({
-        operador, timestamp, tipo: 'saida',
-        produto: r.produto.trim(),
-        formula: r.formula || '',
-        parte: r.parte || '',
-        lote: r.formula || '—',
-        validade: r.validade || '',
-        quantidade_esperada: Number(r.quantidade) || 0,
-        quantidade_guardada: Number(r.quantidade) || 0,
-        unidade: 'unid.',
-        status: 'saida'
-      }));
+      // SAÍDA — valida FEFO por PRODUTO. Se furar, exige justificativa do admin.
+      const violacoes = [];
+      manualRows.forEach(row => {
+        if(!row.produto) return;
+        const maisAntiga = validadeMaisAntigaDoProduto(row.produto);
+        if(!maisAntiga) return;
+        row.partes.forEach(parte => parte.lotes.forEach(l => {
+          const qtd = Number(l.qtd) || 0;
+          if(qtd > 0 && l.validade && l.validade > maisAntiga){
+            violacoes.push({ produto: row.produto, parte: parte.nome, validadeSel: l.validade, validadeFEFO: maisAntiga });
+          }
+        }));
+      });
 
-      const avisosFEFO = verificarFEFO(registros);
-      if(avisosFEFO.length > 0){
-        toast('⚠ ' + avisosFEFO[0] + (avisosFEFO.length > 1 ? ` (+${avisosFEFO.length - 1} outro alerta)` : ''));
+      let justificativa = '';
+      if(violacoes.length > 0){
+        if(!usuarioAtual || !usuarioAtual.isAdmin){
+          const lista = violacoes.slice(0,3).map(v =>
+            `• ${v.produto} (parte ${v.parte}): você escolheu ${formatarDataBR(v.validadeSel)} mas existe ${formatarDataBR(v.validadeFEFO)}`
+          ).join('\n');
+          alert('🚫 Saída fora do FEFO bloqueada\n\nApenas administradores podem liberar saída de lote mais novo enquanto há lote mais antigo.\n\n' + lista + (violacoes.length>3?`\n\n…e mais ${violacoes.length-3}`:''));
+          return;
+        }
+        const aviso = '⚠ ATENÇÃO: SAÍDA FURA O FEFO\n\n' + violacoes.slice(0,5).map(v =>
+          `• ${v.produto} (parte ${v.parte})\n  Selecionado: ${formatarDataBR(v.validadeSel)}\n  Lote mais antigo disponível: ${formatarDataBR(v.validadeFEFO)}`
+        ).join('\n\n') + '\n\nDigite a justificativa para liberar:';
+        justificativa = prompt(aviso, '');
+        if(justificativa === null) return;
+        justificativa = justificativa.trim();
+        if(justificativa.length < 5){
+          toast('Justificativa muito curta (mín. 5 caracteres)');
+          return;
+        }
       }
 
-      salvarERegistrar(registros, avisosFEFO);
+      const timestamp = new Date().toLocaleString('pt-BR');
+      const regsLog = registros.map(r => ({
+        operador, timestamp, tipo: 'saida',
+        produto: r.produto, formula: r.formula, parte: r.parte,
+        lote: r.formula || '—', validade: r.validade,
+        quantidade_esperada: r.quantidade,
+        quantidade_guardada: r.quantidade,
+        unidade: 'unid.', status: 'saida',
+        fabrica: '2',
+        justificativa_fefo: justificativa
+      }));
+      salvarERegistrar(regsLog, []);
     }
   });
 
@@ -2555,7 +2979,8 @@
       quantidade_esperada: p.quantidade_esperada,
       quantidade_guardada: p.quantidade_guardada,
       unidade: p.unidade,
-      status: p.status
+      status: p.status,
+      fabrica: '2'
     }));
 
     salvarERegistrar(registros);
@@ -2652,151 +3077,256 @@
   });
 
   // ---------- configurações (admin) ----------
-  // ---------- estoque atual (mostra todas as partes do catálogo + saldo calculado) ----------
+  // ---------- estoque atual (accordion produto -> partes + drawer detalhes) ----------
+  let estoqueDadosCache = null;
+  const FABRICA_ATUAL_ESTOQUE = '2';
+
+  function calcularEstoqueProdutosF(fabrica){
+    const filtroFab = String(fabrica);
+    // saldos por chave produto||parte||validade
+    const itens = {};
+    (logCompleto||[]).forEach(r => {
+      if(String(r.fabrica||'2') !== filtroFab) return;
+      const produto = (r.produto||'').trim();
+      const parte = (r.parte||'').trim();
+      if(!produto) return;
+      const chave = produto + '||' + parte + '||' + (r.validade||'');
+      if(!itens[chave]){
+        itens[chave] = {
+          produto, parte, validade: r.validade||'',
+          formula: r.formula||'', saldo:0,
+          entradas:0, saidas:0,
+          movimentacoes: []
+        };
+      }
+      const q = Number(r.quantidade_guardada) || 0;
+      if(r.tipo === 'entrada'){ itens[chave].saldo += q; itens[chave].entradas += q; }
+      else if(r.tipo === 'saida'){ itens[chave].saldo -= q; itens[chave].saidas += q; }
+      itens[chave].movimentacoes.push(r);
+    });
+
+    // Agrupa por produto > parte
+    const produtos = {};
+    CATALOGO_PRODUTOS.forEach(p => {
+      produtos[p.produto] = {
+        produto: p.produto, formula: p.formula, sap: p.sap_produto, categoria: p.categoria,
+        partes: {}, saldoTotal: 0, validadeMaisProx: null, noCatalogo: true
+      };
+      (p.partes||[]).forEach(pa => {
+        produtos[p.produto].partes[pa.nome] = { nome: pa.nome, saldo:0, lotes:[], movimentacoes:[] };
+      });
+    });
+
+    Object.values(itens).forEach(it => {
+      if(!produtos[it.produto]){
+        produtos[it.produto] = { produto: it.produto, formula: it.formula, sap:'', categoria:'(legado)', partes:{}, saldoTotal:0, validadeMaisProx:null, noCatalogo:false };
+      }
+      const prod = produtos[it.produto];
+      if(!prod.partes[it.parte]){
+        prod.partes[it.parte] = { nome: it.parte, saldo:0, lotes:[], movimentacoes:[] };
+      }
+      prod.partes[it.parte].saldo += it.saldo;
+      if(it.saldo > 0){
+        prod.partes[it.parte].lotes.push({ validade:it.validade, saldo:it.saldo, entradas:it.entradas, saidas:it.saidas });
+      }
+      prod.partes[it.parte].movimentacoes.push(...it.movimentacoes);
+      prod.saldoTotal += it.saldo;
+      if(it.saldo > 0 && it.validade){
+        if(!prod.validadeMaisProx || it.validade < prod.validadeMaisProx) prod.validadeMaisProx = it.validade;
+      }
+    });
+
+    return Object.values(produtos);
+  }
+
   function renderEstoque(){
     const container = $('estoqueList');
     container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Calculando estoque...</p></div>';
 
     carregarLog().then(() => {
-      // 1) Calcula saldos pelos logs (entradas - saidas) — chave = produto+parte
-      const saldos = {};
-      logCompleto.forEach(r => {
-        const nomeProduto = (r.produto||'').trim();
-        const parte = (r.parte || '').trim();
-        if(!nomeProduto) return;
-        const chave = nomeProduto.toLowerCase() + '||' + parte.toLowerCase();
-        if(!saldos[chave]){
-          saldos[chave] = {
-            nome: nomeProduto, parte,
-            formula: r.formula || '',
-            sap: '',
-            categoria: '',
-            saldo: 0,
-            unidade: r.unidade || 'unid.',
-            validadeMaisProxima: null,
-            totalEntradas: 0,
-            totalSaidas: 0,
-            noCatalogo: false
-          };
-        }
-        const qtd = Number(r.quantidade_guardada) || 0;
-        if(r.tipo === 'entrada'){
-          saldos[chave].saldo += qtd;
-          saldos[chave].totalEntradas += qtd;
-          if(r.validade && (!saldos[chave].validadeMaisProxima || r.validade < saldos[chave].validadeMaisProxima)){
-            saldos[chave].validadeMaisProxima = r.validade;
-          }
-        } else if(r.tipo === 'saida'){
-          saldos[chave].saldo -= qtd;
-          saldos[chave].totalSaidas += qtd;
-        }
-      });
+      const produtos = calcularEstoqueProdutosF(FABRICA_ATUAL_ESTOQUE);
+      estoqueDadosCache = produtos;
+      renderEstoqueProdutos(container, produtos);
+    });
+  }
 
-      // 2) Adiciona TODAS as partes do catálogo (saldo 0 se não tem entrada)
-      const lista = [];
-      CATALOGO_PRODUTOS.forEach(p => {
-        const partes = (p.partes && p.partes.length > 0) ? p.partes : [{nome:'', sap_parte:p.sap_produto}];
-        partes.forEach(parte => {
-          const chave = p.produto.toLowerCase() + '||' + (parte.nome||'').toLowerCase();
-          let item = saldos[chave];
-          if(item){
-            item.noCatalogo = true;
-            item.formula = p.formula || item.formula;
-            item.sap = p.sap_produto || '';
-            item.categoria = p.categoria || '';
-          } else {
-            item = {
-              nome: p.produto, parte: parte.nome || '',
-              formula: p.formula || '',
-              sap: p.sap_produto || '',
-              categoria: p.categoria || '',
-              saldo: 0, unidade: 'unid.',
-              validadeMaisProxima: null,
-              totalEntradas: 0, totalSaidas: 0,
-              noCatalogo: true
-            };
-            saldos[chave] = item;
-          }
-          lista.push(item);
+  function renderEstoqueProdutos(container, produtos){
+    container.innerHTML = '';
+
+    const totalProdutos = produtos.length;
+    const comSaldo = produtos.filter(p => p.saldoTotal > 0).length;
+    const resumo = document.createElement('div');
+    resumo.className = 'estoque-resumo';
+    resumo.innerHTML = `
+      <div><b>${totalProdutos}</b> produtos no catálogo</div>
+      <div><b>${comSaldo}</b> com estoque positivo</div>
+    `;
+    container.appendChild(resumo);
+
+    // Ordena por categoria > nome
+    produtos.sort((a,b) => {
+      const c = (a.categoria||'').localeCompare(b.categoria||'');
+      if(c !== 0) return c;
+      return a.produto.localeCompare(b.produto);
+    });
+
+    let categoriaAtual = null;
+    produtos.forEach(prod => {
+      if(prod.categoria && prod.categoria !== categoriaAtual){
+        categoriaAtual = prod.categoria;
+        const head = document.createElement('div');
+        head.className = 'estoque-cat-head';
+        head.textContent = categoriaAtual;
+        container.appendChild(head);
+      }
+
+      const card = document.createElement('div');
+      card.className = 'prod-accordion';
+      if(prod.saldoTotal === 0) card.classList.add('zerado');
+      const sinal = calcularSinalValidade(prod.validadeMaisProx);
+      const sinalHtml = sinal
+        ? `<span class="sinal-badge sinal-${sinal.cor}">${formatarDataBR(prod.validadeMaisProx)} · ${sinal.label}</span>`
+        : (prod.validadeMaisProx ? `<span class="sinal-badge">${formatarDataBR(prod.validadeMaisProx)}</span>` : '');
+
+      const partes = Object.values(prod.partes).sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+
+      card.innerHTML = `
+        <div class="prod-ac-head">
+          <div class="prod-ac-info">
+            <div class="prod-ac-nome">${escapeHtml(prod.produto)}</div>
+            <div class="prod-ac-meta">${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''} · ${partes.length} parte${partes.length!==1?'s':''}</div>
+          </div>
+          <div class="prod-ac-saldo">
+            <div class="num ${prod.saldoTotal>0?'positivo':'zero'}">${prod.saldoTotal}</div>
+            <div class="unit">unid. total</div>
+            ${sinalHtml}
+          </div>
+          <button class="prod-ac-toggle" aria-label="Expandir">▾</button>
+        </div>
+        <div class="prod-ac-body" style="display:none;">
+          ${partes.map(p => {
+            const sinPa = calcularSinalValidade(p.lotes[0]?.validade);
+            const sinPaHtml = sinPa ? `<span class="sinal-badge sinal-${sinPa.cor}">${sinPa.label}</span>` : '';
+            return `
+              <button class="parte-linha" data-produto="${escapeHtml(prod.produto)}" data-parte="${escapeHtml(p.nome||'')}">
+                <span class="parte-tag">${escapeHtml(p.nome||'—')}</span>
+                <span class="parte-saldo ${p.saldo>0?'positivo':'zero'}">${p.saldo}</span>
+                <span class="parte-info">${p.lotes.length} lote${p.lotes.length!==1?'s':''} ativo${p.lotes.length!==1?'s':''}</span>
+                ${sinPaHtml}
+                <span class="parte-arrow">›</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      const head = card.querySelector('.prod-ac-head');
+      const body = card.querySelector('.prod-ac-body');
+      const toggle = card.querySelector('.prod-ac-toggle');
+      head.addEventListener('click', (e) => {
+        if(e.target.closest('.parte-linha')) return;
+        const aberto = body.style.display !== 'none';
+        body.style.display = aberto ? 'none' : 'block';
+        toggle.textContent = aberto ? '▾' : '▴';
+        card.classList.toggle('aberto', !aberto);
+      });
+      card.querySelectorAll('.parte-linha').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          abrirDrawerParte(btn.dataset.produto, btn.dataset.parte);
         });
       });
 
-      // 3) Inclui itens do log que NÃO estão no catálogo (legados)
-      Object.values(saldos).forEach(item => {
-        if(!item.noCatalogo) lista.push(item);
-      });
+      container.appendChild(card);
+    });
 
-      // Ordena por categoria > produto > parte
-      lista.sort((a,b) => {
-        const c = (a.categoria||'').localeCompare(b.categoria||'');
-        if(c !== 0) return c;
-        const n = a.nome.localeCompare(b.nome);
-        if(n !== 0) return n;
-        return (a.parte||'').localeCompare(b.parte||'');
-      });
+    if(produtos.length === 0){
+      container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Catálogo vazio</div>`;
+    }
+  }
 
-      container.innerHTML = '';
+  function abrirDrawerParte(produto, parte){
+    const prod = (estoqueDadosCache||[]).find(p => p.produto === produto);
+    if(!prod) return;
+    const dados = prod.partes[parte];
+    if(!dados) return;
 
-      // Resumo no topo
-      const totalPartes = lista.length;
-      const comSaldo = lista.filter(x => x.saldo > 0).length;
-      const resumo = document.createElement('div');
-      resumo.className = 'estoque-resumo';
-      resumo.innerHTML = `
-        <div><b>${totalPartes}</b> partes no catálogo</div>
-        <div><b>${comSaldo}</b> com estoque positivo</div>
-      `;
-      container.appendChild(resumo);
+    const drawer = $('drawerParte');
+    const corpo = $('drawerParteCorpo');
+    $('drawerParteTitulo').textContent = produto;
+    $('drawerParteSub').innerHTML = `Parte <b>${escapeHtml(parte||'—')}</b> · ${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''}`;
 
-      let categoriaAtual = null;
-      lista.forEach(item => {
-        // Cabeçalho de categoria
-        if(item.categoria && item.categoria !== categoriaAtual){
-          categoriaAtual = item.categoria;
-          const head = document.createElement('div');
-          head.className = 'estoque-cat-head';
-          head.textContent = categoriaAtual;
-          container.appendChild(head);
-        }
-
-        const card = document.createElement('div');
-        card.className = 'estoque-card';
-        if(item.saldo === 0) card.classList.add('zerado');
-        const saldoClasse = item.saldo > 0 ? 'positivo' : (item.saldo === 0 ? 'zero' : 'negativo');
-        const sinal = calcularSinalValidade(item.validadeMaisProxima);
-        const sinalHtml = sinal
-          ? `<span class="sinal-badge sinal-${sinal.cor}">Vence em: ${formatarDataBR(item.validadeMaisProxima)} · ${sinal.label}</span>`
-          : (item.validadeMaisProxima ? `<span>Vence em: ${formatarDataBR(item.validadeMaisProxima)}</span>` : '');
-        const parteBadge = item.parte
-          ? `<span class="ec-parte-badge">Parte ${escapeHtml(item.parte)}</span>`
-          : '';
-        const metaLinha = (item.formula || item.sap)
-          ? `<div class="ec-formula">${escapeHtml(item.formula||'')} ${item.sap ? '· SAP ' + escapeHtml(item.sap) : ''}</div>`
-          : '';
-        card.innerHTML = `
-          <div class="ec-head">
-            <div class="ec-nome">
-              ${escapeHtml(item.nome)} ${parteBadge}
-              ${metaLinha}
+    // Lotes ativos
+    const lotesAtivos = (dados.lotes||[]).filter(l => l.saldo > 0)
+      .sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
+    let lotesHtml = '';
+    if(lotesAtivos.length === 0){
+      lotesHtml = `<div class="empty-state small"><div class="ic">📭</div>Sem lotes com saldo</div>`;
+    } else {
+      lotesHtml = lotesAtivos.map((l,i) => {
+        const sinal = calcularSinalValidade(l.validade);
+        const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
+        const fefoBadge = i === 0 ? `<span class="fefo-tag">FEFO</span>` : '';
+        return `
+          <div class="lote-card">
+            <div class="lote-card-top">
+              <div>
+                <div class="lote-val">${formatarDataBR(l.validade) || 'sem data'} ${fefoBadge}</div>
+                <div class="lote-info">${l.entradas} entradas · ${l.saidas} saídas</div>
+              </div>
+              <div class="lote-saldo">${l.saldo}</div>
             </div>
-            <div class="ec-saldo">
-              <div class="num ${saldoClasse}">${item.saldo}</div>
-              <div class="unit">${escapeHtml(item.unidade)}</div>
-            </div>
-          </div>
-          <div class="ec-detalhe">
-            <span>↓ ${item.totalEntradas} entrou</span>
-            <span>↑ ${item.totalSaidas} saiu</span>
-            ${sinalHtml}
+            ${badge}
           </div>
         `;
-        container.appendChild(card);
-      });
+      }).join('');
+    }
 
-      if(lista.length === 0){
-        container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Catálogo vazio</div>`;
-      }
+    // Histórico (todas as movimentações ordenadas por data desc)
+    const movs = (dados.movimentacoes||[]).slice().sort((a,b) => {
+      const da = parseData(a.timestamp || a.registradoEm) || new Date(0);
+      const db = parseData(b.timestamp || b.registradoEm) || new Date(0);
+      return db - da;
     });
+    let histHtml = '';
+    if(movs.length === 0){
+      histHtml = `<div class="empty-state small"><div class="ic">📋</div>Sem histórico</div>`;
+    } else {
+      histHtml = movs.slice(0, 50).map(m => {
+        const ehEntrada = m.tipo === 'entrada';
+        return `
+          <div class="hist-item">
+            <span class="hist-icon ${ehEntrada?'entrou':'saiu'}">${ehEntrada?'↓':'↑'}</span>
+            <div class="hist-meta">
+              <div><b>${m.quantidade_guardada}</b> ${escapeHtml(m.unidade||'unid.')} ${ehEntrada?'entrou':'saiu'} · ${escapeHtml(m.validade?formatarDataBR(m.validade):'—')}</div>
+              <div class="hist-sub">${escapeHtml(m.operador||'')} · ${escapeHtml(m.timestamp||'')}</div>
+              ${m.justificativa_fefo ? `<div class="hist-just">📝 ${escapeHtml(m.justificativa_fefo)}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    corpo.innerHTML = `
+      <div class="drawer-resumo">
+        <div><div class="dr-label">Saldo atual</div><div class="dr-val ${dados.saldo>0?'positivo':'zero'}">${dados.saldo}</div></div>
+        <div><div class="dr-label">Lotes ativos</div><div class="dr-val">${lotesAtivos.length}</div></div>
+        <div><div class="dr-label">Movimentações</div><div class="dr-val">${movs.length}</div></div>
+      </div>
+      <div class="drawer-secao">
+        <div class="drawer-label">Lotes em estoque</div>
+        ${lotesHtml}
+      </div>
+      <div class="drawer-secao">
+        <div class="drawer-label">Histórico</div>
+        ${histHtml}
+      </div>
+    `;
+    drawer.classList.add('aberto');
+  }
+
+  function fecharDrawerParte(){
+    $('drawerParte').classList.remove('aberto');
   }
 
   $('btnVoltarInicioEstoque').addEventListener('click', () => {
@@ -2824,6 +3354,29 @@
     finally{
       $('btnLimparLog').disabled = false;
       $('btnLimparLog').textContent = '🗑 Apagar todo o histórico (admin)';
+    }
+  });
+
+  $('btnLimparLegado').addEventListener('click', async () => {
+    if(!usuarioAtual || !usuarioAtual.isAdmin){ toast('Apenas admin'); return; }
+    const senha = prompt('Senha de admin para apagar registros LEGADOS (sem parte):');
+    if(senha === null) return;
+    if(senha !== SENHA_ADMIN){ toast('Senha incorreta'); return; }
+    if(!confirm('Apagar registros antigos (sem campo "parte")? Não afeta registros novos.')) return;
+    $('btnLimparLegado').disabled = true; $('btnLimparLegado').textContent = 'Apagando...';
+    try{
+      const res = await apiPost({ acao:'limparLogLegado' });
+      if(res.ok){
+        toast(`${res.removidos||0} registros legados apagados`);
+        await carregarLog();
+        renderEstoque();
+      } else {
+        toast('Erro: ' + (res.erro||''));
+      }
+    }catch(e){ toast('Erro de rede'); }
+    finally{
+      $('btnLimparLegado').disabled = false;
+      $('btnLimparLegado').textContent = '🧹 Apagar só registros legados (admin)';
     }
   });
 
@@ -2912,10 +3465,14 @@
   }
   window._abrirLightbox = abrirLightbox;
 
-  // ---------- SOLICITAÇÕES F1 -> F2 ----------
+  // ---------- SOLICITAÇÕES F1 <-> F2 ----------
   let solicFiltroStatus = 'pendente';
-  let solicProdutoSel = null; // {nome, formula}
+  let solicFiltroDirecao = 'f1_para_f2';
+  let solicNovoDirecao = 'f1_para_f2';
+  let solicProdutoSel = null; // {nome, formula, sap, categoria}
   let solicCache = [];
+  let solicAtual = null; // pedido sendo atendido
+  let atenderLotes = []; // [{parte, lotes:[{validade, qtd}]}]
 
   // tabs (lista / novo)
   document.querySelectorAll('#screen-solic [data-solic-aba]').forEach(btn => {
@@ -2925,6 +3482,25 @@
       const aba = btn.dataset.solicAba;
       $('solicListaWrap').style.display = aba === 'lista' ? 'block' : 'none';
       $('solicNovoWrap').style.display = aba === 'novo' ? 'block' : 'none';
+    });
+  });
+
+  // direção da lista
+  document.querySelectorAll('#screen-solic [data-solic-dir]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-solic [data-solic-dir]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      solicFiltroDirecao = btn.dataset.solicDir;
+      renderSolicLista();
+    });
+  });
+
+  // direção do novo pedido
+  document.querySelectorAll('#screen-solic [data-dir]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-solic [data-dir]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      solicNovoDirecao = btn.dataset.dir;
     });
   });
 
@@ -2938,7 +3514,6 @@
     });
   });
 
-  // seletor de produto (usa o seletor genérico em 3 níveis com flag __solic__)
   $('solicBtnProduto').addEventListener('click', () => {
     seletorLinhaId = '__solic__';
     seletorNivel = 'categoria';
@@ -2966,13 +3541,13 @@
         solicitante: usuarioAtual ? usuarioAtual.nome : '—',
         produto: solicProdutoSel.nome,
         formula: solicProdutoSel.formula,
-        parte: solicProdutoSel.parte || '',
+        parte: '',
         quantidade: qtd,
-        observacao: obs
+        observacao: obs,
+        direcao: solicNovoDirecao
       });
       if(!res.ok){ toast('Erro: ' + res.erro); return; }
       toast('Pedido enviado!');
-      // limpa form e volta pra lista
       solicProdutoSel = null;
       $('solicProdutoLabel').outerHTML = '<div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>';
       $('solicQtd').value = '';
@@ -3002,6 +3577,8 @@
   function renderSolicLista(){
     const container = $('solicLista');
     let dados = solicCache.slice().reverse();
+    // Filtra direção
+    dados = dados.filter(s => (s.direcao || 'f1_para_f2') === solicFiltroDirecao);
     if(solicFiltroStatus !== 'todos'){
       dados = dados.filter(s => (s.status || 'pendente') === solicFiltroStatus);
     }
@@ -3018,14 +3595,16 @@
       const atendido = String(s.status || 'pendente') === 'atendido';
       card.className = 'solic-card' + (atendido ? ' atendido' : '');
       const obsHtml = s.observacao ? `<div class="sc-obs">${escapeHtml(s.observacao)}</div>` : '';
+      const direcaoTag = (s.direcao||'f1_para_f2') === 'f1_para_f2'
+        ? '<span class="dir-tag">F1 → F2</span>'
+        : '<span class="dir-tag rev">F2 → F1</span>';
       const acaoHtml = atendido
         ? `<div class="sc-atendido">✓ Atendido por ${escapeHtml(s.atendido_por||'—')}<br><small>${escapeHtml(s.atendido_em||'')}</small></div>`
-        : `<button class="btn btn-primary sc-btn-atender" data-id="${s.id}" style="width:auto; padding:9px 16px; font-size:13px;">Marcar como atendido</button>`;
-      const parteBadge = s.parte ? `<span class="ps-parte-badge">Parte ${escapeHtml(s.parte)}</span>` : '';
+        : `<button class="btn btn-primary sc-btn-atender" data-id="${s.id}" style="width:auto; padding:9px 16px; font-size:13px;">Atender pedido →</button>`;
       card.innerHTML = `
         <div class="sc-head">
-          <div class="sc-produto">${escapeHtml(s.produto || '—')} ${parteBadge}</div>
-          <div class="sc-qtd">${escapeHtml(String(s.quantidade||0))}</div>
+          <div class="sc-produto">${escapeHtml(s.produto || '—')} ${direcaoTag}</div>
+          <div class="sc-qtd">${escapeHtml(String(s.quantidade||0))} <small style="font-size:11px;font-weight:400;">kits</small></div>
         </div>
         <div class="sc-formula">${escapeHtml(s.formula || '')}</div>
         ${obsHtml}
@@ -3035,27 +3614,358 @@
       container.appendChild(card);
     });
     container.querySelectorAll('.sc-btn-atender').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        btn.disabled = true; btn.textContent = 'Marcando...';
-        try{
-          const res = await apiPost({
-            acao: 'atenderSolicitacao',
-            id: btn.dataset.id,
-            atendido_por: usuarioAtual ? usuarioAtual.nome : '—',
-            atendido_em: new Date().toLocaleString('pt-BR')
-          });
-          if(res.ok){ toast('Pedido marcado como atendido'); await renderSolicitacoes(); }
-          else { toast('Erro: ' + res.erro); btn.disabled = false; btn.textContent = 'Marcar como atendido'; }
-        }catch(e){
-          toast('Erro de rede'); btn.disabled = false; btn.textContent = 'Marcar como atendido';
-        }
+      btn.addEventListener('click', () => {
+        const ped = solicCache.find(s => String(s.id) === String(btn.dataset.id));
+        if(ped) abrirTelaAtendimento(ped);
       });
     });
   }
 
+  function abrirTelaAtendimento(ped){
+    solicAtual = ped;
+    const dir = ped.direcao || 'f1_para_f2';
+    const origem = dir === 'f1_para_f2' ? 'F2 (xaroparia)' : 'F1';
+    const destino = dir === 'f1_para_f2' ? 'F1' : 'F2 (xaroparia)';
+    $('atenderTitulo').textContent = ped.produto || '—';
+    $('atenderSub').innerHTML = `Solicitado: <b>${ped.quantidade||0} kits</b> · ${escapeHtml(ped.formula||'')}`;
+    $('atenderInfoExtra').innerHTML = `Direção: <b>${escapeHtml(origem)} → ${escapeHtml(destino)}</b> · Por ${escapeHtml(ped.solicitante||'—')} em ${escapeHtml(ped.timestamp||'')}`;
+
+    // Procura o produto no catálogo
+    const prodInfo = CATALOGO_PRODUTOS.find(p => p.produto === ped.produto);
+    const partes = prodInfo ? (prodInfo.partes||[]) : [];
+
+    // Inicializa estrutura de lotes
+    atenderLotes = partes.map(p => ({ parte: p.nome || '', lotes: [{ validade:'', qtd:'' }] }));
+    if(atenderLotes.length === 0){
+      atenderLotes = [{ parte:'', lotes:[{ validade:'', qtd:'' }] }];
+    }
+    renderAtenderForm();
+    showScreen('screen-solic-atender');
+  }
+
+  function renderAtenderForm(){
+    const wrap = $('atenderFormPartes');
+    wrap.innerHTML = '';
+    atenderLotes.forEach((pa, pIdx) => {
+      const div = document.createElement('div');
+      div.className = 'parte-bloco';
+      let lotesHtml = '';
+      pa.lotes.forEach((l, lIdx) => {
+        const sinal = calcularSinalValidade(l.validade);
+        const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
+        lotesHtml += `
+          <div class="lote-row">
+            <div class="lote-field" style="flex-basis:130px; flex-grow:0;">
+              <label>Qtd.</label>
+              <input type="number" inputmode="numeric" min="0" placeholder="0" data-aten-parte="${pIdx}" data-aten-lote="${lIdx}" data-field="qtd" value="${escapeHtml(String(l.qtd))}">
+            </div>
+            <div class="lote-field">
+              <label>Validade ${badge}</label>
+              <input type="date" data-aten-parte="${pIdx}" data-aten-lote="${lIdx}" data-field="validade" value="${escapeHtml(l.validade)}" style="color-scheme:dark;">
+            </div>
+            ${pa.lotes.length > 1 ? `<button class="mr-remove" data-aten-rem-parte="${pIdx}" data-aten-rem-lote="${lIdx}" title="Remover">×</button>` : ''}
+          </div>`;
+      });
+      div.innerHTML = `
+        <div class="parte-head">
+          <span class="parte-tag">Parte ${escapeHtml(pa.parte || '—')}</span>
+          <button class="link-btn" data-aten-add="${pIdx}">+ outro lote</button>
+        </div>
+        ${lotesHtml}
+      `;
+      wrap.appendChild(div);
+    });
+    // listeners
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', (e) => {
+        const pIdx = Number(e.target.dataset.atenParte);
+        const lIdx = Number(e.target.dataset.atenLote);
+        atenderLotes[pIdx].lotes[lIdx][e.target.dataset.field] = e.target.value;
+        if(e.target.dataset.field === 'validade') renderAtenderForm();
+      });
+    });
+    wrap.querySelectorAll('[data-aten-add]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        atenderLotes[Number(btn.dataset.atenAdd)].lotes.push({ validade:'', qtd:'' });
+        renderAtenderForm();
+      });
+    });
+    wrap.querySelectorAll('[data-aten-rem-parte]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = Number(btn.dataset.atenRemParte), l = Number(btn.dataset.atenRemLote);
+        atenderLotes[p].lotes.splice(l,1);
+        if(atenderLotes[p].lotes.length === 0) atenderLotes[p].lotes.push({validade:'',qtd:''});
+        renderAtenderForm();
+      });
+    });
+  }
+
+  $('btnCancelarAtendimento').addEventListener('click', () => {
+    showScreen('screen-solic');
+  });
+
+  $('btnConfirmarAtendimento').addEventListener('click', async () => {
+    if(!solicAtual){ toast('Pedido não selecionado'); return; }
+    const lotesParaEnviar = [];
+    atenderLotes.forEach(pa => {
+      pa.lotes.forEach(l => {
+        const qtd = Number(l.qtd) || 0;
+        if(qtd > 0 && l.validade){
+          lotesParaEnviar.push({ parte: pa.parte, validade: l.validade, quantidade: qtd });
+        }
+      });
+    });
+    if(lotesParaEnviar.length === 0){
+      toast('Preencha ao menos uma parte com quantidade e validade');
+      return;
+    }
+    if(!confirm(`Confirmar envio de ${lotesParaEnviar.length} lote(s) para ${solicAtual.direcao === 'f1_para_f2' ? 'F1' : 'F2'}?`)) return;
+
+    $('btnConfirmarAtendimento').disabled = true;
+    $('btnConfirmarAtendimento').textContent = 'Gravando...';
+    try{
+      const res = await apiPost({
+        acao: 'atenderSolicitacao',
+        id: solicAtual.id,
+        atendido_por: usuarioAtual ? usuarioAtual.nome : '—',
+        atendido_em: new Date().toLocaleString('pt-BR'),
+        direcao: solicAtual.direcao || 'f1_para_f2',
+        lotes: lotesParaEnviar
+      });
+      if(!res.ok){ toast('Erro: ' + res.erro); return; }
+      toast(`Pedido atendido! ${res.lotes_registrados || lotesParaEnviar.length} lotes registrados`);
+      solicAtual = null;
+      atenderLotes = [];
+      await carregarLog();
+      await renderSolicitacoes();
+      showScreen('screen-solic');
+    }catch(e){
+      toast('Erro de rede: ' + (e.message || ''));
+    }finally{
+      $('btnConfirmarAtendimento').disabled = false;
+      $('btnConfirmarAtendimento').textContent = '✓ Confirmar envio';
+    }
+  });
+
   $('btnVoltarInicioSolic').addEventListener('click', () => { iniciarTabelaManual(); showScreen('screen-scan'); });
 
-  // ============= AUDITORIA DAS SALAS =============
+  // ---------- PAINEL DE VALIDADES ----------
+  let valFiltroDias = 'todos';
+  let valFiltroFab = '2';
+
+  document.querySelectorAll('#screen-validades [data-val-filtro]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-validades [data-val-filtro]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      valFiltroDias = btn.dataset.valFiltro;
+      renderValidadesLista();
+    });
+  });
+  document.querySelectorAll('#screen-validades [data-val-fab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#screen-validades [data-val-fab]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      valFiltroFab = btn.dataset.valFab;
+      renderValidades();
+    });
+  });
+
+  function coletarLotesParaValidades(){
+    // Une os lotes ativos das duas fábricas conforme filtro
+    const fontes = valFiltroFab === 'todas' ? ['1','2'] : [valFiltroFab];
+    const itens = [];
+    fontes.forEach(fab => {
+      const produtos = calcularEstoqueProdutosF(fab);
+      produtos.forEach(prod => {
+        Object.values(prod.partes).forEach(parte => {
+          (parte.lotes||[]).forEach(l => {
+            if(l.saldo > 0 && l.validade){
+              itens.push({
+                produto: prod.produto,
+                categoria: prod.categoria,
+                formula: prod.formula,
+                sap: prod.sap,
+                parte: parte.nome || '',
+                validade: l.validade,
+                qtd: l.saldo,
+                fabrica: fab,
+                dias: diasAteValidade(l.validade)
+              });
+            }
+          });
+        });
+      });
+    });
+    return itens.sort((a,b) => a.validade.localeCompare(b.validade));
+  }
+
+  function diasAteValidade(v){
+    const d = parseData(v);
+    if(!d) return null;
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
+    return Math.round((d - hoje) / (1000*60*60*24));
+  }
+
+  async function renderValidades(){
+    $('validadesResumo').innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    await carregarLog();
+    const itens = coletarLotesParaValidades();
+    // Resumo
+    const vencidos = itens.filter(x => x.dias < 0);
+    const ate30 = itens.filter(x => x.dias >= 0 && x.dias <= 30);
+    const ate60 = itens.filter(x => x.dias > 30 && x.dias <= 60);
+    const ate90 = itens.filter(x => x.dias > 60 && x.dias <= 90);
+    $('validadesResumo').innerHTML = `
+      <div class="val-card val-card-vermelho">
+        <div class="vc-num">${vencidos.length}</div>
+        <div class="vc-label">Vencidos</div>
+        <div class="vc-qtd">${vencidos.reduce((s,x)=>s+x.qtd,0)} unid.</div>
+      </div>
+      <div class="val-card val-card-laranja">
+        <div class="vc-num">${ate30.length}</div>
+        <div class="vc-label">≤ 30 dias</div>
+        <div class="vc-qtd">${ate30.reduce((s,x)=>s+x.qtd,0)} unid.</div>
+      </div>
+      <div class="val-card val-card-amarelo">
+        <div class="vc-num">${ate60.length}</div>
+        <div class="vc-label">31-60 dias</div>
+        <div class="vc-qtd">${ate60.reduce((s,x)=>s+x.qtd,0)} unid.</div>
+      </div>
+      <div class="val-card val-card-verde">
+        <div class="vc-num">${ate90.length}</div>
+        <div class="vc-label">61-90 dias</div>
+        <div class="vc-qtd">${ate90.reduce((s,x)=>s+x.qtd,0)} unid.</div>
+      </div>
+    `;
+    renderValidadesTimeline(itens);
+    renderValidadesLista(itens);
+  }
+
+  function renderValidadesTimeline(itens){
+    const tl = $('validadesTimeline');
+    // Próximos 30 dias
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const proximos = itens.filter(x => x.dias >= 0 && x.dias <= 30);
+
+    // Agrupa por dia
+    const porDia = {};
+    proximos.forEach(x => {
+      porDia[x.dias] = porDia[x.dias] || [];
+      porDia[x.dias].push(x);
+    });
+
+    let html = '<div class="tl-track">';
+    for(let d = 0; d <= 30; d++){
+      const itensDia = porDia[d] || [];
+      const data = new Date(hoje); data.setDate(data.getDate() + d);
+      const cor = d <= 7 ? 'vermelho' : (d <= 15 ? 'laranja' : (d <= 30 ? 'amarelo' : 'verde'));
+      const tit = `${data.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} · ${itensDia.length} item${itensDia.length!==1?'s':''}`;
+      const sz = itensDia.length === 0 ? '' : `tl-dot-${Math.min(itensDia.length,5)}`;
+      html += `<div class="tl-day ${itensDia.length > 0 ? 'has-items':''}" title="${escapeHtml(tit)}" data-dia="${d}">
+        <div class="tl-bar tl-cor-${cor} ${sz}"></div>
+        <div class="tl-tick">${d===0?'Hoje':d+'d'}</div>
+      </div>`;
+    }
+    html += '</div>';
+    tl.innerHTML = html;
+    tl.querySelectorAll('.tl-day.has-items').forEach(el => {
+      el.addEventListener('click', () => {
+        const d = Number(el.dataset.dia);
+        const itensDia = porDia[d] || [];
+        const txt = itensDia.map(x => `• ${x.produto} (parte ${x.parte}) · ${x.qtd} unid. · ${formatarDataBR(x.validade)}`).join('\n');
+        alert(`Vencimentos em ${d===0?'hoje':d+' dias'}:\n\n${txt}`);
+      });
+    });
+  }
+
+  function renderValidadesLista(itensOverride){
+    const lista = $('validadesLista');
+    const itens = itensOverride || coletarLotesParaValidades();
+    let filtrados = itens;
+    if(valFiltroDias === 'vencidos') filtrados = itens.filter(x => x.dias < 0);
+    else if(valFiltroDias === '30') filtrados = itens.filter(x => x.dias <= 30);
+    else if(valFiltroDias === '60') filtrados = itens.filter(x => x.dias <= 60);
+    else if(valFiltroDias === '90') filtrados = itens.filter(x => x.dias <= 90);
+
+    if(filtrados.length === 0){
+      lista.innerHTML = `<div class="empty-state"><div class="ic">✅</div>Nenhum item com validade nesse filtro</div>`;
+      return;
+    }
+
+    // Agrupa por mês
+    const porMes = {};
+    filtrados.forEach(x => {
+      const m = (x.validade||'').slice(0,7); // YYYY-MM
+      porMes[m] = porMes[m] || [];
+      porMes[m].push(x);
+    });
+    const meses = Object.keys(porMes).sort();
+
+    let html = '';
+    meses.forEach(m => {
+      const mesData = m ? new Date(m + '-01') : null;
+      const tit = mesData ? mesData.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).toUpperCase() : 'Sem data';
+      html += `<div class="val-mes-head">${escapeHtml(tit)} <span class="val-mes-count">${porMes[m].length}</span></div>`;
+      porMes[m].forEach(x => {
+        const corCls = x.dias < 0 ? 'val-vencido' : x.dias <= 30 ? 'val-30' : x.dias <= 60 ? 'val-60' : x.dias <= 90 ? 'val-90' : 'val-ok';
+        const diasTxt = x.dias < 0 ? `Vencido há ${Math.abs(x.dias)}d` : x.dias === 0 ? 'Vence hoje' : `${x.dias}d`;
+        html += `
+          <div class="val-item ${corCls}">
+            <div class="val-item-info">
+              <div class="val-item-prod">${escapeHtml(x.produto)} <span class="ps-parte-badge">${escapeHtml(x.parte||'—')}</span></div>
+              <div class="val-item-meta">${escapeHtml(x.categoria||'')} · ${escapeHtml(x.formula||'')} ${x.sap?'· SAP '+escapeHtml(x.sap):''} · Fáb. ${escapeHtml(x.fabrica)}</div>
+            </div>
+            <div class="val-item-qtd">
+              <div class="vi-data">${formatarDataBR(x.validade)}</div>
+              <div class="vi-dias">${escapeHtml(diasTxt)}</div>
+              <div class="vi-saldo">${x.qtd} unid.</div>
+            </div>
+          </div>`;
+      });
+    });
+    lista.innerHTML = html;
+  }
+
+  $('btnVoltarInicioValidades').addEventListener('click', () => {
+    iniciarTabelaManual();
+    showScreen('screen-scan');
+  });
+
+  $('btnExportarVencidos').addEventListener('click', () => {
+    const itens = coletarLotesParaValidades().filter(x => x.dias <= 0);
+    if(itens.length === 0){ toast('Nenhum vencido para exportar'); return; }
+    let csv = 'Produto;Categoria;Parte;Formula;SAP;Validade;Dias;Quantidade;Fabrica\n';
+    itens.forEach(x => {
+      csv += `${(x.produto||'').replace(/;/g,',')};${x.categoria||''};${x.parte||''};${x.formula||''};${x.sap||''};${formatarDataBR(x.validade)};${x.dias};${x.qtd};${x.fabrica}\n`;
+    });
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `vencidos_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Indicador no menu lateral (bolinha pulsante)
+  async function atualizarIndicadorValidades(){
+    try{
+      await carregarLog();
+      const itens = coletarLotesParaValidades();
+      const criticos = itens.filter(x => x.dias <= 30);
+      const badge = document.querySelector('[data-step="screen-validades"] .val-badge');
+      if(badge){
+        if(criticos.length > 0){
+          badge.textContent = criticos.length;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    }catch(e){}
+  }
+  // Atualiza periodicamente quando o usuário tá logado
+  setInterval(() => { if(usuarioAtual) atualizarIndicadorValidades(); }, 60000);
   const SALAS_AUDITORIA = [
     { id:'ibc', nome:'IBC', icone:'📦' },
     { id:'powerade', nome:'Powerade', icone:'⚡' },
@@ -3314,40 +4224,16 @@
   }
 
 
-  // ---------- Fábrica 1: log filtrado ----------
+  // ---------- Fábrica 1: estoque (accordion + drawer iguais ao F2) ----------
   async function renderFab1(){
     const container = $('fab1List');
     container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza);font-size:13px;">Carregando...</p></div>';
     try{
-      const res = await apiGet({ acao:'listarLog' });
-      const fab1 = (res.ok ? res.log : []).filter(r => r.fabrica === 'Fábrica 1');
-      if(fab1.length === 0){
-        container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Nenhum registro para Fábrica 1 ainda</div>`;
-        return;
-      }
-      // calcula saldo igual ao estoque atual, mas só pra Fábrica 1
-      const saldos = {};
-      fab1.forEach(r => {
-        const chave = r.produto.trim().toLowerCase();
-        if(!saldos[chave]) saldos[chave] = { nome: r.produto.trim(), saldo:0, totalEntradas:0, totalSaidas:0, unidade: r.unidade||'unid.' };
-        const qtd = Number(r.quantidade_guardada)||0;
-        if(r.tipo==='entrada'){ saldos[chave].saldo+=qtd; saldos[chave].totalEntradas+=qtd; }
-        else { saldos[chave].saldo-=qtd; saldos[chave].totalSaidas+=qtd; }
-      });
-      container.innerHTML = '';
-      Object.values(saldos).sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'estoque-card';
-        const cls = item.saldo>0?'positivo':(item.saldo===0?'zero':'negativo');
-        card.innerHTML = `
-          <div class="ec-head">
-            <div class="ec-nome">${escapeHtml(item.nome)}</div>
-            <div class="ec-saldo"><div class="num ${cls}">${item.saldo}</div><div class="unit">${escapeHtml(item.unidade)}</div></div>
-          </div>
-          <div class="ec-detalhe"><span>↓ ${item.totalEntradas} entrou</span><span>↑ ${item.totalSaidas} saiu</span></div>
-        `;
-        container.appendChild(card);
-      });
+      await carregarLog();
+      const produtos = calcularEstoqueProdutosF('1');
+      estoqueDadosCache = produtos; // drawer pega daqui
+      // mostra só produtos com saldo positivo ou que apareceram em algum log f1
+      renderEstoqueProdutos(container, produtos);
     }catch(e){
       container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao carregar</div>`;
     }
