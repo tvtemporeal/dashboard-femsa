@@ -2747,9 +2747,12 @@
   async function carregarCatalogo(){
     try{
       const res = await apiGet({ acao:'listarCatalogoEstoque' });
-      if(!res.ok){ console.error('Erro catalogo:', res.erro); return false; }
+      if(!res.ok){
+        console.error('Erro catalogo:', res.erro, res);
+        toast('Catálogo: ' + (res.erro || 'erro desconhecido'));
+        return false;
+      }
       CATALOGO_PRODUTOS = res.catalogo || [];
-      // monta TODOS_PRODUTOS pra retrocompatibilidade (1 entrada por produto)
       TODOS_PRODUTOS = CATALOGO_PRODUTOS.map(p => ({
         nome: p.produto,
         formula: p.formula,
@@ -2758,10 +2761,14 @@
         tipo: p.tipo,
         partes: p.partes || []
       }));
-      console.log('Catálogo carregado:', CATALOGO_PRODUTOS.length, 'produtos');
+      console.log('Catálogo carregado:', CATALOGO_PRODUTOS.length, 'produtos', res.debug);
+      if(CATALOGO_PRODUTOS.length === 0){
+        toast('Catálogo vazio. Debug: ' + JSON.stringify(res.debug || {}));
+      }
       return true;
     }catch(e){
       console.error('Falha carregando catálogo:', e);
+      toast('Falha ao carregar catálogo: ' + (e.message||e));
       return false;
     }
   }
