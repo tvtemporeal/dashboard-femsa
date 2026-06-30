@@ -3287,34 +3287,43 @@
   });
 
   // ---------- configurações (admin) ----------
-  // ---------- estoque atual (lê da aba Validade, não calcula mais do log) ----------
+  // ---------- estoque atual (lê da aba INVENTÁRIO) ----------
   let estoqueDadosCache = null;
-  let validadesCache = [];
+  let inventarioCache = [];
+  let blocosInventarioCache = [];
   const FABRICA_ATUAL_ESTOQUE = '2';
 
-  async function carregarValidades(){
+  async function carregarInventario(){
     try{
-      const res = await apiGet({ acao:'listarValidades' });
-      validadesCache = res.ok ? (res.validades || []) : [];
-      // normaliza
-      validadesCache.forEach(v => {
-        v.produto = String(v.produto||'').trim();
-        v.parte = String(v.parte||'').trim();
-        v.validade = validadeISO(v.validade);
-        v.quantidade = Number(v.quantidade) || 0;
-        v.fabrica = String(v.fabrica||'2');
-      });
+      const res = await apiGet({ acao:'listarInventario' });
+      if(res.ok){
+        inventarioCache = (res.lotes || []).map(v => ({
+          produto: String(v.produto||'').trim(),
+          parte: String(v.parte||'').trim(),
+          validade: validadeISO(v.validade),
+          quantidade: Number(v.quantidade) || 0,
+          lote: v.lote || '',
+          row: v.row, colVenc: v.colVenc, colQtd: v.colQtd,
+          colParte: v.colParte, colLote: v.colLote
+        }));
+        blocosInventarioCache = res.blocos || [];
+      } else {
+        inventarioCache = [];
+        blocosInventarioCache = [];
+      }
     }catch(e){
-      validadesCache = [];
-      console.error('carregarValidades:', e);
+      inventarioCache = [];
+      blocosInventarioCache = [];
+      console.error('carregarInventario:', e);
     }
   }
 
+  // Compatibilidade: nome antigo
+  const carregarValidades = carregarInventario;
+
   function calcularEstoqueProdutosF(fabrica){
-    const filtroFab = String(fabrica);
-    // Agrupa lotes ativos por produto > parte
     const produtos = {};
-    // Pre-popula com TODOS os produtos do catálogo (saldo 0 se nada)
+    // Pre-popula com TODOS os produtos do catálogo
     CATALOGO_PRODUTOS.forEach(p => {
       produtos[p.produto] = {
         produto: p.produto, formula: p.formula, sap: p.sap_produto, categoria: p.categoria,
@@ -3325,12 +3334,11 @@
       });
     });
 
-    // Adiciona lotes da aba Validade
-    validadesCache.forEach(v => {
-      if(v.fabrica !== filtroFab) return;
+    // Adiciona lotes do INVENTÁRIO (aba visual)
+    inventarioCache.forEach(v => {
       if(v.quantidade <= 0) return;
       if(!produtos[v.produto]){
-        produtos[v.produto] = { produto: v.produto, formula:'', sap:'', categoria:'(legado)', partes:{}, saldoTotal:0, validadeMaisProx:null, noCatalogo:false };
+        produtos[v.produto] = { produto: v.produto, formula:'', sap:'', categoria:'(do Inventário)', partes:{}, saldoTotal:0, validadeMaisProx:null, noCatalogo:false };
       }
       const prod = produtos[v.produto];
       if(!prod.partes[v.parte]){
@@ -3347,11 +3355,10 @@
 
     // Adiciona movimentações do log (pro drawer mostrar histórico)
     (logCompleto||[]).forEach(r => {
-      if(String(r.fabrica||'2') !== filtroFab) return;
+      if(String(r.fabrica||'2') !== String(fabrica)) return;
       if(r.tipo === 'inventario_inicial') return;
       const produto = r.produto, parte = r.parte;
-      if(!produto) return;
-      if(!produtos[produto]) return;
+      if(!produto || !produtos[produto]) return;
       if(!produtos[produto].partes[parte]) return;
       produtos[produto].partes[parte].movimentacoes.push(r);
     });
@@ -3361,9 +3368,9 @@
 
   function renderEstoque(){
     const container = $('estoqueList');
-    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Carregando estoque...</p></div>';
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Lendo aba Inventário...</p></div>';
 
-    Promise.all([carregarValidades(), carregarLog()]).then(() => {
+    Promise.all([carregarInventario(), carregarLog()]).then(() => {
       try {
         const produtos = calcularEstoqueProdutosF(FABRICA_ATUAL_ESTOQUE);
         estoqueDadosCache = produtos;
