@@ -3558,25 +3558,6 @@
       if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
     });
   })();
-    const inp = $('estoqueBusca');
-    const clear = $('estoqueBuscaClear');
-    if(!inp) return;
-    let debounce = null;
-    inp.addEventListener('input', () => {
-      clear.style.display = inp.value ? 'inline-block' : 'none';
-      window._estoqueFiltro = inp.value;
-      clearTimeout(debounce);
-      debounce = setTimeout(() => {
-        if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
-      }, 200);
-    });
-    clear.addEventListener('click', () => {
-      inp.value = '';
-      window._estoqueFiltro = '';
-      clear.style.display = 'none';
-      if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
-    });
-  })();
 
   function renderEstoqueProdutos(container, produtos){
     container.innerHTML = '';
