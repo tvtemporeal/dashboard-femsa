@@ -926,6 +926,13 @@
   .parte-linha.vazia{ opacity:0.45; }
   .parte-linha.primeiro-da-parte{ border-top:1px solid var(--linha); padding-top:14px; }
 
+  .kit-badge{
+    display:inline-block; margin-left:6px; padding:2px 8px;
+    background:rgba(217,142,4,0.15); color:var(--ambar);
+    border-radius:5px; font-size:10px; font-weight:800; letter-spacing:0.5px;
+  }
+  .kit-badge b{ font-size:12px; }
+
   /* ============ DRAWER LATERAL ============ */
   #drawerParteOverlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); opacity:0; pointer-events:none;
@@ -3278,6 +3285,7 @@
   let estoqueDadosCache = null;
   let inventarioCache = [];
   let blocosInventarioCache = [];
+  let blocosInventarioPorProduto = {};
   const FABRICA_ATUAL_ESTOQUE = '2';
 
   async function carregarInventario(){
@@ -3294,13 +3302,26 @@
           colParte: v.colParte, colLote: v.colLote
         }));
         blocosInventarioCache = res.blocos || [];
+        // Indexa blocos por nome de produto pra lookup rápido (somar total_kit se tiver vários SKUs)
+        blocosInventarioPorProduto = {};
+        blocosInventarioCache.forEach(b => {
+          if(!b.nome) return;
+          const tk = Number(b.totalKit);
+          if(!blocosInventarioPorProduto[b.nome]){
+            blocosInventarioPorProduto[b.nome] = { totalKit: 0, sap: b.sap || '', blocos: 0 };
+          }
+          if(!isNaN(tk) && tk > 0) blocosInventarioPorProduto[b.nome].totalKit += tk;
+          blocosInventarioPorProduto[b.nome].blocos += 1;
+        });
       } else {
         inventarioCache = [];
         blocosInventarioCache = [];
+        blocosInventarioPorProduto = {};
       }
     }catch(e){
       inventarioCache = [];
       blocosInventarioCache = [];
+      blocosInventarioPorProduto = {};
       console.error('carregarInventario:', e);
     }
   }
@@ -3445,11 +3466,14 @@
         }).join('');
       }).join('');
 
+      const blocoInfo = blocosInventarioPorProduto[prod.produto] || {};
+      const totalKitTxt = blocoInfo.totalKit > 0 ? `<span class="kit-badge">Total kit: <b>${blocoInfo.totalKit}</b></span>` : '';
+
       card.innerHTML = `
         <div class="prod-ac-head">
           <div class="prod-ac-info">
             <div class="prod-ac-nome">${escapeHtml(prod.produto)}</div>
-            <div class="prod-ac-meta">${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''} · ${partes.length} partes · ${totalLotesAtivos} lote${totalLotesAtivos!==1?'s':''} ativo${totalLotesAtivos!==1?'s':''}</div>
+            <div class="prod-ac-meta">${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''} · ${partes.length} partes · ${totalLotesAtivos} lote${totalLotesAtivos!==1?'s':''} ativo${totalLotesAtivos!==1?'s':''} ${totalKitTxt}</div>
           </div>
           <button class="prod-ac-toggle" aria-label="Expandir">▾</button>
         </div>
