@@ -1060,69 +1060,169 @@
 
   /* ============ PAINEL DE VALIDADES ============ */
   .val-resumo{
-    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px;
   }
   @media (max-width:600px){ .val-resumo{ grid-template-columns:repeat(2,1fr); } }
+
   .val-card{
-    background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px;
-    padding:14px 16px; text-align:left; position:relative; overflow:hidden;
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:14px;
+    padding:16px 18px; text-align:left; position:relative; overflow:hidden;
+    cursor:pointer; transition:all 0.2s;
+    font-family:inherit; color:var(--osso);
+    display:flex; flex-direction:column; gap:8px;
   }
-  .val-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:currentColor; }
+  .val-card:hover{
+    transform:translateY(-2px);
+    border-color:currentColor;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+  .val-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:4px; background:currentColor; }
   .val-card-vermelho{ color:var(--erro); }
   .val-card-laranja{ color:var(--ambar); }
   .val-card-amarelo{ color:#F0CC4E; }
   .val-card-verde{ color:var(--verde); }
-  .vc-num{ font-family:'JetBrains Mono', monospace; font-size:32px; font-weight:900; line-height:1; color:currentColor; }
-  .vc-label{ font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--cinza); margin-top:6px; font-weight:700; }
-  .vc-qtd{ font-size:11px; color:var(--cinza); margin-top:2px; }
 
-  .val-secao{ margin-bottom:18px; }
-  .val-secao-titulo{ font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--cinza); font-weight:800; margin-bottom:10px; }
+  .vc-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .vc-icon{ font-size:22px; }
+  .vc-numwrap{ text-align:right; }
+  .vc-num{
+    font-family:'JetBrains Mono', monospace; font-size:34px; font-weight:900; line-height:1; color:currentColor;
+  }
+  .vc-perc{ font-size:10px; color:var(--cinza); margin-top:2px; }
+  .vc-label{ font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--osso); font-weight:800; }
+  .vc-qtd-bar{
+    height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; margin:2px 0;
+  }
+  .vc-qtd-fill{
+    height:100%; background:currentColor; border-radius:2px;
+    transition:width 0.6s ease;
+  }
+  .vc-qtd{ font-size:11px; color:var(--cinza); line-height:1.3; }
 
-  .val-timeline{ background:var(--carvao); border:1.5px solid var(--linha); border-radius:12px; padding:14px 10px; overflow-x:auto; }
-  .tl-track{ display:flex; gap:3px; min-width:max-content; align-items:flex-end; }
-  .tl-day{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:30px; cursor:default; }
+  .val-secao{ margin-bottom:24px; }
+  .val-secao-titulo{
+    font-size:11px; text-transform:uppercase; letter-spacing:1.5px;
+    color:var(--cinza); font-weight:800; margin-bottom:10px;
+  }
+
+  .val-timeline{
+    background:var(--carvao); border:1.5px solid var(--linha);
+    border-radius:14px; padding:18px 14px; overflow-x:auto;
+  }
+  .tl-track{ display:flex; gap:6px; min-width:max-content; align-items:flex-end; }
+  .tl-day{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    min-width:32px; cursor:default; position:relative;
+  }
   .tl-day.has-items{ cursor:pointer; }
-  .tl-day.has-items:hover{ opacity:0.8; }
+  .tl-day.has-items:hover .tl-bar{ filter:brightness(1.3); transform:scaleY(1.05); }
+  .tl-bar-wrap{
+    height:80px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    position:relative;
+  }
+  .tl-count{
+    position:absolute; top:0; font-size:9px; font-weight:800; color:var(--osso);
+    background:rgba(0,0,0,0.5); padding:1px 5px; border-radius:3px;
+  }
   .tl-bar{
-    width:8px; height:8px; border-radius:2px; background:rgba(255,255,255,0.05);
+    width:18px; border-radius:3px 3px 0 0; background:rgba(255,255,255,0.05);
     transition:all 0.2s;
   }
-  .tl-bar.tl-dot-1{ height:14px; }
-  .tl-bar.tl-dot-2{ height:24px; }
-  .tl-bar.tl-dot-3{ height:36px; }
-  .tl-bar.tl-dot-4{ height:50px; }
-  .tl-bar.tl-dot-5{ height:64px; }
+  .tl-cor-preto{ background:#3a1313; }
   .tl-cor-vermelho{ background:var(--erro); }
   .tl-cor-laranja{ background:var(--ambar); }
   .tl-cor-amarelo{ background:#F0CC4E; }
   .tl-cor-verde{ background:var(--verde); }
-  .tl-tick{ font-size:9px; color:var(--cinza); font-family:'JetBrains Mono', monospace; }
+  .tl-tick{ font-size:9px; color:var(--cinza); font-family:'JetBrains Mono', monospace; white-space:nowrap; }
+  .tl-tick.tl-hoje{ color:var(--vermelho); font-weight:800; }
+  .tl-qtd-mini{ font-size:8.5px; color:var(--osso); opacity:0.6; font-family:'JetBrains Mono', monospace; }
 
+  /* Lista de validades */
   .val-mes-head{
     font-size:11px; text-transform:uppercase; letter-spacing:2px; font-weight:800;
-    color:var(--vermelho); padding:14px 6px 6px; border-bottom:1px solid var(--linha); margin-bottom:8px;
+    padding:14px 12px 8px; border-bottom:1px solid var(--linha); margin:18px 0 12px;
     display:flex; justify-content:space-between; align-items:center;
+    border-left:3px solid var(--linha);
   }
-  .val-mes-count{ background:var(--linha); color:var(--osso); padding:2px 8px; border-radius:10px; font-size:11px; }
+  .val-mes-vencido{ color:var(--erro); border-left-color:var(--erro); background:rgba(217,54,42,0.05); }
+  .val-mes-critico{ color:var(--ambar); border-left-color:var(--ambar); background:rgba(217,142,4,0.05); }
+  .val-mes-alerta{ color:#F0CC4E; border-left-color:#F0CC4E; }
+  .val-mes-ok{ color:var(--verde); border-left-color:var(--verde); }
+  .val-mes-tit{ font-size:13px; }
+  .val-mes-info{ font-size:11px; color:var(--cinza); font-weight:600; letter-spacing:0.5px; text-transform:none; }
+
   .val-item{
-    display:flex; gap:12px; align-items:center; justify-content:space-between;
-    background:var(--carvao); border:1px solid var(--linha); border-radius:10px;
-    padding:10px 14px; margin-bottom:6px; border-left:3px solid var(--cinza);
+    display:flex; gap:14px; align-items:center;
+    background:var(--carvao); border:1px solid var(--linha); border-radius:12px;
+    padding:14px 16px; margin-bottom:8px;
+    border-left:4px solid var(--cinza);
+    width:100%; cursor:pointer; transition:all 0.15s;
+    font-family:inherit; color:var(--osso); text-align:left;
   }
+  .val-item:hover{ transform:translateX(2px); background:rgba(255,255,255,0.03); }
   .val-item.val-vencido{ border-left-color:var(--erro); background:rgba(217,54,42,0.05); }
-  .val-item.val-30{ border-left-color:var(--ambar); }
+  .val-item.val-30{ border-left-color:var(--ambar); background:rgba(217,142,4,0.03); }
   .val-item.val-60{ border-left-color:#F0CC4E; }
   .val-item.val-90{ border-left-color:var(--verde); }
+
+  .val-item-ring{
+    width:54px; height:54px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    padding:4px;
+  }
+  .ring-inner{
+    background:var(--carvao); border-radius:50%;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:800;
+  }
   .val-item-info{ flex:1; min-width:0; }
-  .val-item-prod{ font-size:14px; font-weight:800; }
-  .val-item-meta{ font-size:11px; color:var(--cinza); margin-top:2px; }
+  .val-item-prod{ font-size:14px; font-weight:800; margin-bottom:3px; }
+  .val-item-meta{ font-size:11px; color:var(--cinza); margin-bottom:4px; }
+  .val-item-dias{
+    font-size:11px; font-weight:800; letter-spacing:0.3px;
+    color:var(--cinza);
+  }
+  .val-item.val-vencido .val-item-dias{ color:var(--erro); }
+  .val-item.val-30 .val-item-dias{ color:var(--ambar); }
+  .val-item.val-60 .val-item-dias{ color:#F0CC4E; }
+  .val-item.val-90 .val-item-dias{ color:var(--verde); }
+
   .val-item-qtd{ text-align:right; flex-shrink:0; }
-  .vi-data{ font-family:'JetBrains Mono', monospace; font-weight:800; font-size:13px; }
-  .vi-dias{ font-size:11px; color:var(--cinza); }
-  .val-item.val-vencido .vi-dias{ color:var(--erro); font-weight:800; }
-  .val-item.val-30 .vi-dias{ color:var(--ambar); font-weight:800; }
-  .vi-saldo{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--cinza); margin-top:2px; }
+  .vi-saldo-grande{ font-family:'JetBrains Mono', monospace; font-size:22px; font-weight:900; color:var(--verde); line-height:1; }
+  .vi-saldo-label{ font-size:10px; color:var(--cinza); text-transform:uppercase; letter-spacing:1px; }
+  .vi-data-full{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--cinza); margin-top:4px; }
+  .val-item-arrow{ font-size:18px; color:var(--cinza); flex-shrink:0; }
+
+  /* Drawer do dia (clique na timeline) */
+  #drawerDiaOverlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.55); opacity:0; pointer-events:none;
+    transition:opacity 0.25s; z-index:50;
+  }
+  #drawerDia.aberto ~ #drawerDiaOverlay,
+  body:has(#drawerDia.aberto) #drawerDiaOverlay{ opacity:1; pointer-events:auto; }
+  .dia-resumo{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px;
+    padding:14px; border-radius:10px;
+  }
+  .dia-resumo.corpo-vencido{ background:rgba(217,54,42,0.1); border:1px solid var(--erro); }
+  .dia-resumo.corpo-critico{ background:rgba(217,142,4,0.1); border:1px solid var(--ambar); }
+  .dia-resumo.corpo-alerta{ background:rgba(240,204,78,0.08); border:1px solid #F0CC4E; }
+  .dia-resumo.corpo-ok{ background:rgba(31,138,76,0.08); border:1px solid var(--verde); }
+  .dia-resumo > div{ text-align:center; }
+  .dia-resumo .dr-val{ font-family:'JetBrains Mono', monospace; font-size:22px; font-weight:900; }
+  .dia-resumo .dr-label{ font-size:10px; text-transform:uppercase; color:var(--cinza); letter-spacing:1px; margin-bottom:3px; }
+
+  .dia-item{
+    display:flex; gap:12px; align-items:center; padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .dia-item-info{ flex:1; min-width:0; }
+  .dia-item-prod{ font-size:14px; font-weight:800; margin-bottom:4px; }
+  .dia-item-meta{ font-size:11px; color:var(--cinza); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .dia-item-qtd{ text-align:right; }
+  .diq-num{ font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:900; color:var(--verde); line-height:1; }
+  .diq-label{ font-size:10px; color:var(--cinza); text-transform:uppercase; letter-spacing:1px; }
 
   /* Indicador (bolinha) no menu */
   .val-badge{
@@ -3785,6 +3885,11 @@
 
   // Intercepta o botão voltar do telefone
   window.addEventListener('popstate', (e) => {
+    // Drawer Dia primeiro (clicou na timeline)
+    if($('drawerDia') && $('drawerDia').classList.contains('aberto')){
+      $('drawerDia').classList.remove('aberto');
+      return;
+    }
     // Se o drawer estiver aberto, fecha em vez de sair
     if($('drawerParte') && $('drawerParte').classList.contains('aberto')){
       fecharDrawerParte();
@@ -3795,13 +3900,17 @@
       fecharSeletorProduto();
       return;
     }
+    // Scanner aberto: fecha
+    if($('scannerOverlay') && $('scannerOverlay').classList.contains('show')){
+      fecharScanner();
+      return;
+    }
     // Se o drawer-nav estiver aberto, fecha
     if($('drawer') && $('drawer').classList.contains('open')){
       $('drawer').classList.remove('open');
       $('drawerScrim').classList.remove('show');
       return;
     }
-    // Caso contrário deixa o navegador navegar (mas re-empilha pra não sair direto)
     history.pushState({}, '', location.href);
   });
   // Empilha um estado inicial pra ter onde voltar
@@ -4319,92 +4428,196 @@
     $('validadesResumo').innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
     await Promise.all([carregarValidades(), carregarLog()]);
     const itens = coletarLotesParaValidades();
-    // Resumo
+    window._validadesItensCache = itens;
+
     const vencidos = itens.filter(x => x.dias < 0);
     const ate30 = itens.filter(x => x.dias >= 0 && x.dias <= 30);
     const ate60 = itens.filter(x => x.dias > 30 && x.dias <= 60);
     const ate90 = itens.filter(x => x.dias > 60 && x.dias <= 90);
-    $('validadesResumo').innerHTML = `
-      <div class="val-card val-card-vermelho">
-        <div class="vc-num">${vencidos.length}</div>
-        <div class="vc-label">Vencidos</div>
-        <div class="vc-qtd">${vencidos.reduce((s,x)=>s+x.qtd,0)} unid.</div>
-      </div>
-      <div class="val-card val-card-laranja">
-        <div class="vc-num">${ate30.length}</div>
-        <div class="vc-label">≤ 30 dias</div>
-        <div class="vc-qtd">${ate30.reduce((s,x)=>s+x.qtd,0)} unid.</div>
-      </div>
-      <div class="val-card val-card-amarelo">
-        <div class="vc-num">${ate60.length}</div>
-        <div class="vc-label">31-60 dias</div>
-        <div class="vc-qtd">${ate60.reduce((s,x)=>s+x.qtd,0)} unid.</div>
-      </div>
-      <div class="val-card val-card-verde">
-        <div class="vc-num">${ate90.length}</div>
-        <div class="vc-label">61-90 dias</div>
-        <div class="vc-qtd">${ate90.reduce((s,x)=>s+x.qtd,0)} unid.</div>
-      </div>
-    `;
+    const seguros = itens.filter(x => x.dias > 90);
+
+    const cardData = [
+      { cls:'val-card-vermelho', ic:'⚠', num:vencidos.length, label:'Vencidos', qtd:vencidos.reduce((s,x)=>s+x.qtd,0), filtro:'vencidos', desc:'Não usar — descartar' },
+      { cls:'val-card-laranja', ic:'⏰', num:ate30.length, label:'≤ 30 dias', qtd:ate30.reduce((s,x)=>s+x.qtd,0), filtro:'30', desc:'Prioridade máxima de uso' },
+      { cls:'val-card-amarelo', ic:'⌛', num:ate60.length, label:'31-60 dias', qtd:ate60.reduce((s,x)=>s+x.qtd,0), filtro:'60', desc:'Atenção, planejar uso' },
+      { cls:'val-card-verde', ic:'🌿', num:ate90.length, label:'61-90 dias', qtd:ate90.reduce((s,x)=>s+x.qtd,0), filtro:'90', desc:'Saudável' }
+    ];
+    const totalItens = itens.length;
+    $('validadesResumo').innerHTML = cardData.map(c => `
+      <button class="val-card ${c.cls}" data-filtro-card="${c.filtro}">
+        <div class="vc-top">
+          <span class="vc-icon">${c.ic}</span>
+          <div class="vc-numwrap">
+            <div class="vc-num">${c.num}</div>
+            <div class="vc-perc">${totalItens > 0 ? ((c.num/totalItens)*100).toFixed(0) : 0}%</div>
+          </div>
+        </div>
+        <div class="vc-label">${c.label}</div>
+        <div class="vc-qtd-bar">
+          <div class="vc-qtd-fill" style="width:${totalItens > 0 ? (c.num/totalItens)*100 : 0}%;"></div>
+        </div>
+        <div class="vc-qtd">${c.qtd} unid · ${c.desc}</div>
+      </button>
+    `).join('');
+    // Cliques nos cards: aplicam filtro
+    document.querySelectorAll('#validadesResumo [data-filtro-card]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = btn.dataset.filtroCard;
+        document.querySelectorAll('#screen-validades [data-val-filtro]').forEach(b => b.classList.toggle('active', b.dataset.valFiltro === f));
+        valFiltroDias = f;
+        renderValidadesLista();
+        const lista = document.getElementById('validadesLista');
+        if(lista) lista.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
     renderValidadesTimeline(itens);
     renderValidadesLista(itens);
   }
 
   function renderValidadesTimeline(itens){
     const tl = $('validadesTimeline');
-    // Próximos 30 dias
     const hoje = new Date(); hoje.setHours(0,0,0,0);
-    const proximos = itens.filter(x => x.dias >= 0 && x.dias <= 30);
+    const proximos = itens.filter(x => x.dias >= -7 && x.dias <= 30);
 
-    // Agrupa por dia
     const porDia = {};
     proximos.forEach(x => {
       porDia[x.dias] = porDia[x.dias] || [];
       porDia[x.dias].push(x);
     });
 
+    let maxItens = 1;
+    Object.values(porDia).forEach(arr => { if(arr.length > maxItens) maxItens = arr.length; });
+
     let html = '<div class="tl-track">';
-    for(let d = 0; d <= 30; d++){
+    for(let d = -7; d <= 30; d++){
       const itensDia = porDia[d] || [];
       const data = new Date(hoje); data.setDate(data.getDate() + d);
-      const cor = d <= 7 ? 'vermelho' : (d <= 15 ? 'laranja' : (d <= 30 ? 'amarelo' : 'verde'));
+      const cor = d < 0 ? 'preto' : d <= 7 ? 'vermelho' : d <= 15 ? 'laranja' : d <= 30 ? 'amarelo' : 'verde';
       const tit = `${data.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} · ${itensDia.length} item${itensDia.length!==1?'s':''}`;
-      const sz = itensDia.length === 0 ? '' : `tl-dot-${Math.min(itensDia.length,5)}`;
-      html += `<div class="tl-day ${itensDia.length > 0 ? 'has-items':''}" title="${escapeHtml(tit)}" data-dia="${d}">
-        <div class="tl-bar tl-cor-${cor} ${sz}"></div>
-        <div class="tl-tick">${d===0?'Hoje':d+'d'}</div>
-      </div>`;
+      const altura = itensDia.length === 0 ? 4 : Math.max(8, (itensDia.length / maxItens) * 64);
+      const totQtd = itensDia.reduce((s,x)=>s+x.qtd,0);
+      const labelDia = d === 0 ? 'Hoje' : d < 0 ? `${Math.abs(d)}d` : `${d}d`;
+      html += `
+        <div class="tl-day ${itensDia.length > 0 ? 'has-items':''}" title="${escapeHtml(tit)}" data-dia="${d}">
+          <div class="tl-bar-wrap">
+            ${itensDia.length > 0 ? `<div class="tl-count">${itensDia.length}</div>` : ''}
+            <div class="tl-bar tl-cor-${cor}" style="height:${altura}px;"></div>
+          </div>
+          <div class="tl-tick ${d===0?'tl-hoje':''}">${labelDia}</div>
+          ${itensDia.length > 0 ? `<div class="tl-qtd-mini">${totQtd}u</div>` : ''}
+        </div>`;
     }
     html += '</div>';
     tl.innerHTML = html;
+
     tl.querySelectorAll('.tl-day.has-items').forEach(el => {
       el.addEventListener('click', () => {
         const d = Number(el.dataset.dia);
         const itensDia = porDia[d] || [];
-        const txt = itensDia.map(x => `• ${x.produto} (parte ${x.parte}) · ${x.qtd} unid. · ${formatarDataBR(x.validade)}`).join('\n');
-        alert(`Vencimentos em ${d===0?'hoje':d+' dias'}:\n\n${txt}`);
+        abrirDrawerVencimentoDia(d, itensDia);
       });
     });
   }
 
+  function abrirDrawerVencimentoDia(d, itensDia){
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const data = new Date(hoje); data.setDate(data.getDate() + d);
+    const titDia = d === 0 ? 'Vencimentos de HOJE'
+      : d < 0 ? `Vencidos há ${Math.abs(d)} dia${Math.abs(d)!==1?'s':''}`
+      : `Vencimentos em ${d} dia${d!==1?'s':''}`;
+    const dataTxt = data.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+    const totalUnid = itensDia.reduce((s,x)=>s+x.qtd,0);
+
+    const corClasse = d < 0 ? 'corpo-vencido' : d <= 7 ? 'corpo-critico' : d <= 30 ? 'corpo-alerta' : 'corpo-ok';
+
+    const itensSorted = itensDia.slice().sort((a,b)=>a.produto.localeCompare(b.produto));
+    const itensHtml = itensSorted.map(x => `
+      <div class="dia-item">
+        <div class="dia-item-info">
+          <div class="dia-item-prod">${escapeHtml(x.produto)}</div>
+          <div class="dia-item-meta">
+            <span class="parte-tag">${escapeHtml(x.parte||'—')}</span>
+            ${escapeHtml(x.categoria||'')} ${x.formula?'· '+escapeHtml(x.formula):''} · Fáb. ${escapeHtml(x.fabrica)}
+          </div>
+        </div>
+        <div class="dia-item-qtd">
+          <div class="diq-num">${x.qtd}</div>
+          <div class="diq-label">unid.</div>
+        </div>
+      </div>
+    `).join('');
+
+    const corpo = $('drawerDiaCorpo');
+    if(!corpo){
+      // Cria drawer dinamicamente caso não exista
+      const drawer = document.createElement('aside');
+      drawer.id = 'drawerDia';
+      drawer.className = 'drawer-parte';
+      drawer.innerHTML = `
+        <div class="drawer-head">
+          <button class="drawer-back" onclick="fecharDrawerDia()">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 14L5 9l6-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Voltar</span>
+          </button>
+          <button class="drawer-close" onclick="fecharDrawerDia()">×</button>
+        </div>
+        <div class="drawer-tit-bar" id="drawerDiaTit"></div>
+        <div id="drawerDiaCorpo" class="drawer-corpo"></div>
+      `;
+      const overlay = document.createElement('div');
+      overlay.id = 'drawerDiaOverlay';
+      overlay.onclick = window.fecharDrawerDia;
+      document.body.appendChild(overlay);
+      document.body.appendChild(drawer);
+    }
+    $('drawerDiaTit').innerHTML = `
+      <div class="drawer-titulo">${escapeHtml(titDia)}</div>
+      <div class="drawer-sub">${escapeHtml(dataTxt.charAt(0).toUpperCase() + dataTxt.slice(1))}</div>
+    `;
+    $('drawerDiaCorpo').innerHTML = `
+      <div class="dia-resumo ${corClasse}">
+        <div><div class="dr-label">Lotes</div><div class="dr-val">${itensDia.length}</div></div>
+        <div><div class="dr-label">Unidades</div><div class="dr-val">${totalUnid}</div></div>
+        <div><div class="dr-label">Produtos</div><div class="dr-val">${new Set(itensSorted.map(x=>x.produto)).size}</div></div>
+      </div>
+      <div class="drawer-secao">
+        <div class="drawer-label">Itens do dia (${itensDia.length})</div>
+        ${itensHtml}
+      </div>
+    `;
+    $('drawerDia').classList.add('aberto');
+    try { history.pushState({ drawerDiaAberto:true }, '', location.href); } catch(e){}
+  }
+
+  function fecharDrawerDia(){
+    const d = $('drawerDia');
+    if(d) d.classList.remove('aberto');
+    if(history.state && history.state.drawerDiaAberto) history.back();
+  }
+  window.fecharDrawerDia = fecharDrawerDia;
+
   function renderValidadesLista(itensOverride){
     const lista = $('validadesLista');
-    const itens = itensOverride || coletarLotesParaValidades();
+    const itens = itensOverride || (window._validadesItensCache || coletarLotesParaValidades());
     let filtrados = itens;
     if(valFiltroDias === 'vencidos') filtrados = itens.filter(x => x.dias < 0);
-    else if(valFiltroDias === '30') filtrados = itens.filter(x => x.dias <= 30);
-    else if(valFiltroDias === '60') filtrados = itens.filter(x => x.dias <= 60);
-    else if(valFiltroDias === '90') filtrados = itens.filter(x => x.dias <= 90);
+    else if(valFiltroDias === '30') filtrados = itens.filter(x => x.dias >= 0 && x.dias <= 30);
+    else if(valFiltroDias === '60') filtrados = itens.filter(x => x.dias >= 0 && x.dias <= 60);
+    else if(valFiltroDias === '90') filtrados = itens.filter(x => x.dias >= 0 && x.dias <= 90);
 
     if(filtrados.length === 0){
-      lista.innerHTML = `<div class="empty-state"><div class="ic">✅</div>Nenhum item com validade nesse filtro</div>`;
+      lista.innerHTML = `<div class="empty-state"><div class="ic">✅</div>Nenhum item com validade nesse filtro<br><small>Estoque saudável!</small></div>`;
       return;
     }
+
+    // Ordena por validade ascendente
+    filtrados.sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
 
     // Agrupa por mês
     const porMes = {};
     filtrados.forEach(x => {
-      const m = (x.validade||'').slice(0,7); // YYYY-MM
+      const m = (x.validade||'').slice(0,7);
       porMes[m] = porMes[m] || [];
       porMes[m].push(x);
     });
@@ -4414,25 +4627,43 @@
     meses.forEach(m => {
       const mesData = m ? new Date(m + '-01') : null;
       const tit = mesData ? mesData.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}).toUpperCase() : 'Sem data';
-      html += `<div class="val-mes-head">${escapeHtml(tit)} <span class="val-mes-count">${porMes[m].length}</span></div>`;
+      const totalUnidMes = porMes[m].reduce((s,x)=>s+x.qtd,0);
+      // determina cor predominante do mês
+      const piorDias = Math.min(...porMes[m].map(x=>x.dias));
+      const corMes = piorDias < 0 ? 'val-mes-vencido' : piorDias <= 30 ? 'val-mes-critico' : piorDias <= 60 ? 'val-mes-alerta' : 'val-mes-ok';
+      html += `
+        <div class="val-mes-head ${corMes}">
+          <span class="val-mes-tit">${escapeHtml(tit)}</span>
+          <span class="val-mes-info">${porMes[m].length} lote${porMes[m].length!==1?'s':''} · ${totalUnidMes} unid.</span>
+        </div>`;
       porMes[m].forEach(x => {
         const corCls = x.dias < 0 ? 'val-vencido' : x.dias <= 30 ? 'val-30' : x.dias <= 60 ? 'val-60' : x.dias <= 90 ? 'val-90' : 'val-ok';
-        const diasTxt = x.dias < 0 ? `Vencido há ${Math.abs(x.dias)}d` : x.dias === 0 ? 'Vence hoje' : `${x.dias}d`;
+        const diasTxt = x.dias < 0 ? `Vencido há ${Math.abs(x.dias)}d` : x.dias === 0 ? 'Vence HOJE' : `${x.dias} dias`;
+        const ringPerc = x.dias < 0 ? 100 : Math.max(0, Math.min(100, 100 - (x.dias / 90) * 100));
+        const ringColor = x.dias < 0 ? 'var(--erro)' : x.dias <= 30 ? 'var(--ambar)' : x.dias <= 60 ? '#F0CC4E' : 'var(--verde)';
         html += `
-          <div class="val-item ${corCls}">
+          <button class="val-item ${corCls}" data-produto="${escapeHtml(x.produto)}" data-parte="${escapeHtml(x.parte||'')}">
+            <div class="val-item-ring" style="background: conic-gradient(${ringColor} ${ringPerc}%, rgba(255,255,255,0.06) ${ringPerc}%);">
+              <div class="ring-inner">${formatarDataBR(x.validade).slice(0,5)}</div>
+            </div>
             <div class="val-item-info">
               <div class="val-item-prod">${escapeHtml(x.produto)} <span class="ps-parte-badge">${escapeHtml(x.parte||'—')}</span></div>
-              <div class="val-item-meta">${escapeHtml(x.categoria||'')} · ${escapeHtml(x.formula||'')} ${x.sap?'· SAP '+escapeHtml(x.sap):''} · Fáb. ${escapeHtml(x.fabrica)}</div>
+              <div class="val-item-meta">${escapeHtml(x.categoria||'')}${x.formula ? ' · ' + escapeHtml(x.formula) : ''}${x.sap ? ' · SAP ' + escapeHtml(x.sap) : ''} · Fáb. ${escapeHtml(x.fabrica)}</div>
+              <div class="val-item-dias">${escapeHtml(diasTxt)}</div>
             </div>
             <div class="val-item-qtd">
-              <div class="vi-data">${formatarDataBR(x.validade)}</div>
-              <div class="vi-dias">${escapeHtml(diasTxt)}</div>
-              <div class="vi-saldo">${x.qtd} unid.</div>
+              <div class="vi-saldo-grande">${x.qtd}</div>
+              <div class="vi-saldo-label">unid.</div>
+              <div class="vi-data-full">${formatarDataBR(x.validade)}</div>
             </div>
-          </div>`;
+            <span class="val-item-arrow">›</span>
+          </button>`;
       });
     });
     lista.innerHTML = html;
+    lista.querySelectorAll('[data-produto]').forEach(btn => {
+      btn.addEventListener('click', () => abrirDrawerParte(btn.dataset.produto, btn.dataset.parte));
+    });
   }
 
   $('btnVoltarInicioValidades').addEventListener('click', () => {
