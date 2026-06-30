@@ -903,41 +903,28 @@
   .prod-ac-toggle{ background:transparent; border:1px solid var(--linha); color:var(--osso); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px; flex-shrink:0; }
   .prod-ac-body{ border-top:1px solid var(--linha); padding:8px; background:rgba(0,0,0,0.2); }
   .parte-linha{
-    display:flex; flex-direction:column; gap:8px; padding:12px 14px;
+    display:flex; flex-direction:column; gap:0; padding:10px 14px;
     background:transparent; border:none; border-radius:8px;
     color:var(--osso); width:100%; text-align:left; cursor:pointer;
-    font-family:inherit;
+    font-family:inherit; border-bottom:1px solid rgba(255,255,255,0.04);
   }
   .parte-linha:hover{ background:rgba(255,255,255,0.04); }
-  .parte-linha-topo{ display:flex; align-items:center; gap:10px; }
-  .parte-linha .parte-tag{ flex-shrink:0; min-width:54px; text-align:center; }
-  .parte-saldo{ font-family:'JetBrains Mono', monospace; font-size:18px; font-weight:900; min-width:50px; text-align:right; }
-  .parte-saldo.positivo{ color:var(--verde); }
-  .parte-saldo.zero{ color:var(--cinza); }
-  .parte-info{ font-size:11px; color:var(--cinza); flex:1; }
+  .parte-linha-topo{ display:flex; align-items:center; gap:10px; width:100%; }
+  .parte-linha .parte-tag{ flex-shrink:0; min-width:56px; text-align:center; }
+  .parte-linha .parte-tag-cont{
+    background:transparent; color:rgba(255,255,255,0.15); border:1px dashed rgba(255,255,255,0.1);
+    font-weight:400;
+  }
+  .lote-data{
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:13px;
+    background:var(--carvao); padding:3px 8px; border-radius:5px; border:1px solid var(--linha);
+  }
+  .lote-qtd-num{ font-family:'JetBrains Mono', monospace; font-size:18px; font-weight:900; color:var(--verde); margin-left:auto; }
+  .lote-qtd-label{ font-size:10px; color:var(--cinza); text-transform:uppercase; letter-spacing:1px; }
+  .parte-info-vazia{ font-size:11px; color:var(--cinza); font-style:italic; flex:1; }
   .parte-arrow{ color:var(--cinza); font-size:18px; font-weight:700; }
-
-  .parte-lotes-chips{
-    display:flex; flex-wrap:wrap; gap:6px; padding-left:62px;
-  }
-  .parte-lotes-chips.vazio{
-    font-size:11px; color:var(--cinza); font-style:italic; padding-left:62px;
-  }
-  .lote-chip{
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--carvao); border:1px solid var(--linha);
-    padding:4px 9px; border-radius:6px; font-size:11px;
-    font-family:'JetBrains Mono', monospace;
-  }
-  .lote-chip b{ font-weight:700; color:var(--osso); }
-  .lote-chip .chip-qtd{
-    background:rgba(31,138,76,0.18); color:#4FCC85;
-    padding:1px 6px; border-radius:4px; font-weight:800; font-size:10px;
-  }
-  .lote-chip.chip-verm{ border-color:var(--erro); background:rgba(217,54,42,0.08); }
-  .lote-chip.chip-verm b{ color:#F08176; }
-  .lote-chip.chip-amar{ border-color:var(--ambar); background:rgba(217,142,4,0.08); }
-  .lote-chip.chip-amar b{ color:var(--ambar); }
+  .parte-linha.vazia{ opacity:0.45; }
+  .parte-linha.primeiro-da-parte{ border-top:1px solid var(--linha); padding-top:14px; }
 
   /* ============ DRAWER LATERAL ============ */
   #drawerParteOverlay{
@@ -3394,11 +3381,10 @@
     resumo.className = 'estoque-resumo';
     resumo.innerHTML = `
       <div><b>${totalProdutos}</b> produtos no catálogo</div>
-      <div><b>${comSaldo}</b> com estoque positivo</div>
+      <div><b>${comSaldo}</b> com lotes ativos</div>
     `;
     container.appendChild(resumo);
 
-    // Ordena por categoria > nome
     produtos.sort((a,b) => {
       const c = (a.categoria||'').localeCompare(b.categoria||'');
       if(c !== 0) return c;
@@ -3417,62 +3403,58 @@
 
       const card = document.createElement('div');
       card.className = 'prod-accordion';
-      if(prod.saldoTotal === 0) card.classList.add('zerado');
-      const sinal = calcularSinalValidade(prod.validadeMaisProx);
-      const sinalHtml = sinal
-        ? `<span class="sinal-badge sinal-${sinal.cor}">${formatarDataBR(prod.validadeMaisProx)} · ${sinal.label}</span>`
-        : (prod.validadeMaisProx ? `<span class="sinal-badge">${formatarDataBR(prod.validadeMaisProx)}</span>` : '');
+      // Conta total de lotes ativos (sem somar quantidade)
+      let totalLotesAtivos = 0;
+      Object.values(prod.partes).forEach(p => {
+        totalLotesAtivos += (p.lotes||[]).filter(l => l.saldo > 0).length;
+      });
+      if(totalLotesAtivos === 0) card.classList.add('zerado');
 
       const partes = Object.values(prod.partes).sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+
+      // Constrói corpo: cada PARTE com seus lotes individualizados
+      const partesHtml = partes.map(p => {
+        const lotesOrd = (p.lotes||[]).filter(l => l.saldo > 0).sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
+        if(lotesOrd.length === 0){
+          // Parte sem lote
+          return `
+            <button class="parte-linha vazia" data-produto="${escapeHtml(prod.produto)}" data-parte="${escapeHtml(p.nome||'')}">
+              <div class="parte-linha-topo">
+                <span class="parte-tag">${escapeHtml(p.nome||'—')}</span>
+                <span class="parte-info-vazia">sem lote em estoque</span>
+                <span class="parte-arrow">›</span>
+              </div>
+            </button>`;
+        }
+        // Para cada lote, uma linha
+        return lotesOrd.map((l, idx) => {
+          const sinal = calcularSinalValidade(l.validade);
+          const sinHtml = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
+          const ehPrimeiro = idx === 0;
+          return `
+            <button class="parte-linha lote-row-bt ${ehPrimeiro?'primeiro-da-parte':''}" data-produto="${escapeHtml(prod.produto)}" data-parte="${escapeHtml(p.nome||'')}">
+              <div class="parte-linha-topo">
+                <span class="parte-tag ${ehPrimeiro?'':'parte-tag-cont'}">${ehPrimeiro?escapeHtml(p.nome||'—'):'·'}</span>
+                <span class="lote-data">${formatarDataBR(l.validade)}</span>
+                <span class="lote-qtd-num">${l.saldo}</span>
+                <span class="lote-qtd-label">unid.</span>
+                ${sinHtml}
+                <span class="parte-arrow">›</span>
+              </div>
+            </button>`;
+        }).join('');
+      }).join('');
 
       card.innerHTML = `
         <div class="prod-ac-head">
           <div class="prod-ac-info">
             <div class="prod-ac-nome">${escapeHtml(prod.produto)}</div>
-            <div class="prod-ac-meta">${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''} · ${partes.length} parte${partes.length!==1?'s':''}</div>
-          </div>
-          <div class="prod-ac-saldo">
-            <div class="num ${prod.saldoTotal>0?'positivo':'zero'}">${prod.saldoTotal}</div>
-            <div class="unit">unid. total</div>
-            ${sinalHtml}
+            <div class="prod-ac-meta">${escapeHtml(prod.formula||'')} ${prod.sap ? '· SAP ' + escapeHtml(prod.sap) : ''} · ${partes.length} partes · ${totalLotesAtivos} lote${totalLotesAtivos!==1?'s':''} ativo${totalLotesAtivos!==1?'s':''}</div>
           </div>
           <button class="prod-ac-toggle" aria-label="Expandir">▾</button>
         </div>
         <div class="prod-ac-body" style="display:none;">
-          ${partes.map(p => {
-            // ordena lotes por validade
-            const lotesOrd = (p.lotes||[]).slice().sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
-            const proxima = lotesOrd[0] ? lotesOrd[0].validade : '';
-            const sinPa = calcularSinalValidade(proxima);
-            const sinPaHtml = sinPa ? `<span class="sinal-badge sinal-${sinPa.cor}">${sinPa.label}</span>` : '';
-
-            // Chips com cada lote ativo
-            const chipsHtml = lotesOrd.length > 0
-              ? `<div class="parte-lotes-chips">
-                   ${lotesOrd.map(l => {
-                     const s = calcularSinalValidade(l.validade);
-                     const corCls = s ? 'chip-' + s.cor : '';
-                     return `<span class="lote-chip ${corCls}" title="Validade ${formatarDataBR(l.validade)} · saldo ${l.saldo}">
-                       <b>${formatarDataBR(l.validade) || '—'}</b>
-                       <span class="chip-qtd">${l.saldo}</span>
-                     </span>`;
-                   }).join('')}
-                 </div>`
-              : `<div class="parte-lotes-chips vazio">sem lotes em estoque</div>`;
-
-            return `
-              <button class="parte-linha" data-produto="${escapeHtml(prod.produto)}" data-parte="${escapeHtml(p.nome||'')}">
-                <div class="parte-linha-topo">
-                  <span class="parte-tag">${escapeHtml(p.nome||'—')}</span>
-                  <span class="parte-saldo ${p.saldo>0?'positivo':'zero'}">${p.saldo}</span>
-                  <span class="parte-info">${lotesOrd.length} lote${lotesOrd.length!==1?'s':''}</span>
-                  ${sinPaHtml}
-                  <span class="parte-arrow">›</span>
-                </div>
-                ${chipsHtml}
-              </button>
-            `;
-          }).join('')}
+          ${partesHtml}
         </div>
       `;
 
