@@ -7,6 +7,13 @@
 <meta property="og:title" content="Controle de Estoque FEMSA Maringá">
 <meta property="og:description" content="Gestão de entradas, saídas e qualidade dos concentrados">
 <meta name="apple-mobile-web-app-title" content="Estoque FEMSA Maringá">
+<meta name="theme-color" content="#16140F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23E2231A'/%3E%3Ctext x='50' y='65' font-size='50' fill='white' text-anchor='middle' font-family='sans-serif' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
   :root{
     --vermelho:#E2231A;
@@ -933,6 +940,60 @@
   }
   .kit-badge b{ font-size:12px; }
 
+  /* Barra de busca */
+  .search-bar{
+    display:flex; align-items:center; gap:10px;
+    background:var(--carvao); border:1.5px solid var(--linha); border-radius:10px;
+    padding:10px 14px; margin-bottom:14px;
+    transition:border-color 0.2s;
+  }
+  .search-bar:focus-within{ border-color:var(--vermelho); }
+  .search-bar input{
+    flex:1; background:transparent; border:none; color:var(--osso);
+    font-size:14px; font-family:inherit; outline:none;
+  }
+  .search-bar button{
+    background:transparent; border:none; color:var(--cinza); cursor:pointer;
+    font-size:20px; padding:0 4px; line-height:1;
+  }
+  .search-bar button:hover{ color:var(--osso); }
+  .search-empty{
+    padding:30px 16px; text-align:center; color:var(--cinza); font-size:13px;
+  }
+
+  .filtros-extras{
+    display:flex; gap:10px; align-items:center; margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .filtro-select{
+    background:var(--carvao); border:1.5px solid var(--linha); color:var(--osso);
+    padding:10px 14px; border-radius:10px; font-family:inherit; font-size:13px;
+    min-width:180px;
+  }
+  .filtro-select:focus{ outline:none; border-color:var(--vermelho); }
+
+  /* Scanner */
+  .scanner-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
+    z-index:200; align-items:center; justify-content:center;
+  }
+  .scanner-overlay.show{ display:flex; }
+  .scanner-modal{
+    background:var(--preto); border:1.5px solid var(--linha); border-radius:14px;
+    width:min(420px, 95vw); max-height:90vh; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .scanner-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; border-bottom:1px solid var(--linha); background:var(--carvao);
+  }
+  .scanner-titulo{ font-size:15px; font-weight:800; }
+  .scanner-info{
+    padding:12px 18px; font-size:11.5px; color:var(--cinza);
+    border-top:1px solid var(--linha); background:var(--carvao); text-align:center;
+  }
+  #scannerReader video{ width:100% !important; height:auto !important; max-height:60vh; }
+
   /* ============ DRAWER LATERAL ============ */
   #drawerParteOverlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); opacity:0; pointer-events:none;
@@ -1590,6 +1651,19 @@
         <button data-filter="ok">Corretos</button>
       </div>
 
+      <div class="filtros-extras">
+        <div class="search-bar" style="flex:1; margin-bottom:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:0.5;">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="logBusca" placeholder="Buscar produto, parte, lote..." autocomplete="off">
+        </div>
+        <select id="logFiltroOperador" class="filtro-select">
+          <option value="">Todos operadores</option>
+        </select>
+      </div>
+
       <div id="logContainer"></div>
 
       <div class="stack" style="margin-top:24px;">
@@ -1603,7 +1677,17 @@
     <section class="screen" id="screen-estoque">
       <div class="section-label">Saldo calculado</div>
       <h1 class="title" style="font-size:24px; margin-bottom:8px;">Estoque atual</h1>
-      <p class="lead" style="margin-bottom:22px;">Todas as partes do catálogo com seus saldos atuais (entradas menos saídas).</p>
+      <p class="lead" style="margin-bottom:18px;">Lido direto da aba Inventário. Cada lote separadamente.</p>
+
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:0.5;">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="estoqueBusca" placeholder="Buscar produto, parte, fórmula, SAP, validade..." autocomplete="off">
+        <button id="estoqueBuscaClear" style="display:none;" title="Limpar">×</button>
+        <button id="btnAbrirScanner" title="Ler código de barras" style="font-size:18px;">📷</button>
+      </div>
 
       <div id="estoqueList"></div>
 
@@ -1614,6 +1698,18 @@
         <button class="btn btn-outline" id="btnLimparLegado" style="display:none;">🧹 Apagar só registros legados (admin)</button>
       </div>
     </section>
+
+    <!-- Overlay scanner QR/Código de barras -->
+    <div id="scannerOverlay" class="scanner-overlay" onclick="if(event.target===this) fecharScanner()">
+      <div class="scanner-modal">
+        <div class="scanner-head">
+          <div class="scanner-titulo">📷 Ler código</div>
+          <button class="drawer-close" onclick="fecharScanner()">×</button>
+        </div>
+        <div id="scannerReader" style="width:100%; min-height:280px;"></div>
+        <div class="scanner-info">Aponte para o código de barras ou QR do lote. O resultado vai na busca automaticamente.</div>
+      </div>
+    </div>
 
     <!-- Drawer lateral de detalhes de parte -->
     <div id="drawerParteOverlay" onclick="fecharDrawerParteSeguro()"></div>
@@ -3393,27 +3489,135 @@
     });
   }
 
+  // ============ PWA — Service Worker (modo offline) ============
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW falhou:', err));
+    });
+  }
+
+  // Detecta online/offline e mostra indicador
+  window.addEventListener('online', () => toast('🟢 Conexão restabelecida'));
+  window.addEventListener('offline', () => toast('🔴 Sem conexão — usando dados em cache'));
+
+  // ============ SCANNER QR/CÓDIGO DE BARRAS ============
+  let scannerInstancia = null;
+  async function abrirScanner(){
+    if(!window.Html5Qrcode){ toast('Lib do scanner não carregou. Verifique sua conexão.'); return; }
+    $('scannerOverlay').classList.add('show');
+    try{
+      scannerInstancia = new Html5Qrcode("scannerReader");
+      await scannerInstancia.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 150 } },
+        (decodedText) => {
+          $('estoqueBusca').value = decodedText;
+          $('estoqueBuscaClear').style.display = 'inline-block';
+          window._estoqueFiltro = decodedText;
+          if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
+          toast('Código lido: ' + decodedText.slice(0, 30));
+          fecharScanner();
+        },
+        () => {}
+      );
+    }catch(err){
+      console.error('scanner:', err);
+      toast('Erro câmera: ' + (err.message || err));
+      fecharScanner();
+    }
+  }
+  async function fecharScanner(){
+    $('scannerOverlay').classList.remove('show');
+    if(scannerInstancia){
+      try{ await scannerInstancia.stop(); }catch(e){}
+      try{ scannerInstancia.clear(); }catch(e){}
+      scannerInstancia = null;
+    }
+  }
+  window.fecharScanner = fecharScanner;
+  if($('btnAbrirScanner')) $('btnAbrirScanner').addEventListener('click', abrirScanner);
+
+  // Inicializa busca do estoque
+  (function inicEstoqueBusca(){
+    const inp = $('estoqueBusca');
+    const clear = $('estoqueBuscaClear');
+    if(!inp) return;
+    let debounce = null;
+    inp.addEventListener('input', () => {
+      clear.style.display = inp.value ? 'inline-block' : 'none';
+      window._estoqueFiltro = inp.value;
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
+      }, 200);
+    });
+    clear.addEventListener('click', () => {
+      inp.value = '';
+      window._estoqueFiltro = '';
+      clear.style.display = 'none';
+      if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
+    });
+  })();
+    const inp = $('estoqueBusca');
+    const clear = $('estoqueBuscaClear');
+    if(!inp) return;
+    let debounce = null;
+    inp.addEventListener('input', () => {
+      clear.style.display = inp.value ? 'inline-block' : 'none';
+      window._estoqueFiltro = inp.value;
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
+      }, 200);
+    });
+    clear.addEventListener('click', () => {
+      inp.value = '';
+      window._estoqueFiltro = '';
+      clear.style.display = 'none';
+      if(estoqueDadosCache) renderEstoqueProdutos($('estoqueList'), estoqueDadosCache);
+    });
+  })();
+
   function renderEstoqueProdutos(container, produtos){
     container.innerHTML = '';
+    const filtro = (window._estoqueFiltro || '').trim().toLowerCase();
 
-    const totalProdutos = produtos.length;
-    const comSaldo = produtos.filter(p => p.saldoTotal > 0).length;
+    let produtosFiltrados = produtos;
+    if(filtro){
+      produtosFiltrados = produtos.filter(prod => {
+        const blob = [
+          prod.produto, prod.formula, prod.sap, prod.categoria,
+          ...Object.values(prod.partes || {}).map(p => {
+            const lotesStr = (p.lotes||[]).map(l => `${l.validade} ${formatarDataBR(l.validade)}`).join(' ');
+            return `${p.nome} ${lotesStr}`;
+          })
+        ].join(' ').toLowerCase();
+        return blob.includes(filtro);
+      });
+    }
+
+    const totalProdutos = produtosFiltrados.length;
+    const comSaldo = produtosFiltrados.filter(p => p.saldoTotal > 0 || Object.values(p.partes||{}).some(pa => (pa.lotes||[]).some(l => l.saldo > 0))).length;
     const resumo = document.createElement('div');
     resumo.className = 'estoque-resumo';
-    resumo.innerHTML = `
-      <div><b>${totalProdutos}</b> produtos no catálogo</div>
-      <div><b>${comSaldo}</b> com lotes ativos</div>
-    `;
+    resumo.innerHTML = filtro
+      ? `<div><b>${totalProdutos}</b> resultado${totalProdutos!==1?'s':''} pra "${escapeHtml(filtro)}"</div><div><b>${comSaldo}</b> com lotes ativos</div>`
+      : `<div><b>${totalProdutos}</b> produtos no catálogo</div><div><b>${comSaldo}</b> com lotes ativos</div>`;
     container.appendChild(resumo);
 
-    produtos.sort((a,b) => {
+    if(totalProdutos === 0){
+      container.innerHTML += `<div class="search-empty">📭 Nenhum produto/parte/validade encontrado para "${escapeHtml(filtro)}"</div>`;
+      return;
+    }
+
+    produtosFiltrados.sort((a,b) => {
       const c = (a.categoria||'').localeCompare(b.categoria||'');
       if(c !== 0) return c;
       return a.produto.localeCompare(b.produto);
     });
 
     let categoriaAtual = null;
-    produtos.forEach(prod => {
+    produtosFiltrados.forEach(prod => {
       if(prod.categoria && prod.categoria !== categoriaAtual){
         categoriaAtual = prod.categoria;
         const head = document.createElement('div');
@@ -3424,7 +3628,6 @@
 
       const card = document.createElement('div');
       card.className = 'prod-accordion';
-      // Conta total de lotes ativos (sem somar quantidade)
       let totalLotesAtivos = 0;
       Object.values(prod.partes).forEach(p => {
         totalLotesAtivos += (p.lotes||[]).filter(l => l.saldo > 0).length;
@@ -3433,11 +3636,9 @@
 
       const partes = Object.values(prod.partes).sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
 
-      // Constrói corpo: cada PARTE com seus lotes individualizados
       const partesHtml = partes.map(p => {
         const lotesOrd = (p.lotes||[]).filter(l => l.saldo > 0).sort((a,b) => (a.validade||'').localeCompare(b.validade||''));
         if(lotesOrd.length === 0){
-          // Parte sem lote
           return `
             <button class="parte-linha vazia" data-produto="${escapeHtml(prod.produto)}" data-parte="${escapeHtml(p.nome||'')}">
               <div class="parte-linha-topo">
@@ -3447,7 +3648,6 @@
               </div>
             </button>`;
         }
-        // Para cada lote, uma linha
         return lotesOrd.map((l, idx) => {
           const sinal = calcularSinalValidade(l.validade);
           const sinHtml = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
@@ -3477,7 +3677,7 @@
           </div>
           <button class="prod-ac-toggle" aria-label="Expandir">▾</button>
         </div>
-        <div class="prod-ac-body" style="display:none;">
+        <div class="prod-ac-body" style="display:${filtro ? 'block' : 'none'};">
           ${partesHtml}
         </div>
       `;
@@ -3485,6 +3685,7 @@
       const head = card.querySelector('.prod-ac-head');
       const body = card.querySelector('.prod-ac-body');
       const toggle = card.querySelector('.prod-ac-toggle');
+      if(filtro) toggle.textContent = '▴';
       head.addEventListener('click', (e) => {
         if(e.target.closest('.parte-linha')) return;
         const aberto = body.style.display !== 'none';
@@ -3501,10 +3702,6 @@
 
       container.appendChild(card);
     });
-
-    if(produtos.length === 0){
-      container.innerHTML = `<div class="empty-state"><div class="ic">📦</div>Catálogo vazio</div>`;
-    }
   }
 
   function abrirDrawerParte(produto, parte){
@@ -4850,12 +5047,35 @@
 
   function renderLog(filtro, filtroTipo){
     const container = $('logContainer');
-    // Esconde registros do tipo "inventario_inicial" — eles contam pro estoque mas não aparecem no histórico
     let dados = logCompleto.filter(r => r.tipo !== 'inventario_inicial').slice().reverse();
     if(filtroTipo === 'entrada') dados = dados.filter(r => r.tipo === 'entrada');
     if(filtroTipo === 'saida') dados = dados.filter(r => r.tipo === 'saida');
     if(filtro === 'erro') dados = dados.filter(r => r.tipo === 'entrada' && r.status !== 'ok');
     if(filtro === 'ok') dados = dados.filter(r => r.tipo === 'entrada' && r.status === 'ok');
+
+    // Filtro de operador
+    const opSel = $('logFiltroOperador') ? $('logFiltroOperador').value : '';
+    if(opSel) dados = dados.filter(r => r.operador === opSel);
+
+    // Filtro de busca textual
+    const busca = ($('logBusca') ? $('logBusca').value : '').trim().toLowerCase();
+    if(busca){
+      dados = dados.filter(r => {
+        const blob = `${r.produto} ${r.parte} ${r.formula} ${r.lote} ${r.operador} ${r.validade} ${formatarDataBR(r.validade)}`.toLowerCase();
+        return blob.includes(busca);
+      });
+    }
+
+    // Popula dropdown de operadores (uma vez por sessão)
+    if($('logFiltroOperador') && !$('logFiltroOperador').dataset.populado){
+      const ops = [...new Set(logCompleto.map(r => r.operador).filter(o => o && o !== 'IMPORTAÇÃO XLSX'))].sort();
+      ops.forEach(op => {
+        const opt = document.createElement('option');
+        opt.value = op; opt.textContent = op;
+        $('logFiltroOperador').appendChild(opt);
+      });
+      $('logFiltroOperador').dataset.populado = '1';
+    }
 
     if(dados.length === 0){
       container.innerHTML = `<div class="empty-state"><div class="ic">📋</div>Nenhum registro encontrado</div>`;
@@ -4947,6 +5167,18 @@
       renderLog(filtroStatusAtual, filtroTipoAtual);
     });
   });
+
+  // Busca e operador no histórico
+  if($('logBusca')){
+    let _logDebounce = null;
+    $('logBusca').addEventListener('input', () => {
+      clearTimeout(_logDebounce);
+      _logDebounce = setTimeout(() => renderLog(filtroStatusAtual, filtroTipoAtual), 200);
+    });
+  }
+  if($('logFiltroOperador')){
+    $('logFiltroOperador').addEventListener('change', () => renderLog(filtroStatusAtual, filtroTipoAtual));
+  }
 
   $('btnExportar').addEventListener('click', () => {
     if(logCompleto.length === 0){ toast('Nenhum registro para exportar'); return; }

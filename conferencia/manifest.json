@@ -1,0 +1,25 @@
+{
+  "name": "Controle de Estoque FEMSA Maringá",
+  "short_name": "Estoque FEMSA",
+  "description": "Gestão de concentrados, validades e movimentações entre fábricas",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#16140F",
+  "background_color": "#16140F",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23E2231A'/%3E%3Ctext x='96' y='130' font-size='100' fill='white' text-anchor='middle' font-family='sans-serif' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23E2231A'/%3E%3Ctext x='256' y='350' font-size='280' fill='white' text-anchor='middle' font-family='sans-serif' font-weight='bold'%3EF%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
