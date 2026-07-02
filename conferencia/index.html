@@ -2339,25 +2339,65 @@
   // ---------- backend compartilhado (Google Sheets via Apps Script) ----------
   const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxU_F31UIrHyLgunopYUYfmOinKbOvGpHuHXEGILIsxVH_PTZW_cO-ihBO2XA8eU8v0/exec';
 
+  function _detectarBloqueio(texto){
+    const t = (texto || '').slice(0, 500).toLowerCase();
+    // Sinais típicos de proxy/firewall corporativo
+    if (t.includes('<!doctype html') || t.includes('<html')) {
+      if (t.includes('zscaler') || t.includes('bluecoat') || t.includes('fortinet') || t.includes('websense') || t.includes('mcafee') || t.includes('sophos') || t.includes('barracuda')) {
+        return 'Proxy corporativo bloqueou o acesso a script.google.com.';
+      }
+      if (t.includes('access denied') || t.includes('bloqueado') || t.includes('blocked') || t.includes('access to this page has been blocked') || t.includes('acesso negado')) {
+        return 'Firewall da rede bloqueou o acesso a script.google.com.';
+      }
+      if (t.includes('authentication required') || t.includes('autenticação') || t.includes('proxy auth')) {
+        return 'Proxy da rede exige autenticação para acessar script.google.com.';
+      }
+      // HTML genérico = quase sempre página do proxy
+      return 'A rede intercepta o acesso a script.google.com (proxy/firewall corporativo).';
+    }
+    if (t.includes('ps6bvntkn') || t.startsWith('<!--')) {
+      return 'Proxy corporativo bloqueou script.google.com (assinatura detectada).';
+    }
+    return null;
+  }
+
   async function apiGet(params){
     const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
-    const res = await fetch(url, { method: 'GET', redirect: 'follow' });
-    const texto = await res.text();
-    try { return JSON.parse(texto); }
-    catch(e){ throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120)); }
+    try{
+      const res = await fetch(url, { method: 'GET', redirect: 'follow' });
+      const texto = await res.text();
+      try { return JSON.parse(texto); }
+      catch(e){
+        const bloqueio = _detectarBloqueio(texto);
+        if (bloqueio) throw new Error('🚫 REDE: ' + bloqueio + ' Peça à TI liberar os domínios google.com/script e googleusercontent.com, ou use hotspot do celular.');
+        throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120));
+      }
+    }catch(e){
+      if (!navigator.onLine) throw new Error('📡 Sem conexão. Verifique sua internet.');
+      throw e;
+    }
   }
 
   async function apiPost(body){
     // text/plain evita CORS preflight — Apps Script lê e.postData.contents normalmente
-    const res = await fetch(BACKEND_URL, {
-      method: 'POST',
-      redirect: 'follow',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(body)
-    });
-    const texto = await res.text();
-    try { return JSON.parse(texto); }
-    catch(e){ throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120)); }
+    try{
+      const res = await fetch(BACKEND_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(body)
+      });
+      const texto = await res.text();
+      try { return JSON.parse(texto); }
+      catch(e){
+        const bloqueio = _detectarBloqueio(texto);
+        if (bloqueio) throw new Error('🚫 REDE: ' + bloqueio + ' Peça à TI liberar script.google.com e script.googleusercontent.com, ou use hotspot do celular.');
+        throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120));
+      }
+    }catch(e){
+      if (!navigator.onLine) throw new Error('📡 Sem conexão. Verifique sua internet.');
+      throw e;
+    }
   }
 
   // ---------- autenticação ----------
