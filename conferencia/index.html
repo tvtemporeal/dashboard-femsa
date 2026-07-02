@@ -994,6 +994,24 @@
   }
   #scannerReader video{ width:100% !important; height:auto !important; max-height:60vh; }
 
+  /* Configurações */
+  .cfg-pane{ margin-top:10px; }
+  .cfg-item{
+    display:flex; gap:12px; align-items:center; justify-content:space-between;
+    background:var(--carvao); border:1px solid var(--linha); border-radius:10px;
+    padding:12px 14px; margin-bottom:8px;
+  }
+  .cfg-item-info{ flex:1; min-width:0; }
+  .cfg-item-nome{ font-size:14px; font-weight:700; margin-bottom:4px; }
+  .cfg-item-meta{ font-size:11px; color:var(--cinza); }
+  .cfg-item-acoes{ display:flex; gap:6px; }
+  .btn-mini{
+    background:transparent; border:1px solid var(--linha); color:var(--osso);
+    padding:6px 10px; border-radius:6px; cursor:pointer; font-size:14px;
+  }
+  .btn-mini:hover{ background:rgba(255,255,255,0.05); }
+  .btn-mini.danger{ border-color:rgba(217,54,42,0.4); color:var(--erro); }
+
   /* ============ DRAWER LATERAL ============ */
   #drawerParteOverlay{
     position:fixed; inset:0; background:rgba(0,0,0,0.55); opacity:0; pointer-events:none;
@@ -1833,10 +1851,64 @@
     <section class="screen" id="screen-config">
       <div class="section-label">Acesso restrito</div>
       <h1 class="title" style="font-size:24px; margin-bottom:8px;">Configurações</h1>
-      <p class="lead" style="margin-bottom:22px;">Gerencie os usuários cadastrados no aplicativo.</p>
+      <p class="lead" style="margin-bottom:22px;">Gerencie usuários, catálogo, inventário e todos os dados do app.</p>
 
-      <div class="drawer-label" style="margin-bottom:10px;">Usuários cadastrados</div>
-      <div id="configUserList"></div>
+      <div class="nav-tabs" id="cfgTabs">
+        <button class="active" data-cfg="usuarios">Usuários</button>
+        <button data-cfg="catalogo">Catálogo</button>
+        <button data-cfg="inventario">Inventário</button>
+        <button data-cfg="log">Logs</button>
+        <button data-cfg="backup">Backup/Migrar</button>
+      </div>
+
+      <div id="cfg-usuarios" class="cfg-pane">
+        <div class="drawer-label" style="margin-bottom:10px;">Usuários cadastrados</div>
+        <div id="configUserList"></div>
+      </div>
+
+      <div id="cfg-catalogo" class="cfg-pane" style="display:none;">
+        <div class="drawer-label">Catálogo de produtos <button class="btn btn-outline" id="btnCfgAddProduto" style="float:right; font-size:12px; padding:4px 12px;">+ Adicionar produto</button></div>
+        <div id="cfgCatalogoList" style="margin-top:12px;"></div>
+      </div>
+
+      <div id="cfg-inventario" class="cfg-pane" style="display:none;">
+        <div class="drawer-label">Inventário atual (lotes) <button class="btn btn-outline" id="btnCfgAddLote" style="float:right; font-size:12px; padding:4px 12px;">+ Adicionar lote</button></div>
+        <input type="text" id="cfgInvBusca" placeholder="🔍 Buscar produto/parte/validade..." style="width:100%; margin:10px 0; padding:8px 12px; background:var(--carvao); border:1px solid var(--linha); color:var(--osso); border-radius:8px;">
+        <div id="cfgInventarioList"></div>
+      </div>
+
+      <div id="cfg-log" class="cfg-pane" style="display:none;">
+        <div class="drawer-label">Últimos 100 registros do log</div>
+        <div id="cfgLogList" style="margin-top:12px;"></div>
+      </div>
+
+      <div id="cfg-backup" class="cfg-pane" style="display:none;">
+        <div class="drawer-label">Backup e migração de dados</div>
+        <p class="lead" style="margin:10px 0 16px; font-size:13px;">
+          Faça backup de todos os dados ou importe do Google Sheets antigo.
+        </p>
+        <div class="stack">
+          <button class="btn btn-outline" id="btnBackupBaixar">💾 Baixar backup completo (JSON)</button>
+          <button class="btn btn-outline" id="btnMigrarSheets">📥 Importar do Google Sheets (uma vez)</button>
+          <button class="btn btn-outline" id="btnConfigToken">🔑 Configurar token do GitHub</button>
+        </div>
+        <div id="tokenBox" style="display:none; margin-top:16px; padding:14px; background:var(--carvao); border-radius:10px; border:1px solid var(--linha);">
+          <p style="font-size:13px; margin-bottom:10px;">Cole o token do GitHub (formato <code>github_pat_...</code>). Fica salvo no seu navegador.</p>
+          <input type="password" id="tokenInput" style="width:100%; padding:10px; background:#000; color:var(--osso); border:1px solid var(--linha); border-radius:8px; font-family:monospace;" placeholder="github_pat_...">
+          <div class="stack" style="margin-top:10px;">
+            <button class="btn btn-primary" id="btnSalvarToken">✅ Salvar token</button>
+            <button class="btn btn-ghost" id="btnCancelarToken">Cancelar</button>
+          </div>
+        </div>
+        <div id="migrarBox" style="display:none; margin-top:16px; padding:14px; background:var(--carvao); border-radius:10px; border:1px solid var(--linha);">
+          <p style="font-size:13px; margin-bottom:10px;">Cole aqui o JSON obtido de <code style="background:#000; padding:2px 6px; border-radius:4px;">?acao=exportarTudo</code>:</p>
+          <textarea id="migrarPayload" style="width:100%; min-height:180px; background:#000; color:var(--osso); border:1px solid var(--linha); border-radius:8px; padding:10px; font-family:monospace; font-size:11px;" placeholder='{"exportado_em":"...", "usuarios":[...], ...}'></textarea>
+          <div class="stack" style="margin-top:10px;">
+            <button class="btn btn-primary" id="btnConfirmarMigracao">✅ Importar dados</button>
+            <button class="btn btn-ghost" id="btnCancelarMigracao">Cancelar</button>
+          </div>
+        </div>
+      </div>
 
       <div class="stack" style="margin-top:24px;">
         <button class="btn btn-ghost" id="btnVoltarInicioConfig">← Voltar ao início</button>
@@ -2339,63 +2411,386 @@
   // ---------- backend compartilhado (Google Sheets via Apps Script) ----------
   const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxU_F31UIrHyLgunopYUYfmOinKbOvGpHuHXEGILIsxVH_PTZW_cO-ihBO2XA8eU8v0/exec';
 
+  // ============ BACKEND GITHUB ============
+  // Migração: dados agora vivem em JSONs no próprio repo, não no Google Sheets.
+  // Vantagem: não depende do Google (rede corporativa bloqueia docs.google.com).
+  const GH_OWNER = 'tvtemporeal';
+  const GH_REPO = 'dashboard-femsa';
+  const GH_BRANCH = 'main';
+  const GH_DATA_PATH = 'conferencia/data';
+  // Token fica no navegador (localStorage), configurado pelo admin uma vez.
+  function _getToken(){ return localStorage.getItem('gh_token') || ''; }
+  function _setToken(t){ localStorage.setItem('gh_token', t); }
+
+  // Cache local de arquivos (evita GET repetido pra cada operação)
+  const _ghCache = new Map(); // filename -> {content, sha, ts}
+  const _ghCacheTTL = 3000; // 3s — leituras próximas usam cache
+
+  function _ghRawUrl(filename){
+    // raw.githubusercontent.com serve os arquivos SEM AUTH — ideal pra leitura (rápido e cacheado por CDN)
+    return `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_DATA_PATH}/${filename}?t=${Date.now()}`;
+  }
+  function _ghApiUrl(filename){
+    return `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}/${filename}`;
+  }
+
+  async function ghRead(filename){
+    // Primeiro tenta cache (só se recente)
+    const cached = _ghCache.get(filename);
+    if(cached && (Date.now() - cached.ts) < _ghCacheTTL){
+      return cached.content;
+    }
+    // Tenta via raw (mais rápido, sem auth)
+    try{
+      const res = await fetch(_ghRawUrl(filename));
+      if(res.ok){
+        const content = await res.json();
+        _ghCache.set(filename, {content, sha: null, ts: Date.now()});
+        return content;
+      }
+      if(res.status === 404){
+        return null; // arquivo ainda não existe
+      }
+    }catch(e){ /* cai no api abaixo */ }
+    // Fallback via API (com auth)
+    const apiRes = await fetch(_ghApiUrl(filename) + `?ref=${GH_BRANCH}`, {
+      headers: { 'Authorization': `Bearer ${_getToken()}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if(apiRes.status === 404) return null;
+    if(!apiRes.ok) throw new Error('GitHub read ' + filename + ': HTTP ' + apiRes.status);
+    const data = await apiRes.json();
+    const content = JSON.parse(atob(data.content.replace(/\s/g,'')));
+    _ghCache.set(filename, {content, sha: data.sha, ts: Date.now()});
+    return content;
+  }
+
+  async function ghGetSha(filename){
+    // Sempre busca sha atualizado antes de escrever (evita conflito)
+    const res = await fetch(_ghApiUrl(filename) + `?ref=${GH_BRANCH}&t=${Date.now()}`, {
+      headers: { 'Authorization': `Bearer ${_getToken()}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if(res.status === 404) return null;
+    if(!res.ok) throw new Error('GitHub getSha ' + filename + ': HTTP ' + res.status);
+    const data = await res.json();
+    return data.sha;
+  }
+
+  async function ghWrite(filename, content, mensagem){
+    const token = _getToken();
+    if(!token){
+      throw new Error('Token do GitHub não configurado. Vá em Configurações → Backup/Migrar → 🔑 Configurar token.');
+    }
+    const sha = await ghGetSha(filename);
+    const body = {
+      message: mensagem || ('Atualiza ' + filename),
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
+      branch: GH_BRANCH,
+      committer: {
+        name: (usuarioAtual && usuarioAtual.nome) || 'App',
+        email: 'app@femsa-maringa.local'
+      }
+    };
+    if(sha) body.sha = sha;
+    const res = await fetch(_ghApiUrl(filename), {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${_getToken()}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const err = await res.text();
+      throw new Error('GitHub write ' + filename + ': HTTP ' + res.status + ' — ' + err.slice(0,200));
+    }
+    const data = await res.json();
+    _ghCache.set(filename, {content, sha: data.content.sha, ts: Date.now()});
+    return data;
+  }
+
+  // Store: cada "tabela" é um JSON no repo
+  const store = {
+    async load(nome){
+      const key = nome + '.json';
+      const data = await ghRead(key);
+      if(!data) return [];
+      // Formato padrão: {nome: [...]} ou array direto
+      return data[nome] !== undefined ? data[nome] : (Array.isArray(data) ? data : []);
+    },
+    async save(nome, lista, mensagem){
+      const wrapper = {};
+      wrapper[nome] = lista;
+      wrapper.atualizado_em = new Date().toISOString();
+      wrapper.atualizado_por = (usuarioAtual && usuarioAtual.nome) || 'desconhecido';
+      return ghWrite(nome + '.json', wrapper, mensagem);
+    },
+    invalidar(nome){
+      _ghCache.delete(nome + '.json');
+    }
+  };
+
+  // ============ ROTEADOR DE AÇÕES ============
+  // Reimplementa cada ação do backend antigo (Apps Script) usando GitHub como storage.
+  async function apiGetGithub(params){
+    const acao = params.acao;
+    if(acao === 'listarUsuarios')   return { ok:true, usuarios: await store.load('usuarios') };
+    if(acao === 'listarLog')        return { ok:true, log: await store.load('log') };
+    if(acao === 'listarRNC')        return { ok:true, rnc: await store.load('rnc') };
+    if(acao === 'listarSolicitacoes') return { ok:true, solicitacoes: await store.load('solicitacoes') };
+    if(acao === 'listarAuditorias') return { ok:true, auditorias: await store.load('auditoria') };
+    if(acao === 'listarCatalogoEstoque') return { ok:true, catalogo: await store.load('catalogo') };
+    if(acao === 'listarInventario'){
+      const lotes = await store.load('inventario');
+      // Constrói blocos (por produto) pra compatibilidade com o código antigo
+      const porProduto = {};
+      lotes.forEach(l => {
+        if(!porProduto[l.produto]) porProduto[l.produto] = { nome: l.produto, totalKit: l.total_kit_produto || null, sap: l.sap_produto || '' };
+      });
+      return { ok:true, lotes, blocos: Object.values(porProduto), total_lotes: lotes.length };
+    }
+    throw new Error('Ação GET desconhecida: ' + acao);
+  }
+
+  async function apiPostGithub(body){
+    const acao = body.acao;
+
+    // ---- Usuários ----
+    if(acao === 'criarUsuario'){
+      const users = await store.load('usuarios');
+      if(users.find(u => String(u.br||'').trim() === String(body.br||'').trim())){
+        return { ok:false, erro:'BR já cadastrado' };
+      }
+      users.push({
+        br: body.br, nome: body.nome, senha: body.senha,
+        criadoEm: new Date().toISOString()
+      });
+      await store.save('usuarios', users, `Cadastro: ${body.nome} (${body.br})`);
+      return { ok:true };
+    }
+    if(acao === 'resetarUsuario'){
+      const users = await store.load('usuarios');
+      const u = users.find(u => String(u.br||'').trim() === String(body.br||'').trim());
+      if(!u) return { ok:false, erro:'Usuário não encontrado' };
+      u.senha = body.novaSenha;
+      u.resetadoEm = new Date().toISOString();
+      await store.save('usuarios', users, `Reset senha: ${u.nome}`);
+      return { ok:true };
+    }
+
+    // ---- Log + atualização de Inventário ----
+    if(acao === 'adicionarLog'){
+      const log = await store.load('log');
+      const inv = await store.load('inventario');
+      const resultadosInv = [];
+      (body.registros||[]).forEach(r => {
+        log.push({
+          tipo: r.tipo||'', operador: r.operador||'', timestamp: r.timestamp||'',
+          produto: r.produto||'', formula: r.formula||'', parte: r.parte||'', lote: r.lote||'',
+          validade: r.validade||'', quantidade_esperada: r.quantidade_esperada,
+          quantidade_guardada: r.quantidade_guardada, unidade: r.unidade||'',
+          status: r.status||'', fabrica: r.fabrica||'2', justificativa_fefo: r.justificativa_fefo||'',
+          registradoEm: new Date().toISOString()
+        });
+        // Atualiza Inventário (só fábrica 2)
+        const qtd = Number(r.quantidade_guardada) || 0;
+        if(String(r.fabrica||'2') === '2' && qtd > 0){
+          const delta = r.tipo === 'entrada' ? qtd : (r.tipo === 'saida' ? -qtd : 0);
+          if(delta !== 0){
+            resultadosInv.push(_atualizarInventarioLocal(inv, r.produto, r.parte, r.validade, delta, r.lote));
+          }
+        }
+      });
+      await store.save('log', log, `Log +${body.registros.length}`);
+      await store.save('inventario', inv, `Inventário atualizado`);
+      return { ok:true, inventario: resultadosInv };
+    }
+    if(acao === 'excluirLog'){
+      const log = await store.load('log');
+      const antes = log.length;
+      const idx = log.findIndex(r => r.timestamp === body.timestamp && r.produto === body.produto && r.parte === body.parte);
+      if(idx >= 0) log.splice(idx, 1);
+      await store.save('log', log, 'Exclui registro do log');
+      return { ok:true, excluidos: antes - log.length };
+    }
+    if(acao === 'limparLog'){
+      await store.save('log', [], 'Log limpo (admin)');
+      return { ok:true };
+    }
+    if(acao === 'limparLogLegado'){
+      const log = await store.load('log');
+      const novo = log.filter(r => r.tipo !== 'inventario_inicial');
+      await store.save('log', novo, 'Remove registros legados (inventario_inicial)');
+      return { ok:true, removidos: log.length - novo.length };
+    }
+
+    // ---- RNC ----
+    if(acao === 'adicionarRNC'){
+      const rnc = await store.load('rnc');
+      rnc.push({ ...body.rnc, registradoEm: new Date().toISOString() });
+      await store.save('rnc', rnc, `RNC: ${body.rnc.produto||''}`);
+      return { ok:true };
+    }
+    if(acao === 'salvarFoto'){
+      // Sem storage de fotos por enquanto — pode voltar depois se necessário
+      return { ok:true, url: '' };
+    }
+
+    // ---- Solicitações ----
+    if(acao === 'adicionarSolicitacao'){
+      const sols = await store.load('solicitacoes');
+      const nova = { ...body.solicitacao, id: 'S' + Date.now(), criadoEm: new Date().toISOString(), status: 'pendente' };
+      sols.push(nova);
+      await store.save('solicitacoes', sols, `Solicitação ${nova.id}`);
+      return { ok:true, id: nova.id };
+    }
+    if(acao === 'atenderSolicitacao'){
+      const sols = await store.load('solicitacoes');
+      const log = await store.load('log');
+      const inv = await store.load('inventario');
+      const sol = sols.find(s => s.id === body.id);
+      if(!sol) return { ok:false, erro:'Solicitação não encontrada' };
+      sol.status = 'atendido';
+      sol.atendido_em = body.atendido_em || new Date().toLocaleString('pt-BR');
+      sol.atendido_por = body.atendido_por;
+
+      const fabOrigem = String(sol.direcao === 'f1_para_f2' ? '1' : '2');
+      const fabDestino = String(sol.direcao === 'f1_para_f2' ? '2' : '1');
+      const ts = sol.atendido_em;
+      (body.lotes||[]).forEach(l => {
+        const qtd = Number(l.quantidade) || 0;
+        if(qtd <= 0) return;
+        // saída
+        log.push({
+          tipo:'saida', operador:body.atendido_por||'', timestamp:ts, produto:sol.produto,
+          formula:sol.formula, parte:l.parte||'', lote:sol.formula, validade:l.validade||'',
+          quantidade_esperada:qtd, quantidade_guardada:qtd, unidade:'unid.', status:'saida',
+          fabrica:fabOrigem, justificativa_fefo:l.justificativa_fefo || 'Solicitação ' + sol.id,
+          registradoEm: new Date().toISOString()
+        });
+        if(fabOrigem === '2') _atualizarInventarioLocal(inv, sol.produto, l.parte, l.validade, -qtd, '');
+        // entrada
+        log.push({
+          tipo:'entrada', operador:body.atendido_por||'', timestamp:ts, produto:sol.produto,
+          formula:sol.formula, parte:l.parte||'', lote:sol.formula, validade:l.validade||'',
+          quantidade_esperada:qtd, quantidade_guardada:qtd, unidade:'unid.', status:'ok',
+          fabrica:fabDestino, justificativa_fefo:'Recebido via solicitação ' + sol.id,
+          registradoEm: new Date().toISOString()
+        });
+        if(fabDestino === '2') _atualizarInventarioLocal(inv, sol.produto, l.parte, l.validade, qtd, '');
+      });
+      await store.save('solicitacoes', sols, `Atende sol ${sol.id}`);
+      await store.save('log', log, `Log +${body.lotes.length*2}`);
+      await store.save('inventario', inv, 'Inventário atualizado (solicitação)');
+      return { ok:true };
+    }
+
+    // ---- Auditoria ----
+    if(acao === 'adicionarAuditoria'){
+      const aud = await store.load('auditoria');
+      aud.push({ ...body.auditoria, registradoEm: new Date().toISOString() });
+      await store.save('auditoria', aud, 'Auditoria');
+      return { ok:true };
+    }
+
+    // ---- Migração ----
+    if(acao === 'importarPayload'){
+      // Recebe o payload completo do exportarTudo (do Apps Script) e substitui todos os JSONs
+      const p = body.payload || {};
+      if(p.usuarios) await store.save('usuarios', p.usuarios, 'Import: usuarios');
+      if(p.log) await store.save('log', p.log, 'Import: log');
+      if(p.rnc) await store.save('rnc', p.rnc, 'Import: rnc');
+      if(p.solicitacoes) await store.save('solicitacoes', p.solicitacoes, 'Import: solicitacoes');
+      if(p.auditoria) await store.save('auditoria', p.auditoria, 'Import: auditoria');
+      if(p.catalogo) await store.save('catalogo', p.catalogo, 'Import: catalogo');
+      if(p.inventario) await store.save('inventario', p.inventario, 'Import: inventario');
+      return { ok:true,
+        importados: {
+          usuarios: (p.usuarios||[]).length, log: (p.log||[]).length, rnc: (p.rnc||[]).length,
+          solicitacoes: (p.solicitacoes||[]).length, auditoria: (p.auditoria||[]).length,
+          catalogo: (p.catalogo||[]).length, inventario: (p.inventario||[]).length
+        }
+      };
+    }
+
+    // ---- Configurações ----
+    if(acao === 'salvarConfig'){
+      // Salva qualquer JSON diretamente (usado no editor de configurações)
+      await store.save(body.tabela, body.dados, body.mensagem || `Editor: ${body.tabela}`);
+      return { ok:true };
+    }
+
+    throw new Error('Ação POST desconhecida: ' + acao);
+  }
+
+  // Helper: atualiza inventário em memória (sem gravar)
+  function _atualizarInventarioLocal(inv, produto, parte, validade, deltaQtd, loteNum){
+    const p = String(produto||'').trim();
+    const pa = String(parte||'').trim();
+    const v = String(validade||'').trim();
+    const idx = inv.findIndex(l =>
+      String(l.produto||'').trim() === p &&
+      String(l.parte||'').trim() === pa &&
+      String(l.validade||'').trim() === v
+    );
+    if(idx >= 0){
+      const novo = (Number(inv[idx].quantidade)||0) + deltaQtd;
+      if(novo <= 0){
+        inv.splice(idx, 1);
+        return { acao:'removido' };
+      }
+      inv[idx].quantidade = novo;
+      return { acao:'atualizado', quantidade: novo };
+    }
+    if(deltaQtd > 0){
+      inv.push({ produto: p, parte: pa, validade: v, quantidade: deltaQtd, lote: loteNum || '' });
+      return { acao:'inserido' };
+    }
+    return { acao:'nao_encontrado' };
+  }
+
+  // ============ WRAPPER COMPATIBILIDADE ============
+  // apiGet/apiPost mantém a mesma interface, mas roteia pro GitHub
   function _detectarBloqueio(texto){
     const t = (texto || '').slice(0, 500).toLowerCase();
-    // Sinais típicos de proxy/firewall corporativo
     if (t.includes('<!doctype html') || t.includes('<html')) {
       if (t.includes('zscaler') || t.includes('bluecoat') || t.includes('fortinet') || t.includes('websense') || t.includes('mcafee') || t.includes('sophos') || t.includes('barracuda')) {
-        return 'Proxy corporativo bloqueou o acesso a script.google.com.';
+        return 'Proxy corporativo bloqueou o acesso.';
       }
-      if (t.includes('access denied') || t.includes('bloqueado') || t.includes('blocked') || t.includes('access to this page has been blocked') || t.includes('acesso negado')) {
-        return 'Firewall da rede bloqueou o acesso a script.google.com.';
+      if (t.includes('access denied') || t.includes('bloqueado') || t.includes('blocked') || t.includes('acesso negado')) {
+        return 'Firewall da rede bloqueou o acesso.';
       }
       if (t.includes('authentication required') || t.includes('autenticação') || t.includes('proxy auth')) {
-        return 'Proxy da rede exige autenticação para acessar script.google.com.';
+        return 'Proxy da rede exige autenticação.';
       }
-      // HTML genérico = quase sempre página do proxy
-      return 'A rede intercepta o acesso a script.google.com (proxy/firewall corporativo).';
+      return 'A rede intercepta o acesso ao GitHub.';
     }
     if (t.includes('ps6bvntkn') || t.startsWith('<!--')) {
-      return 'Proxy corporativo bloqueou script.google.com (assinatura detectada).';
+      return 'Proxy corporativo bloqueou (assinatura detectada).';
     }
     return null;
   }
 
   async function apiGet(params){
-    const url = BACKEND_URL + '?' + new URLSearchParams(params).toString();
-    try{
-      const res = await fetch(url, { method: 'GET', redirect: 'follow' });
-      const texto = await res.text();
-      try { return JSON.parse(texto); }
-      catch(e){
-        const bloqueio = _detectarBloqueio(texto);
-        if (bloqueio) throw new Error('🚫 REDE: ' + bloqueio + ' Peça à TI liberar os domínios google.com/script e googleusercontent.com, ou use hotspot do celular.');
-        throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120));
-      }
-    }catch(e){
+    try {
+      return await apiGetGithub(params);
+    } catch(e){
       if (!navigator.onLine) throw new Error('📡 Sem conexão. Verifique sua internet.');
+      const msg = e.message || String(e);
+      const bloqueio = _detectarBloqueio(msg);
+      if (bloqueio) throw new Error('🚫 REDE: ' + bloqueio + ' Peça à TI liberar github.com, ou use hotspot.');
       throw e;
     }
   }
 
   async function apiPost(body){
-    // text/plain evita CORS preflight — Apps Script lê e.postData.contents normalmente
-    try{
-      const res = await fetch(BACKEND_URL, {
-        method: 'POST',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(body)
-      });
-      const texto = await res.text();
-      try { return JSON.parse(texto); }
-      catch(e){
-        const bloqueio = _detectarBloqueio(texto);
-        if (bloqueio) throw new Error('🚫 REDE: ' + bloqueio + ' Peça à TI liberar script.google.com e script.googleusercontent.com, ou use hotspot do celular.');
-        throw new Error('Resposta inválida do servidor: ' + texto.slice(0,120));
-      }
-    }catch(e){
+    try {
+      return await apiPostGithub(body);
+    } catch(e){
       if (!navigator.onLine) throw new Error('📡 Sem conexão. Verifique sua internet.');
+      const msg = e.message || String(e);
+      const bloqueio = _detectarBloqueio(msg);
+      if (bloqueio) throw new Error('🚫 REDE: ' + bloqueio + ' Peça à TI liberar api.github.com, ou use hotspot.');
       throw e;
     }
   }
@@ -5052,6 +5447,245 @@
   $('btnVoltarInicioConfig').addEventListener('click', () => {
     iniciarTabelaManual();
     showScreen('screen-scan');
+  });
+
+  // ============ CONFIGURAÇÕES — ABAS ============
+  document.querySelectorAll('#cfgTabs [data-cfg]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#cfgTabs [data-cfg]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const alvo = btn.dataset.cfg;
+      document.querySelectorAll('.cfg-pane').forEach(p => p.style.display = 'none');
+      $('cfg-' + alvo).style.display = 'block';
+      if(alvo === 'catalogo') renderCfgCatalogo();
+      if(alvo === 'inventario') renderCfgInventario();
+      if(alvo === 'log') renderCfgLog();
+    });
+  });
+
+  // ---------- Catálogo ----------
+  async function renderCfgCatalogo(){
+    const box = $('cfgCatalogoList');
+    box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    const cat = await store.load('catalogo');
+    if(cat.length === 0){
+      box.innerHTML = `<div class="empty-state" style="padding:24px;">Catálogo vazio. Use "Importar" pra migrar do Google.</div>`;
+      return;
+    }
+    box.innerHTML = cat.map((p, i) => `
+      <div class="cfg-item">
+        <div class="cfg-item-info">
+          <div class="cfg-item-nome">${escapeHtml(p.produto)}</div>
+          <div class="cfg-item-meta">${escapeHtml(p.categoria||'')} · ${escapeHtml(p.formula||'')} · SAP ${escapeHtml(p.sap_produto||'')} · ${(p.partes||[]).length} partes</div>
+        </div>
+        <div class="cfg-item-acoes">
+          <button class="btn-mini" onclick="editarCatalogo(${i})">✏️</button>
+          <button class="btn-mini danger" onclick="excluirCatalogo(${i})">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  window.editarCatalogo = async function(idx){
+    const cat = await store.load('catalogo');
+    const p = cat[idx];
+    const novo = prompt('Editar produto (JSON):', JSON.stringify(p, null, 2));
+    if(novo === null) return;
+    try {
+      cat[idx] = JSON.parse(novo);
+      await store.save('catalogo', cat, `Edita produto ${p.produto}`);
+      toast('✓ Salvo');
+      renderCfgCatalogo();
+    } catch(e){ toast('JSON inválido'); }
+  };
+  window.excluirCatalogo = async function(idx){
+    const cat = await store.load('catalogo');
+    if(!confirm(`Excluir "${cat[idx].produto}"?`)) return;
+    const nome = cat[idx].produto;
+    cat.splice(idx, 1);
+    await store.save('catalogo', cat, `Remove produto ${nome}`);
+    toast('✓ Excluído');
+    renderCfgCatalogo();
+  };
+  $('btnCfgAddProduto').addEventListener('click', async () => {
+    const modelo = { categoria: '', tipo: 'concentrado', produto: '', formula: '', sap_produto: '', total_kit: 1, partes: [] };
+    const novo = prompt('Novo produto (JSON):', JSON.stringify(modelo, null, 2));
+    if(!novo) return;
+    try {
+      const p = JSON.parse(novo);
+      const cat = await store.load('catalogo');
+      cat.push(p);
+      await store.save('catalogo', cat, `Add produto ${p.produto}`);
+      toast('✓ Adicionado');
+      renderCfgCatalogo();
+    } catch(e){ toast('JSON inválido'); }
+  });
+
+  // ---------- Inventário ----------
+  async function renderCfgInventario(){
+    const box = $('cfgInventarioList');
+    box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    const inv = await store.load('inventario');
+    const filtro = ($('cfgInvBusca').value || '').trim().toLowerCase();
+    let lotes = inv;
+    if(filtro){
+      lotes = inv.filter(l => (`${l.produto} ${l.parte} ${l.validade} ${l.lote}`).toLowerCase().includes(filtro));
+    }
+    if(lotes.length === 0){
+      box.innerHTML = `<div class="empty-state" style="padding:24px;">Nenhum lote${filtro?' pra "'+escapeHtml(filtro)+'"':' — inventário vazio'}</div>`;
+      return;
+    }
+    lotes.sort((a,b) => (a.produto||'').localeCompare(b.produto||''));
+    box.innerHTML = lotes.slice(0,200).map(l => {
+      const idxOriginal = inv.indexOf(l);
+      return `
+        <div class="cfg-item">
+          <div class="cfg-item-info">
+            <div class="cfg-item-nome">${escapeHtml(l.produto)} · <span style="color:var(--verde);">${escapeHtml(l.parte||'—')}</span></div>
+            <div class="cfg-item-meta">Validade ${formatarDataBR(l.validade)} · <b>${l.quantidade}</b> unid ${l.lote?'· Lote '+escapeHtml(l.lote):''}</div>
+          </div>
+          <div class="cfg-item-acoes">
+            <button class="btn-mini" onclick="editarLoteCfg(${idxOriginal})">✏️</button>
+            <button class="btn-mini danger" onclick="excluirLoteCfg(${idxOriginal})">🗑️</button>
+          </div>
+        </div>`;
+    }).join('') + (lotes.length > 200 ? `<div class="empty-state" style="padding:14px;">... e mais ${lotes.length-200} lotes. Use a busca pra filtrar.</div>` : '');
+  }
+  window.editarLoteCfg = async function(idx){
+    const inv = await store.load('inventario');
+    const l = inv[idx];
+    const novaQtd = prompt(`Nova quantidade para ${l.produto} · ${l.parte} · ${formatarDataBR(l.validade)}:`, String(l.quantidade));
+    if(novaQtd === null) return;
+    const n = Number(novaQtd);
+    if(isNaN(n) || n < 0){ toast('Quantidade inválida'); return; }
+    if(n === 0){
+      inv.splice(idx, 1);
+    } else {
+      inv[idx].quantidade = n;
+    }
+    await store.save('inventario', inv, `Ajuste manual ${l.produto}`);
+    toast('✓ Salvo');
+    renderCfgInventario();
+  };
+  window.excluirLoteCfg = async function(idx){
+    const inv = await store.load('inventario');
+    if(!confirm(`Excluir lote de ${inv[idx].produto}?`)) return;
+    inv.splice(idx, 1);
+    await store.save('inventario', inv, 'Remove lote (admin)');
+    toast('✓ Excluído');
+    renderCfgInventario();
+  };
+  $('cfgInvBusca').addEventListener('input', () => {
+    clearTimeout(window._cfgInvT);
+    window._cfgInvT = setTimeout(renderCfgInventario, 200);
+  });
+  $('btnCfgAddLote').addEventListener('click', async () => {
+    const modelo = { produto: '', parte: '', validade: '2027-12-31', quantidade: 1, lote: '' };
+    const novo = prompt('Novo lote (JSON):', JSON.stringify(modelo, null, 2));
+    if(!novo) return;
+    try {
+      const l = JSON.parse(novo);
+      const inv = await store.load('inventario');
+      inv.push(l);
+      await store.save('inventario', inv, `Add lote ${l.produto}`);
+      toast('✓ Adicionado');
+      renderCfgInventario();
+    } catch(e){ toast('JSON inválido'); }
+  });
+
+  // ---------- Log ----------
+  async function renderCfgLog(){
+    const box = $('cfgLogList');
+    box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    const log = await store.load('log');
+    const ultimos = log.slice(-100).reverse();
+    if(ultimos.length === 0){
+      box.innerHTML = `<div class="empty-state" style="padding:24px;">Log vazio</div>`;
+      return;
+    }
+    box.innerHTML = ultimos.map(r => `
+      <div class="cfg-item" style="border-left:3px solid ${r.tipo==='entrada'?'var(--verde)':r.tipo==='saida'?'var(--erro)':'var(--cinza)'};">
+        <div class="cfg-item-info">
+          <div class="cfg-item-nome">${escapeHtml(r.produto||'—')} · <span style="color:var(--cinza);">${escapeHtml(r.parte||'')}</span></div>
+          <div class="cfg-item-meta">${escapeHtml(r.tipo||'')} · ${escapeHtml(r.timestamp||'')} · ${escapeHtml(r.operador||'')} · Fáb.${escapeHtml(r.fabrica||'')} · ${r.quantidade_guardada} un</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---------- Backup / Migração ----------
+  $('btnConfigToken').addEventListener('click', () => {
+    $('tokenBox').style.display = 'block';
+    $('tokenInput').value = _getToken();
+  });
+  $('btnCancelarToken').addEventListener('click', () => {
+    $('tokenBox').style.display = 'none';
+  });
+  $('btnSalvarToken').addEventListener('click', () => {
+    const t = $('tokenInput').value.trim();
+    if(!t.startsWith('github_pat_') && !t.startsWith('ghp_')){
+      if(!confirm('Isso não parece um token do GitHub. Salvar mesmo assim?')) return;
+    }
+    _setToken(t);
+    toast('✓ Token salvo');
+    $('tokenBox').style.display = 'none';
+  });
+
+  $('btnBackupBaixar').addEventListener('click', async () => {
+    toast('Coletando dados...');
+    const backup = {
+      exportado_em: new Date().toISOString(),
+      usuarios: await store.load('usuarios'),
+      log: await store.load('log'),
+      rnc: await store.load('rnc'),
+      solicitacoes: await store.load('solicitacoes'),
+      auditoria: await store.load('auditoria'),
+      catalogo: await store.load('catalogo'),
+      inventario: await store.load('inventario')
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `backup-femsa-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('✓ Backup baixado');
+  });
+
+  $('btnMigrarSheets').addEventListener('click', () => {
+    $('migrarBox').style.display = 'block';
+    $('btnMigrarSheets').style.display = 'none';
+  });
+  $('btnCancelarMigracao').addEventListener('click', () => {
+    $('migrarBox').style.display = 'none';
+    $('btnMigrarSheets').style.display = '';
+    $('migrarPayload').value = '';
+  });
+  $('btnConfirmarMigracao').addEventListener('click', async () => {
+    const txt = $('migrarPayload').value.trim();
+    if(!txt){ toast('Cole o JSON antes'); return; }
+    let payload;
+    try { payload = JSON.parse(txt); } catch(e){ toast('JSON inválido: ' + e.message); return; }
+    const totalRegistros = (payload.usuarios||[]).length + (payload.log||[]).length + (payload.catalogo||[]).length + (payload.inventario||[]).length;
+    if(!confirm(`Isso vai SOBRESCREVER todos os dados atuais com ${totalRegistros} registros do backup. Continuar?`)) return;
+
+    $('btnConfirmarMigracao').disabled = true;
+    $('btnConfirmarMigracao').textContent = 'Importando...';
+    try {
+      const res = await apiPost({ acao: 'importarPayload', payload });
+      if(res.ok){
+        const imp = res.importados;
+        toast(`✓ Importado: ${imp.usuarios} usuários, ${imp.catalogo} produtos, ${imp.inventario} lotes, ${imp.log} logs`);
+        $('migrarPayload').value = '';
+        $('migrarBox').style.display = 'none';
+        $('btnMigrarSheets').style.display = '';
+      } else {
+        toast('Erro: ' + (res.erro || ''));
+      }
+    } catch(e){ toast('Erro: ' + e.message); }
+    finally {
+      $('btnConfirmarMigracao').disabled = false;
+      $('btnConfirmarMigracao').textContent = '✅ Importar dados';
+    }
   });
 
   // Normaliza qualquer formato de validade para YYYY-MM-DD (ou '' se não der)
