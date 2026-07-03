@@ -1,1 +1,21 @@
-{"solicitacoes":[]}
+{
+  "solicitacoes": [
+    {
+      "id": "sol_1782898950635",
+      "timestamp": "2026-07-01 06:42:29",
+      "solicitante": "Thiago Monteiro Pereira",
+      "produto": "DV Frut. Laranja",
+      "formula": "OR/A/B- 1929.00",
+      "parte": "",
+      "quantidade": 3,
+      "observacao": "Próximo preparo.",
+      "status": "pendente",
+      "atendido_por": "",
+      "atendido_em": "",
+      "direcao": "f1_para_f2",
+      "registradoEm": "2026-07-01T09:42:30.635Z"
+    }
+  ],
+  "atualizado_em": "2026-07-03T01:47:46.293Z",
+  "atualizado_por": "Administrador"
+}
