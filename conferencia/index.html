@@ -1009,6 +1009,59 @@
     background:transparent; border:1px solid var(--linha); color:var(--osso);
     padding:6px 10px; border-radius:6px; cursor:pointer; font-size:14px;
   }
+  .btn-mini.danger{ border-color:rgba(226,35,26,0.4); }
+  /* Editor de inventário estilo Excel */
+  .inv-bloco{ background:var(--carvao); border:1px solid var(--linha); border-radius:12px; margin-bottom:14px; overflow:hidden; }
+  .inv-bloco-head{ padding:10px 12px; background:linear-gradient(90deg, rgba(226,35,26,0.16), transparent); border-bottom:1px solid var(--linha); }
+  .inv-bloco-nome{ font-size:14px; font-weight:800; letter-spacing:.3px; }
+  .inv-bloco-sub{ font-size:10px; color:var(--cinza); margin-top:3px; text-transform:uppercase; letter-spacing:.5px; }
+  .inv-tab{ width:100%; border-collapse:collapse; font-size:12px; }
+  .inv-tab th{ text-align:left; font-size:9px; letter-spacing:1px; color:var(--cinza); padding:6px 8px; border-bottom:1px solid var(--linha); font-weight:700; }
+  .inv-tab td{ padding:7px 8px; border-bottom:1px solid rgba(244,239,230,0.06); vertical-align:middle; }
+  .inv-tab tbody tr:last-child td{ border-bottom:none; }
+  .inv-tab .ip{ font-weight:700; }
+  .inv-tab .iq{ font-weight:800; text-align:center; }
+  .inv-tab .il{ color:var(--cinza); font-family:'JetBrains Mono',monospace; font-size:11px; }
+  .inv-tab .ia{ text-align:right; white-space:nowrap; }
+  .inv-tab .ia .btn-mini{ padding:4px 7px; font-size:12px; }
+  .inv-tab .iv-verde{ color:var(--verde); }
+  .inv-tab .iv-amb{ color:var(--ambar); }
+  .inv-tab .iv-red{ color:var(--vermelho); font-weight:700; }
+  .inv-tab .iv-venc{ color:#fff; background:var(--vermelho); border-radius:4px; text-align:center; }
+  .inv-tab tfoot .itot{ padding:7px 8px; font-size:11px; color:var(--cinza); border-top:1px solid var(--linha); }
+  .inv-tab tfoot .iq, .inv-tab tfoot td:nth-child(2){ text-align:center; }
+  /* Modal de lote */
+  .modal-ov{ position:fixed; inset:0; background:rgba(0,0,0,0.72); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; z-index:9999; padding:18px; }
+  .modal-ov.show{ display:flex; }
+  .modal-card{ width:100%; max-width:420px; background:var(--carvao); border:1px solid var(--linha); border-radius:16px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
+  .modal-card h3{ margin:0 0 14px; font-size:16px; }
+  .ml-campo{ margin-bottom:12px; }
+  .ml-campo label{ display:block; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--cinza); margin-bottom:5px; }
+  .ml-campo input{ width:100%; background:var(--preto); border:1px solid var(--linha); border-radius:9px; padding:11px 12px; color:var(--osso); font-size:14px; }
+  .ml-campo input:focus{ outline:none; border-color:var(--vermelho); }
+  .ml-linha{ display:flex; gap:10px; }
+  .ml-linha .ml-campo{ flex:1; }
+  .modal-acoes{ display:flex; gap:10px; margin-top:6px; }
+  .modal-acoes button{ flex:1; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; border:1px solid var(--linha); }
+  .modal-acoes .cancel{ background:transparent; color:var(--osso); }
+  .modal-acoes .ok{ background:var(--vermelho); color:#fff; border-color:var(--vermelho); }
+  .cat-grupo-tit{ font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ambar); font-weight:800; margin:14px 2px 8px; }
+  .cat-grupo-tit span{ color:var(--cinza); font-weight:600; }
+  .mp-partes-head{ font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--cinza); margin:2px 0 6px; }
+  #mpPartes{ max-height:190px; overflow-y:auto; margin-bottom:8px; }
+  .mp-parte{ display:flex; gap:8px; margin-bottom:6px; }
+  .mp-parte input{ flex:1; min-width:0; background:var(--preto); border:1px solid var(--linha); border-radius:8px; padding:9px 10px; color:var(--osso); font-size:13px; }
+  .mp-parte input:focus{ outline:none; border-color:var(--vermelho); }
+  .mp-parte .btn-mini{ flex:0 0 auto; }
+  .mp-add-parte{ background:transparent; border:1px dashed var(--linha); color:var(--osso); width:100%; padding:9px; border-radius:8px; cursor:pointer; font-size:12px; }
+  .ml-campo select{ width:100%; background:var(--preto); border:1px solid var(--linha); border-radius:9px; padding:11px 12px; color:var(--osso); font-size:14px; }
+  .ml-campo select:focus{ outline:none; border-color:var(--vermelho); }
+  .modal-card.wide{ max-width:460px; }
+  .modal-card .scroll{ max-height:70vh; overflow-y:auto; }
+  .cfg-filtro-input{ background:var(--preto); border:1px solid var(--linha); border-radius:9px; padding:10px 12px; color:var(--osso); font-size:13px; }
+  .cfg-filtro-input:focus{ outline:none; border-color:var(--vermelho); }
+  .log-qtd{ font-weight:800; font-size:14px; padding-left:10px; white-space:nowrap; align-self:center; }
+  .badge-admin{ font-size:8.5px; background:var(--ambar); color:#16140F; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:.5px; vertical-align:middle; }
   .btn-mini:hover{ background:rgba(255,255,255,0.05); }
   .btn-mini.danger{ border-color:rgba(217,54,42,0.4); color:var(--erro); }
 
@@ -1878,10 +1931,72 @@
       </div>
 
       <div id="cfg-log" class="cfg-pane" style="display:none;">
-        <div class="drawer-label">Últimos 100 registros do log</div>
-        <div id="cfgLogList" style="margin-top:12px;"></div>
+        <div class="drawer-label">Histórico de movimentações <span id="cfgLogCount" style="float:right; font-size:11px; color:var(--cinza); font-weight:400;"></span></div>
+        <div style="display:flex; gap:8px; margin:12px 0;">
+          <input id="cfgLogBusca" class="cfg-filtro-input" placeholder="🔍 produto/parte/operador..." style="flex:1; min-width:0;">
+          <select id="cfgLogTipo" class="cfg-filtro-input" style="flex:0 0 auto; max-width:130px;">
+            <option value="">Todos</option>
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+            <option value="inventario_inicial">Inicial</option>
+          </select>
+        </div>
+        <div id="cfgLogList"></div>
       </div>
 
+      <div class="modal-ov" id="modalProd">
+        <div class="modal-card wide">
+          <h3 id="mpTitulo">Editar produto</h3>
+          <div class="scroll">
+            <div class="ml-campo"><label>Produto</label><input id="mpProduto" placeholder="Nome do produto"></div>
+            <div class="ml-linha">
+              <div class="ml-campo"><label>Categoria</label><input id="mpCategoria" placeholder="ex: Refrigerantes"></div>
+              <div class="ml-campo"><label>Tipo</label>
+                <select id="mpTipo">
+                  <option value="concentrado">concentrado</option>
+                  <option value="suco">suco</option>
+                  <option value="base">base</option>
+                  <option value="outro">outro</option>
+                </select>
+              </div>
+            </div>
+            <div class="ml-campo"><label>Fórmula</label><input id="mpFormula" placeholder="ex: DS-2110.88"></div>
+            <div class="ml-linha">
+              <div class="ml-campo"><label>SAP produto</label><input id="mpSap" placeholder="ex: 30118984"></div>
+              <div class="ml-campo"><label>Total de Kit</label><input id="mpKit" type="number" min="0" step="0.5"></div>
+            </div>
+            <div class="mp-partes-head">Partes</div>
+            <div id="mpPartes"></div>
+            <button class="mp-add-parte" onclick="addParteModal()">+ adicionar parte</button>
+          </div>
+          <div class="modal-acoes" style="margin-top:14px;">
+            <button class="cancel" onclick="fecharModalProd()">Cancelar</button>
+            <button class="ok" id="mpSalvar" onclick="salvarModalProd()">✅ Salvar</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ov" id="modalLote">
+        <div class="modal-card">
+          <h3 id="mlTitulo">Editar lote</h3>
+          <div class="ml-campo">
+            <label>Produto</label>
+            <input id="mlProduto" list="mlProdutos" placeholder="Nome do produto" autocomplete="off">
+            <datalist id="mlProdutos"></datalist>
+          </div>
+          <div class="ml-linha">
+            <div class="ml-campo"><label>Parte</label><input id="mlParte" placeholder="ex: 1,1B"></div>
+            <div class="ml-campo"><label>Validade</label><input id="mlValidade" type="date"></div>
+          </div>
+          <div class="ml-linha">
+            <div class="ml-campo"><label>Quantidade</label><input id="mlQtd" type="number" min="0" step="0.25"></div>
+            <div class="ml-campo"><label>Lote</label><input id="mlLote" placeholder="opcional"></div>
+          </div>
+          <div class="modal-acoes">
+            <button class="cancel" onclick="fecharModalLote()">Cancelar</button>
+            <button class="ok" id="mlSalvar" onclick="salvarModalLote()">✅ Salvar</button>
+          </div>
+        </div>
+      </div>
       <div id="cfg-backup" class="cfg-pane" style="display:none;">
         <div class="drawer-label">Backup e migração de dados</div>
         <p class="lead" style="margin:10px 0 16px; font-size:13px;">
@@ -2437,7 +2552,7 @@
   async function ghRead(filename){
     // Primeiro tenta cache (só se recente)
     const cached = _ghCache.get(filename);
-    if(cached && (Date.now() - cached.ts) < _ghCacheTTL){
+    if(cached && (cached.fresh || (Date.now() - cached.ts) < _ghCacheTTL)){
       return cached.content;
     }
     // Tenta via raw (mais rápido, sem auth)
@@ -2505,7 +2620,7 @@
       throw new Error('GitHub write ' + filename + ': HTTP ' + res.status + ' — ' + err.slice(0,200));
     }
     const data = await res.json();
-    _ghCache.set(filename, {content, sha: data.content.sha, ts: Date.now()});
+    _ghCache.set(filename, {content, sha: data.content.sha, ts: Date.now(), fresh: true});
     return data;
   }
 
@@ -5395,56 +5510,70 @@
     }
   });
 
-  function renderConfiguracoes(){
+async function renderConfiguracoes(){
     const container = $('configUserList');
-    container.innerHTML = '<div class="analyzing"><div class="spinner"></div><p style="color:var(--cinza); font-size:13px;">Carregando usuários...</p></div>';
-
-    carregarUsuarios().then(usuarios => {
-      const comuns = usuarios.filter(u => String(u.isAdmin) !== 'TRUE' && u.isAdmin !== true);
-      if(comuns.length === 0){
-        container.innerHTML = `<div class="empty-state"><div class="ic">👤</div>Nenhum usuário cadastrado ainda</div>`;
-        return;
-      }
-      container.innerHTML = '';
-      comuns.forEach(u => {
-        const row = document.createElement('div');
-        row.className = 'user-row';
-        row.innerHTML = `
-          <div class="ur-info">
-            <div class="ur-nome">${escapeHtml(u.nome)}</div>
-            <div class="ur-br">BR ${escapeHtml(String(u.br))}</div>
+    container.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    let usuarios;
+    try { usuarios = await store.load('usuarios'); }
+    catch(e){ container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao carregar usuários</div>`; return; }
+    if(!usuarios || usuarios.length === 0){
+      container.innerHTML = `<div class="empty-state"><div class="ic">👤</div>Nenhum usuário cadastrado ainda</div>`;
+      return;
+    }
+    const ehAdmin = u => String(u.isAdmin) === 'TRUE' || u.isAdmin === true;
+    const admins = usuarios.filter(ehAdmin);
+    const oper = usuarios.filter(u => !ehAdmin(u));
+    function card(u){
+      const idx = usuarios.indexOf(u);
+      return `
+        <div class="cfg-item">
+          <div class="cfg-item-info">
+            <div class="cfg-item-nome">${escapeHtml(u.nome||'—')} ${ehAdmin(u)?'<span class="badge-admin">ADMIN</span>':''}</div>
+            <div class="cfg-item-meta">BR ${escapeHtml(String(u.br||'—'))}${u.criadoEm?' · desde '+escapeHtml(String(u.criadoEm).slice(0,10)):''}</div>
           </div>
-          <button class="ur-reset" data-br="${escapeHtml(String(u.br))}">Resetar cadastro</button>
-        `;
-        container.appendChild(row);
-      });
-
-      container.querySelectorAll('.ur-reset').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          btn.textContent = 'Resetando...';
-          btn.disabled = true;
-          try{
-            const res = await apiPost({ acao:'resetarUsuario', br: btn.dataset.br });
-            if(res.ok){
-              cacheUsuarios = null;
-              toast('Cadastro resetado — esse BR vai pedir primeiro acesso novamente');
-              renderConfiguracoes();
-            } else {
-              toast('Erro ao resetar: ' + res.erro);
-            }
-          }catch(e){
-            toast('Erro de conexão ao resetar usuário');
-            btn.textContent = 'Resetar cadastro';
-            btn.disabled = false;
-          }
-        });
-      });
-    }).catch(() => {
-      container.innerHTML = `<div class="empty-state"><div class="ic">⚠</div>Erro ao carregar usuários</div>`;
-    });
+          <div class="cfg-item-acoes">
+            <button class="btn-mini" onclick="toggleAdminUser(${idx})" title="${ehAdmin(u)?'Remover admin':'Tornar admin'}">${ehAdmin(u)?'⭐':'☆'}</button>
+            <button class="btn-mini" onclick="resetarUser(${idx})" title="Resetar cadastro">♻️</button>
+            <button class="btn-mini danger" onclick="excluirUser(${idx})" title="Excluir">🗑️</button>
+          </div>
+        </div>`;
+    }
+    let html = '';
+    if(admins.length){ html += `<div class="cat-grupo-tit">Administradores <span>(${admins.length})</span></div>` + admins.map(card).join(''); }
+    html += `<div class="cat-grupo-tit">Operadores <span>(${oper.length})</span></div>`;
+    html += oper.length ? oper.map(card).join('') : `<div class="empty-state" style="padding:16px;">Nenhum operador cadastrado</div>`;
+    container.innerHTML = html;
   }
-
-  $('btnVoltarInicioConfig').addEventListener('click', () => {
+  window.toggleAdminUser = async function(idx){
+    const u = await store.load('usuarios');
+    const atual = String(u[idx].isAdmin) === 'TRUE' || u[idx].isAdmin === true;
+    u[idx].isAdmin = !atual;
+    await store.save('usuarios', u, `Admin ${u[idx].nome}: ${!atual}`);
+    cacheUsuarios = null;
+    toast('✓ Atualizado');
+    renderConfiguracoes();
+  };
+  window.resetarUser = async function(idx){
+    const u = await store.load('usuarios');
+    const nome = u[idx].nome, br = u[idx].br;
+    if(!confirm(`Resetar cadastro de ${nome}? O BR ${br} vai pedir primeiro acesso novamente.`)) return;
+    u.splice(idx, 1);
+    await store.save('usuarios', u, `Reset cadastro ${nome}`);
+    cacheUsuarios = null;
+    toast('✓ Cadastro resetado');
+    renderConfiguracoes();
+  };
+  window.excluirUser = async function(idx){
+    const u = await store.load('usuarios');
+    const nome = u[idx].nome;
+    if(!confirm(`Excluir ${nome} definitivamente?`)) return;
+    u.splice(idx, 1);
+    await store.save('usuarios', u, `Remove usuário ${nome}`);
+    cacheUsuarios = null;
+    toast('✓ Excluído');
+    renderConfiguracoes();
+  };
+    $('btnVoltarInicioConfig').addEventListener('click', () => {
     iniciarTabelaManual();
     showScreen('screen-scan');
   });
@@ -5457,6 +5586,7 @@
       const alvo = btn.dataset.cfg;
       document.querySelectorAll('.cfg-pane').forEach(p => p.style.display = 'none');
       $('cfg-' + alvo).style.display = 'block';
+      if(alvo === 'usuarios') renderConfiguracoes();
       if(alvo === 'catalogo') renderCfgCatalogo();
       if(alvo === 'inventario') renderCfgInventario();
       if(alvo === 'log') renderCfgLog();
@@ -5472,30 +5602,91 @@
       box.innerHTML = `<div class="empty-state" style="padding:24px;">Catálogo vazio. Use "Importar" pra migrar do Google.</div>`;
       return;
     }
-    box.innerHTML = cat.map((p, i) => `
-      <div class="cfg-item">
-        <div class="cfg-item-info">
-          <div class="cfg-item-nome">${escapeHtml(p.produto)}</div>
-          <div class="cfg-item-meta">${escapeHtml(p.categoria||'')} · ${escapeHtml(p.formula||'')} · SAP ${escapeHtml(p.sap_produto||'')} · ${(p.partes||[]).length} partes</div>
-        </div>
-        <div class="cfg-item-acoes">
-          <button class="btn-mini" onclick="editarCatalogo(${i})">✏️</button>
-          <button class="btn-mini danger" onclick="excluirCatalogo(${i})">🗑️</button>
-        </div>
-      </div>
-    `).join('');
+    // agrupa por categoria
+    const grupos = {}; const ordem = [];
+    cat.forEach((p, i) => {
+      const c = String(p.categoria||'Sem categoria').trim() || 'Sem categoria';
+      if(!grupos[c]){ grupos[c] = []; ordem.push(c); }
+      grupos[c].push({p, i});
+    });
+    ordem.sort((a,b) => a.localeCompare(b));
+    let html = '';
+    ordem.forEach(c => {
+      html += `<div class="cat-grupo-tit">${escapeHtml(c)} <span>(${grupos[c].length})</span></div>`;
+      grupos[c].sort((x,y) => (x.p.produto||'').localeCompare(y.p.produto||''));
+      html += grupos[c].map(({p, i}) => `
+        <div class="cfg-item">
+          <div class="cfg-item-info">
+            <div class="cfg-item-nome">${escapeHtml(p.produto)}</div>
+            <div class="cfg-item-meta">${escapeHtml(p.formula||'')} · SAP ${escapeHtml(String(p.sap_produto||'—'))} · Kit ${escapeHtml(String(p.total_kit!=null?p.total_kit:'—'))} · ${(p.partes||[]).length} partes</div>
+          </div>
+          <div class="cfg-item-acoes">
+            <button class="btn-mini" onclick="abrirModalProduto(${i})" title="Editar">✏️</button>
+            <button class="btn-mini danger" onclick="excluirCatalogo(${i})" title="Excluir">🗑️</button>
+          </div>
+        </div>`).join('');
+    });
+    box.innerHTML = html;
   }
-  window.editarCatalogo = async function(idx){
+  // ---- Modal de produto (catálogo) ----
+  let _prodEditIdx = null;
+  function _parteRowHtml(nome, sap){
+    return `<div class="mp-parte">
+      <input class="mp-pt-nome" placeholder="parte (ex: 1,1B)" value="${escapeHtml(nome||'')}">
+      <input class="mp-pt-sap" placeholder="SAP parte" value="${escapeHtml(sap||'')}">
+      <button class="btn-mini danger" onclick="this.parentNode.remove()" title="Remover">🗑️</button>
+    </div>`;
+  }
+  window.addParteModal = function(){
+    $('mpPartes').insertAdjacentHTML('beforeend', _parteRowHtml('', ''));
+  };
+  window.abrirModalProduto = async function(idx){
     const cat = await store.load('catalogo');
-    const p = cat[idx];
-    const novo = prompt('Editar produto (JSON):', JSON.stringify(p, null, 2));
-    if(novo === null) return;
+    const p = (idx === null || idx === undefined)
+      ? { categoria:'', tipo:'concentrado', produto:'', formula:'', sap_produto:'', total_kit:1, partes:[] }
+      : cat[idx];
+    _prodEditIdx = (idx === null || idx === undefined) ? null : idx;
+    $('mpProduto').value = p.produto || '';
+    $('mpCategoria').value = p.categoria || '';
+    $('mpTipo').value = p.tipo || 'concentrado';
+    $('mpFormula').value = p.formula || '';
+    $('mpSap').value = p.sap_produto || '';
+    $('mpKit').value = (p.total_kit != null ? p.total_kit : '');
+    $('mpPartes').innerHTML = (p.partes||[]).map(pt => _parteRowHtml(pt.nome, pt.sap_parte)).join('');
+    $('mpTitulo').textContent = (_prodEditIdx === null) ? 'Novo produto' : 'Editar produto';
+    $('modalProd').classList.add('show');
+    setTimeout(() => $('mpProduto').focus(), 50);
+  };
+  window.fecharModalProd = function(){
+    $('modalProd').classList.remove('show');
+    _prodEditIdx = null;
+  };
+  window.salvarModalProd = async function(){
+    const produto = $('mpProduto').value.trim();
+    if(!produto){ toast('Informe o produto'); return; }
+    const partes = [...$('mpPartes').querySelectorAll('.mp-parte')].map(row => ({
+      nome: row.querySelector('.mp-pt-nome').value.trim(),
+      sap_parte: row.querySelector('.mp-pt-sap').value.trim()
+    })).filter(pt => pt.nome);
+    const obj = {
+      categoria: $('mpCategoria').value.trim(),
+      tipo: $('mpTipo').value.trim() || 'concentrado',
+      produto,
+      formula: $('mpFormula').value.trim(),
+      sap_produto: $('mpSap').value.trim(),
+      total_kit: Number($('mpKit').value) || 0,
+      partes
+    };
+    const cat = await store.load('catalogo');
+    if(_prodEditIdx === null) cat.push(obj); else cat[_prodEditIdx] = obj;
+    const btn = $('mpSalvar'); btn.disabled = true; btn.textContent = 'Salvando...';
     try {
-      cat[idx] = JSON.parse(novo);
-      await store.save('catalogo', cat, `Edita produto ${p.produto}`);
+      await store.save('catalogo', cat, `Produto ${produto}`);
       toast('✓ Salvo');
+      fecharModalProd();
       renderCfgCatalogo();
-    } catch(e){ toast('JSON inválido'); }
+    } catch(e){ toast('Erro: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '✅ Salvar'; }
   };
   window.excluirCatalogo = async function(idx){
     const cat = await store.load('catalogo');
@@ -5506,18 +5697,9 @@
     toast('✓ Excluído');
     renderCfgCatalogo();
   };
-  $('btnCfgAddProduto').addEventListener('click', async () => {
-    const modelo = { categoria: '', tipo: 'concentrado', produto: '', formula: '', sap_produto: '', total_kit: 1, partes: [] };
-    const novo = prompt('Novo produto (JSON):', JSON.stringify(modelo, null, 2));
-    if(!novo) return;
-    try {
-      const p = JSON.parse(novo);
-      const cat = await store.load('catalogo');
-      cat.push(p);
-      await store.save('catalogo', cat, `Add produto ${p.produto}`);
-      toast('✓ Adicionado');
-      renderCfgCatalogo();
-    } catch(e){ toast('JSON inválido'); }
+  $('btnCfgAddProduto').addEventListener('click', () => abrirModalProduto(null));
+  document.addEventListener('click', (e) => {
+    if(e.target && e.target.id === 'modalProd') fecharModalProd();
   });
 
   // ---------- Inventário ----------
@@ -5525,50 +5707,122 @@
     const box = $('cfgInventarioList');
     box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
     const inv = await store.load('inventario');
+    const cat = await store.load('catalogo');
+    const catMap = {};
+    (cat||[]).forEach(p => { catMap[String(p.produto).trim()] = p; });
     const filtro = ($('cfgInvBusca').value || '').trim().toLowerCase();
-    let lotes = inv;
+    let lotes = inv.map((l,i) => ({l, i}));
     if(filtro){
-      lotes = inv.filter(l => (`${l.produto} ${l.parte} ${l.validade} ${l.lote}`).toLowerCase().includes(filtro));
+      lotes = lotes.filter(({l}) => (`${l.produto} ${l.parte} ${l.validade} ${l.lote}`).toLowerCase().includes(filtro));
     }
     if(lotes.length === 0){
       box.innerHTML = `<div class="empty-state" style="padding:24px;">Nenhum lote${filtro?' pra "'+escapeHtml(filtro)+'"':' — inventário vazio'}</div>`;
       return;
     }
-    lotes.sort((a,b) => (a.produto||'').localeCompare(b.produto||''));
-    box.innerHTML = lotes.slice(0,200).map(l => {
-      const idxOriginal = inv.indexOf(l);
-      return `
-        <div class="cfg-item">
-          <div class="cfg-item-info">
-            <div class="cfg-item-nome">${escapeHtml(l.produto)} · <span style="color:var(--verde);">${escapeHtml(l.parte||'—')}</span></div>
-            <div class="cfg-item-meta">Validade ${formatarDataBR(l.validade)} · <b>${l.quantidade}</b> unid ${l.lote?'· Lote '+escapeHtml(l.lote):''}</div>
+    // agrupa por produto
+    const grupos = {}; const ordem = [];
+    lotes.forEach(({l,i}) => {
+      const key = String(l.produto||'—').trim();
+      if(!grupos[key]){ grupos[key] = []; ordem.push(key); }
+      grupos[key].push({l,i});
+    });
+    ordem.sort((a,b) => a.localeCompare(b));
+    let html = '';
+    ordem.forEach(prod => {
+      const itens = grupos[prod];
+      const c = catMap[prod] || {};
+      const sap = itens[0].l.sap_produto || c.sap_produto || '—';
+      const kit = (itens[0].l.total_kit_produto != null ? itens[0].l.total_kit_produto : (c.total_kit != null ? c.total_kit : '—'));
+      const categoria = c.categoria || '';
+      itens.sort((x,y) => String(x.l.validade).localeCompare(String(y.l.validade)));
+      const totalUnid = itens.reduce((sum,{l}) => sum + (Number(l.quantidade)||0), 0);
+      html += `
+        <div class="inv-bloco">
+          <div class="inv-bloco-head">
+            <div class="inv-bloco-nome">${escapeHtml(prod)}</div>
+            <div class="inv-bloco-sub">${categoria?escapeHtml(categoria)+' · ':''}SAP ${escapeHtml(String(sap))} · Total de Kit <b>${escapeHtml(String(kit))}</b></div>
           </div>
-          <div class="cfg-item-acoes">
-            <button class="btn-mini" onclick="editarLoteCfg(${idxOriginal})">✏️</button>
-            <button class="btn-mini danger" onclick="excluirLoteCfg(${idxOriginal})">🗑️</button>
-          </div>
+          <table class="inv-tab">
+            <thead><tr><th>PARTE</th><th>VENCIMENTO</th><th>QTD</th><th>LOTE</th><th></th></tr></thead>
+            <tbody>
+              ${itens.map(({l,i}) => `<tr>
+                  <td class="ip">${escapeHtml(l.parte||'—')}</td>
+                  <td class="${_classeValidade(l.validade)}">${formatarDataBR(l.validade)}</td>
+                  <td class="iq">${l.quantidade}</td>
+                  <td class="il">${l.lote?escapeHtml(l.lote):'—'}</td>
+                  <td class="ia">
+                    <button class="btn-mini" onclick="abrirModalLote(${i})" title="Editar">✏️</button>
+                    <button class="btn-mini danger" onclick="excluirLoteCfg(${i})" title="Excluir">🗑️</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+            <tfoot><tr><td colspan="2" class="itot">${itens.length} lote(s)</td><td class="itot"><b>${totalUnid}</b></td><td colspan="2"></td></tr></tfoot>
+          </table>
         </div>`;
-    }).join('') + (lotes.length > 200 ? `<div class="empty-state" style="padding:14px;">... e mais ${lotes.length-200} lotes. Use a busca pra filtrar.</div>` : '');
+    });
+    box.innerHTML = html;
   }
-  window.editarLoteCfg = async function(idx){
+  function _classeValidade(v){
+    const d = new Date(String(v||'').slice(0,10));
+    if(isNaN(d.getTime())) return 'iv';
+    const dias = Math.round((d - new Date())/86400000);
+    if(dias < 0) return 'iv iv-venc';
+    if(dias <= 30) return 'iv iv-red';
+    if(dias <= 60) return 'iv iv-amb';
+    return 'iv iv-verde';
+  }
+  // ---- Modal de lote (edição/adição) ----
+  let _loteEditIdx = null;
+  window.abrirModalLote = async function(idx){
     const inv = await store.load('inventario');
-    const l = inv[idx];
-    const novaQtd = prompt(`Nova quantidade para ${l.produto} · ${l.parte} · ${formatarDataBR(l.validade)}:`, String(l.quantidade));
-    if(novaQtd === null) return;
-    const n = Number(novaQtd);
-    if(isNaN(n) || n < 0){ toast('Quantidade inválida'); return; }
-    if(n === 0){
-      inv.splice(idx, 1);
+    const l = (idx === null || idx === undefined) ? { produto:'', parte:'', validade:'', quantidade:1, lote:'' } : inv[idx];
+    _loteEditIdx = (idx === null || idx === undefined) ? null : idx;
+    const cat = await store.load('catalogo');
+    $('mlProdutos').innerHTML = (cat||[]).map(p => `<option value="${escapeHtml(p.produto)}"></option>`).join('');
+    $('mlProduto').value = l.produto || '';
+    $('mlParte').value = l.parte || '';
+    $('mlValidade').value = String(l.validade||'').slice(0,10);
+    $('mlQtd').value = (l.quantidade != null ? l.quantidade : '');
+    $('mlLote').value = l.lote || '';
+    $('mlTitulo').textContent = (_loteEditIdx === null) ? 'Novo lote' : 'Editar lote';
+    $('modalLote').classList.add('show');
+    setTimeout(() => $('mlProduto').focus(), 50);
+  };
+  window.fecharModalLote = function(){
+    $('modalLote').classList.remove('show');
+    _loteEditIdx = null;
+  };
+  window.salvarModalLote = async function(){
+    const produto = $('mlProduto').value.trim();
+    const parte = $('mlParte').value.trim();
+    const validade = $('mlValidade').value.trim();
+    const qtd = Number($('mlQtd').value);
+    const lote = $('mlLote').value.trim();
+    if(!produto){ toast('Informe o produto'); return; }
+    if(isNaN(qtd) || qtd < 0){ toast('Quantidade inválida'); return; }
+    const inv = await store.load('inventario');
+    if(_loteEditIdx === null){
+      const cat = await store.load('catalogo');
+      const p = (cat||[]).find(x => String(x.produto).trim() === produto);
+      inv.push({ produto, parte, validade, quantidade: qtd, lote,
+        total_kit_produto: p ? p.total_kit : null, sap_produto: p ? p.sap_produto : '' });
+    } else if(qtd === 0){
+      inv.splice(_loteEditIdx, 1);
     } else {
-      inv[idx].quantidade = n;
+      inv[_loteEditIdx] = Object.assign({}, inv[_loteEditIdx], { produto, parte, validade, quantidade: qtd, lote });
     }
-    await store.save('inventario', inv, `Ajuste manual ${l.produto}`);
-    toast('✓ Salvo');
-    renderCfgInventario();
+    const btn = $('mlSalvar'); btn.disabled = true; btn.textContent = 'Salvando...';
+    try {
+      await store.save('inventario', inv, `Ajuste lote ${produto}`);
+      toast('✓ Salvo');
+      fecharModalLote();
+      renderCfgInventario();
+    } catch(e){ toast('Erro: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '✅ Salvar'; }
   };
   window.excluirLoteCfg = async function(idx){
     const inv = await store.load('inventario');
-    if(!confirm(`Excluir lote de ${inv[idx].produto}?`)) return;
+    if(!confirm(`Excluir lote de ${inv[idx].produto} · ${inv[idx].parte||'—'}?`)) return;
     inv.splice(idx, 1);
     await store.save('inventario', inv, 'Remove lote (admin)');
     toast('✓ Excluído');
@@ -5578,18 +5832,14 @@
     clearTimeout(window._cfgInvT);
     window._cfgInvT = setTimeout(renderCfgInventario, 200);
   });
-  $('btnCfgAddLote').addEventListener('click', async () => {
-    const modelo = { produto: '', parte: '', validade: '2027-12-31', quantidade: 1, lote: '' };
-    const novo = prompt('Novo lote (JSON):', JSON.stringify(modelo, null, 2));
-    if(!novo) return;
-    try {
-      const l = JSON.parse(novo);
-      const inv = await store.load('inventario');
-      inv.push(l);
-      await store.save('inventario', inv, `Add lote ${l.produto}`);
-      toast('✓ Adicionado');
-      renderCfgInventario();
-    } catch(e){ toast('JSON inválido'); }
+  $('cfgLogBusca').addEventListener('input', () => {
+    clearTimeout(window._cfgLogT);
+    window._cfgLogT = setTimeout(renderCfgLog, 200);
+  });
+  $('cfgLogTipo').addEventListener('change', renderCfgLog);
+  $('btnCfgAddLote').addEventListener('click', () => abrirModalLote(null));
+  document.addEventListener('click', (e) => {
+    if(e.target && e.target.id === 'modalLote') fecharModalLote();
   });
 
   // ---------- Log ----------
@@ -5597,19 +5847,23 @@
     const box = $('cfgLogList');
     box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
     const log = await store.load('log');
-    const ultimos = log.slice(-100).reverse();
-    if(ultimos.length === 0){
-      box.innerHTML = `<div class="empty-state" style="padding:24px;">Log vazio</div>`;
-      return;
-    }
-    box.innerHTML = ultimos.map(r => `
-      <div class="cfg-item" style="border-left:3px solid ${r.tipo==='entrada'?'var(--verde)':r.tipo==='saida'?'var(--erro)':'var(--cinza)'};">
+    const busca = ($('cfgLogBusca').value||'').trim().toLowerCase();
+    const tipoF = $('cfgLogTipo').value;
+    let rows = log.slice().reverse();
+    if(tipoF) rows = rows.filter(r => String(r.tipo) === tipoF);
+    if(busca) rows = rows.filter(r => (`${r.produto} ${r.parte} ${r.operador} ${r.tipo} ${r.lote}`).toLowerCase().includes(busca));
+    $('cfgLogCount').textContent = rows.length + ' registro(s)';
+    if(rows.length === 0){ box.innerHTML = `<div class="empty-state" style="padding:24px;">Nenhum registro</div>`; return; }
+    const cor = t => t==='entrada'?'var(--verde)':t==='saida'?'var(--erro)':t==='inventario_inicial'?'var(--ambar)':'var(--cinza)';
+    const sinal = r => r.tipo==='saida'?'−':'+';
+    box.innerHTML = rows.slice(0,200).map(r => `
+      <div class="cfg-item" style="border-left:3px solid ${cor(r.tipo)};">
         <div class="cfg-item-info">
           <div class="cfg-item-nome">${escapeHtml(r.produto||'—')} · <span style="color:var(--cinza);">${escapeHtml(r.parte||'')}</span></div>
-          <div class="cfg-item-meta">${escapeHtml(r.tipo||'')} · ${escapeHtml(r.timestamp||'')} · ${escapeHtml(r.operador||'')} · Fáb.${escapeHtml(r.fabrica||'')} · ${r.quantidade_guardada} un</div>
+          <div class="cfg-item-meta">${escapeHtml(r.tipo||'')} · ${escapeHtml(String(r.timestamp||''))} · ${escapeHtml(r.operador||'')} · Fáb.${escapeHtml(String(r.fabrica||''))}</div>
         </div>
-      </div>
-    `).join('');
+        <div class="log-qtd" style="color:${cor(r.tipo)};">${sinal(r)}${r.quantidade_guardada!=null?r.quantidade_guardada:(r.quantidade_esperada!=null?r.quantidade_esperada:'')}</div>
+      </div>`).join('') + (rows.length>200?`<div class="empty-state" style="padding:12px;">... e mais ${rows.length-200}. Use a busca.</div>`:'');
   }
 
   // ---------- Backup / Migração ----------
