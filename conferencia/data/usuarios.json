@@ -1,1 +1,55 @@
-{"usuarios":[]}
+{
+  "usuarios": [
+    {
+      "br": "5758236",
+      "nome": "João Pedro",
+      "senhaHash": "(gerado automaticamente pelo app)",
+      "isAdmin": true,
+      "criadoEm": "2026-06-21T00:00:00.000Z"
+    },
+    {
+      "br": "5759938",
+      "nome": "Gusttavo",
+      "senhaHash": "1a07445d8dc4a4af05888d37539e19e4925681f51f324f7427d1bc8029aaf24d",
+      "isAdmin": false,
+      "criadoEm": "2026-06-23T04:23:54.684Z"
+    },
+    {
+      "br": "5005879",
+      "nome": "Gabriel Santos Ferreira da Silva",
+      "senhaHash": "79db25ecbecb383d38b2808874555f7c3bf5df6d805b26db48e2a5526705cb6a",
+      "isAdmin": false,
+      "criadoEm": "2026-06-26T01:45:59.902Z"
+    },
+    {
+      "br": "5146710",
+      "nome": "Larissa Fernanda dos Santos",
+      "senhaHash": "d86e905e628b93ced5df3b11c77717704fae101a03fe708d815b12e78da62f1f",
+      "isAdmin": false,
+      "criadoEm": "2026-06-26T03:38:39.393Z"
+    },
+    {
+      "br": "br03011098",
+      "nome": "Thiago Monteiro",
+      "senhaHash": "bebd4f8b81c4fafc2ac35df6875c612e5a4d295a1b92ac2ebe0279762be6f609",
+      "isAdmin": true,
+      "criadoEm": "2026-06-28T15:49:07.585Z"
+    },
+    {
+      "br": "3153305",
+      "nome": "Jerry Adriano Zanatta",
+      "senhaHash": "221ff1806e49d94dd864aea9b4290de7af6ee7788fe176556f92af974c2db4dc",
+      "isAdmin": true,
+      "criadoEm": "2026-06-29T01:34:09.479Z"
+    },
+    {
+      "br": "3011098",
+      "nome": "Thiago Monteiro Pereira",
+      "senhaHash": "bebd4f8b81c4fafc2ac35df6875c612e5a4d295a1b92ac2ebe0279762be6f609",
+      "isAdmin": true,
+      "criadoEm": "2026-07-01T02:36:32.351Z"
+    }
+  ],
+  "atualizado_em": "2026-07-03T01:47:41.875Z",
+  "atualizado_por": "Administrador"
+}
