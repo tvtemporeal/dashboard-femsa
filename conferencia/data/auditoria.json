@@ -1,1 +1,17 @@
-{"auditoria":[]}
+{
+  "auditoria": [
+    {
+      "id": "aud_1782803918592",
+      "sala_id": "sala_refrigerante",
+      "sala_nome": "Sala de Refrigerante",
+      "data": "2026-06-30 00:00:00",
+      "timestamp": "2026-06-30 04:18:36",
+      "auditor": "Thiago Monteiro",
+      "tem_desvios": "nao",
+      "desvios": "[]",
+      "registradoEm": "2026-06-30T07:18:38.592Z"
+    }
+  ],
+  "atualizado_em": "2026-07-03T01:47:47.478Z",
+  "atualizado_por": "Administrador"
+}
