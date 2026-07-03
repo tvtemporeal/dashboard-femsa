@@ -1021,6 +1021,8 @@
   .inv-tab tbody tr:last-child td{ border-bottom:none; }
   .inv-tab .ip{ font-weight:700; }
   .inv-tab .iq{ font-weight:800; text-align:center; }
+  .inv-tab .iq-inp{ width:62px; background:var(--preto); border:1px solid var(--linha); border-radius:6px; padding:5px 6px; color:var(--osso); font-size:13px; font-weight:800; text-align:center; }
+  .inv-tab .iq-inp:focus{ outline:none; border-color:var(--vermelho); }
   .inv-tab .il{ color:var(--cinza); font-family:'JetBrains Mono',monospace; font-size:11px; }
   .inv-tab .ia{ text-align:right; white-space:nowrap; }
   .inv-tab .ia .btn-mini{ padding:4px 7px; font-size:12px; }
@@ -1058,6 +1060,46 @@
   .ml-campo select:focus{ outline:none; border-color:var(--vermelho); }
   .modal-card.wide{ max-width:460px; }
   .modal-card .scroll{ max-height:70vh; overflow-y:auto; }
+  /* Contagem */
+  .ct-bloco{ background:var(--carvao); border:1px solid var(--linha); border-radius:12px; margin-bottom:12px; overflow:hidden; }
+  .ct-head{ padding:9px 12px; background:linear-gradient(90deg, rgba(226,35,26,0.14), transparent); border-bottom:1px solid var(--linha); }
+  .ct-nome{ font-size:13.5px; font-weight:800; }
+  .ct-sub{ font-size:10px; color:var(--cinza); text-transform:uppercase; letter-spacing:.5px; margin-top:2px; }
+  .ct-partes{ padding:8px 10px; }
+  .ct-parte{ padding:8px 0; border-bottom:1px solid rgba(244,239,230,0.06); }
+  .ct-parte:last-child{ border-bottom:none; }
+  .ct-parte-tag{ font-size:11px; font-weight:800; color:var(--ambar); margin-bottom:6px; letter-spacing:.5px; }
+  .ct-lotes{ display:flex; flex-direction:column; gap:6px; }
+  .ct-lote{ display:flex; gap:6px; align-items:center; }
+  .ct-lote input{ background:var(--preto); border:1px solid var(--linha); border-radius:7px; padding:8px; color:var(--osso); font-size:12px; min-width:0; }
+  .ct-lote input:focus{ outline:none; border-color:var(--vermelho); }
+  .ct-lote .ct-val{ flex:1.3; }
+  .ct-lote .ct-qtd{ flex:0.7; text-align:center; font-weight:800; }
+  .ct-lote .ct-lot{ flex:1; }
+  .ct-lote .ct-del{ flex:0 0 auto; background:transparent; border:1px solid var(--linha); color:var(--cinza); border-radius:6px; width:28px; height:30px; cursor:pointer; font-size:12px; }
+  .ct-add{ align-self:flex-start; background:transparent; border:1px dashed var(--linha); color:var(--osso); padding:6px 12px; border-radius:7px; cursor:pointer; font-size:11px; margin-top:2px; }
+  .disp-hint{ color:var(--verde); font-weight:800; font-size:10px; }
+  .sem-estoque-note{ font-size:10px; color:var(--ambar); margin:0 0 8px; font-weight:600; }
+  /* Modal solicitações pendentes */
+  .ms-card{ width:100%; max-width:440px; background:var(--carvao); border:1px solid var(--linha); border-radius:18px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,0.7); }
+  .ms-header{ position:relative; padding:18px 20px; background:linear-gradient(135deg, var(--vermelho), var(--vermelho-escuro)); color:#fff; }
+  .ms-brand{ font-size:13px; font-weight:900; letter-spacing:2px; display:flex; align-items:center; gap:7px; opacity:.95; }
+  .ms-bottle{ width:9px; height:16px; background:#fff; border-radius:3px 3px 6px 6px; display:inline-block; }
+  .ms-title{ font-size:20px; font-weight:800; margin-top:6px; }
+  .ms-count{ position:absolute; top:16px; right:18px; background:rgba(0,0,0,0.28); border:1px solid rgba(255,255,255,0.35); min-width:38px; height:38px; padding:0 8px; border-radius:20px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; }
+  .ms-body{ padding:16px 18px; max-height:46vh; overflow-y:auto; }
+  .ms-lead{ margin:0 0 12px; font-size:12.5px; color:var(--cinza); }
+  .ms-item{ background:var(--preto); border:1px solid var(--linha); border-radius:12px; padding:11px 13px; margin-bottom:9px; }
+  .ms-item-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .ms-prod{ font-weight:800; font-size:14px; }
+  .ms-dir{ font-size:9.5px; font-weight:800; letter-spacing:.5px; background:rgba(31,138,76,0.18); color:var(--verde); padding:3px 8px; border-radius:20px; white-space:nowrap; }
+  .ms-meta{ font-size:11.5px; color:var(--cinza); margin-top:4px; }
+  .ms-obs{ font-size:11.5px; color:var(--osso); font-style:italic; margin-top:5px; opacity:.85; }
+  .ms-extra{ text-align:center; font-size:11px; color:var(--cinza); padding:4px; }
+  .ms-acoes{ display:flex; gap:10px; padding:14px 18px; border-top:1px solid var(--linha); }
+  .ms-acoes button{ flex:1; padding:12px; border-radius:11px; font-size:14px; font-weight:800; cursor:pointer; border:1px solid var(--linha); }
+  .ms-acoes .cancel{ background:transparent; color:var(--osso); }
+  .ms-acoes .ok{ background:var(--vermelho); color:#fff; border-color:var(--vermelho); }
   .cfg-filtro-input{ background:var(--preto); border:1px solid var(--linha); border-radius:9px; padding:10px 12px; color:var(--osso); font-size:13px; }
   .cfg-filtro-input:focus{ outline:none; border-color:var(--vermelho); }
   .log-qtd{ font-weight:800; font-size:14px; padding-left:10px; white-space:nowrap; align-self:center; }
@@ -1845,6 +1887,18 @@
 
     <!-- ===== TELA CONFIGURAÇÕES (somente admin) ===== -->
     <!-- ===== TELA ESTOQUE ATUAL ===== -->
+    <section class="screen" id="screen-contagem">
+      <div class="section-header"><h1 class="title" style="font-size:24px;">Contagem de Inventário</h1></div>
+      <p class="lead" style="margin-bottom:8px;">Preencha o que encontrar em cada parte. O rascunho é salvo sozinho — pode fechar e voltar depois.</p>
+      <div id="contagemStatus" style="font-size:11px; color:var(--cinza); margin-bottom:10px;">Rascunho automático</div>
+      <input id="contagemBusca" class="cfg-filtro-input" placeholder="🔍 filtrar produto/categoria..." style="width:100%; margin-bottom:12px;">
+      <div id="contagemBody"></div>
+      <div class="stack" style="margin-top:16px;">
+        <button class="btn btn-primary" id="btnFinalizarContagem">✅ Finalizar e gerar documento</button>
+        <button class="btn btn-outline" id="btnLimparContagem">🗑️ Limpar contagem</button>
+        <button class="btn btn-outline" onclick="voltarInicio()">← Voltar ao início</button>
+      </div>
+    </section>
     <section class="screen" id="screen-estoque">
       <div class="section-label">Saldo calculado</div>
       <h1 class="title" style="font-size:24px; margin-bottom:8px;">Estoque atual</h1>
@@ -2362,6 +2416,7 @@
   ];
   // demais telas de navegação
   const STEPS = [
+    { id:'screen-contagem',    label:'Contagem de Inventário',hint:'Contar tudo e gerar documento' },
     { id:'screen-log',         label:'Histórico',             hint:'Entradas e saídas' },
     { id:'screen-estoque',     label:'Estoque atual',         hint:'Saldo por produto' },
     { id:'screen-validades',   label:'Validades',             hint:'Painel de vencimentos' },
@@ -2414,7 +2469,8 @@
       div.innerHTML = `<div class="step-dot"></div><div class="step-text">${step.label}${badgeHtml}<small>${step.hint}</small></div>`;
       div.addEventListener('click', () => {
         if(step.id === 'screen-log'){ carregarLog(); }
-        if(step.id === 'screen-config'){ renderConfiguracoes(); }
+        if(step.id === 'screen-contagem'){ renderContagem(); }
+        if(step.id === 'screen-config'){ renderConfiguracoes(); aplicarPermissoesConfig(); }
         if(step.id === 'screen-estoque'){
           renderEstoque();
           $('btnLimparLog').style.display = (usuarioAtual && usuarioAtual.isAdmin) ? 'inline-flex' : 'none';
@@ -2992,6 +3048,7 @@
     iniciarTabelaManual();
     aplicarTextosPorTipo();
     showScreen('screen-scan');
+    verificarSolicitacoesPendentes();
   }
 
   function aplicarTextosPorTipo(){
@@ -4597,7 +4654,7 @@
     });
   }
 
-  function abrirTelaAtendimento(ped){
+  async function abrirTelaAtendimento(ped){
     solicAtual = ped;
     const dir = ped.direcao || 'f1_para_f2';
     const origem = dir === 'f1_para_f2' ? 'F2 (xaroparia)' : 'F1';
@@ -4610,10 +4667,23 @@
     const prodInfo = CATALOGO_PRODUTOS.find(p => p.produto === ped.produto);
     const partes = prodInfo ? (prodInfo.partes||[]) : [];
 
-    // Inicializa estrutura de lotes
-    atenderLotes = partes.map(p => ({ parte: p.nome || '', lotes: [{ validade:'', qtd:'' }] }));
+    // Puxa estoque atual pra pré-preencher por FEFO (menor validade primeiro)
+    let invAtual = [];
+    try { invAtual = await store.load('inventario'); } catch(e){ invAtual = []; }
+    function lotesFEFO(prodN, parteN){
+      return (invAtual||[])
+        .filter(l => String(l.produto).trim() === String(prodN).trim()
+                  && String(l.parte).trim() === String(parteN).trim()
+                  && Number(l.quantidade) > 0)
+        .sort((a,b) => String(a.validade||'').localeCompare(String(b.validade||'')))
+        .map(l => ({ validade: String(l.validade||'').slice(0,10), qtd:'', disp: Number(l.quantidade)||0, lote: l.lote||'' }));
+    }
+    atenderLotes = partes.map(p => {
+      const est = lotesFEFO(ped.produto, p.nome || '');
+      return { parte: p.nome || '', lotes: est.length ? est : [{ validade:'', qtd:'' }], semEstoque: est.length === 0 };
+    });
     if(atenderLotes.length === 0){
-      atenderLotes = [{ parte:'', lotes:[{ validade:'', qtd:'' }] }];
+      atenderLotes = [{ parte:'', lotes:[{ validade:'', qtd:'' }], semEstoque:true }];
     }
     renderAtenderForm();
     showScreen('screen-solic-atender');
@@ -4629,24 +4699,28 @@
       pa.lotes.forEach((l, lIdx) => {
         const sinal = calcularSinalValidade(l.validade);
         const badge = sinal ? `<span class="sinal-badge sinal-${sinal.cor}">${sinal.label}</span>` : '';
+        const dispHint = (l.disp != null) ? ` <span class="disp-hint">disp: ${l.disp}</span>` : '';
+        const roVal = (l.disp != null) ? 'readonly' : '';
         lotesHtml += `
           <div class="lote-row">
             <div class="lote-field" style="flex-basis:130px; flex-grow:0;">
-              <label>Qtd.</label>
-              <input type="number" inputmode="numeric" min="0" placeholder="0" data-aten-parte="${pIdx}" data-aten-lote="${lIdx}" data-field="qtd" value="${escapeHtml(String(l.qtd))}">
+              <label>Qtd.${dispHint}</label>
+              <input type="number" inputmode="numeric" min="0" ${l.disp!=null?`max="${l.disp}"`:''} placeholder="0" data-aten-parte="${pIdx}" data-aten-lote="${lIdx}" data-field="qtd" value="${escapeHtml(String(l.qtd))}">
             </div>
             <div class="lote-field">
               <label>Validade ${badge}</label>
-              <input type="date" data-aten-parte="${pIdx}" data-aten-lote="${lIdx}" data-field="validade" value="${escapeHtml(l.validade)}" style="color-scheme:dark;">
+              <input type="date" ${roVal} data-aten-parte="${pIdx}" data-aten-lote="${lIdx}" data-field="validade" value="${escapeHtml(l.validade)}" style="color-scheme:dark;">
             </div>
             ${pa.lotes.length > 1 ? `<button class="mr-remove" data-aten-rem-parte="${pIdx}" data-aten-rem-lote="${lIdx}" title="Remover">×</button>` : ''}
           </div>`;
       });
+      const semNote = pa.semEstoque ? `<div class="sem-estoque-note">⚠ Sem estoque desta parte — preencha manualmente</div>` : '';
       div.innerHTML = `
         <div class="parte-head">
           <span class="parte-tag">Parte ${escapeHtml(pa.parte || '—')}</span>
           <button class="link-btn" data-aten-add="${pIdx}">+ outro lote</button>
         </div>
+        ${semNote}
         ${lotesHtml}
       `;
       wrap.appendChild(div);
@@ -4654,6 +4728,11 @@
     // listeners
     wrap.querySelectorAll('input').forEach(inp => {
       inp.addEventListener('input', (e) => {
+        const pIdx = Number(e.target.dataset.atenParte);
+        const lIdx = Number(e.target.dataset.atenLote);
+        atenderLotes[pIdx].lotes[lIdx][e.target.dataset.field] = e.target.value;
+      });
+      inp.addEventListener('change', (e) => {
         const pIdx = Number(e.target.dataset.atenParte);
         const lIdx = Number(e.target.dataset.atenLote);
         atenderLotes[pIdx].lotes[lIdx][e.target.dataset.field] = e.target.value;
@@ -5510,7 +5589,20 @@
     }
   });
 
-async function renderConfiguracoes(){
+function aplicarPermissoesConfig(){
+    const soDono = usuarioAtual && String(usuarioAtual.br) === '5758236';
+    document.querySelectorAll('#cfgTabs [data-cfg="log"], #cfgTabs [data-cfg="backup"]').forEach(b => {
+      b.style.display = soDono ? '' : 'none';
+    });
+    if(!soDono){
+      const ativo = document.querySelector('#cfgTabs [data-cfg].active');
+      if(ativo && (ativo.dataset.cfg === 'log' || ativo.dataset.cfg === 'backup')){
+        const uBtn = document.querySelector('#cfgTabs [data-cfg="usuarios"]');
+        if(uBtn) uBtn.click();
+      }
+    }
+  }
+  async function renderConfiguracoes(){
     const container = $('configUserList');
     container.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
     let usuarios;
@@ -5748,7 +5840,7 @@ async function renderConfiguracoes(){
               ${itens.map(({l,i}) => `<tr>
                   <td class="ip">${escapeHtml(l.parte||'—')}</td>
                   <td class="${_classeValidade(l.validade)}">${formatarDataBR(l.validade)}</td>
-                  <td class="iq">${l.quantidade}</td>
+                  <td class="iq"><input class="iq-inp" type="number" step="0.25" min="0" value="${l.quantidade}" onchange="salvarQtdInline(${i}, this.value)" onfocus="this.select()"></td>
                   <td class="il">${l.lote?escapeHtml(l.lote):'—'}</td>
                   <td class="ia">
                     <button class="btn-mini" onclick="abrirModalLote(${i})" title="Editar">✏️</button>
@@ -5828,6 +5920,332 @@ async function renderConfiguracoes(){
     toast('✓ Excluído');
     renderCfgInventario();
   };
+  window.salvarQtdInline = async function(idx, val){
+    const n = Number(val);
+    if(isNaN(n) || n < 0){ toast('Quantidade inválida'); renderCfgInventario(); return; }
+    const inv = await store.load('inventario');
+    if(!inv[idx]) return;
+    const nome = inv[idx].produto;
+    const remover = (n === 0);
+    if(remover){ inv.splice(idx, 1); } else { inv[idx].quantidade = n; }
+    try {
+      await store.save('inventario', inv, `Ajuste qtd ${nome}`);
+      toast('✓ Salvo');
+      if(remover) renderCfgInventario();
+    } catch(e){ toast('Erro: ' + e.message); renderCfgInventario(); }
+  };
+  // ================= CONTAGEM DE INVENTÁRIO =================
+  const CONTAGEM_DRAFT_KEY = 'femsa_contagem_draft_v1';
+  window.voltarInicio = () => showScreen('screen-scan');
+  function _ctLerDraft(){
+    try { return JSON.parse(localStorage.getItem(CONTAGEM_DRAFT_KEY)) || { atualizado_em:null, itens:{} }; }
+    catch(e){ return { atualizado_em:null, itens:{} }; }
+  }
+  function _ctGravarDraft(d){
+    d.atualizado_em = new Date().toISOString();
+    try { localStorage.setItem(CONTAGEM_DRAFT_KEY, JSON.stringify(d)); } catch(e){}
+    const el = $('contagemStatus');
+    if(el) el.textContent = '✓ Rascunho salvo ' + new Date().toLocaleTimeString('pt-BR');
+  }
+  function _ctLoteHtml(l){
+    l = l || {};
+    return `<div class="ct-lote">
+      <input class="ct-val" type="date" value="${escapeHtml(l.validade||'')}">
+      <input class="ct-qtd" type="number" min="0" step="0.25" placeholder="qtd" value="${(l.quantidade!==''&&l.quantidade!=null)?escapeHtml(String(l.quantidade)):''}">
+      <input class="ct-lot" placeholder="lote" value="${escapeHtml(l.lote||'')}">
+      <button class="ct-del" title="remover linha">✕</button>
+    </div>`;
+  }
+  async function renderContagem(){
+    const box = $('contagemBody');
+    box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    let cat;
+    try { cat = await store.load('catalogo'); }
+    catch(e){ box.innerHTML = `<div class="empty-state" style="padding:24px;">Sem catálogo carregado. Conecte à internet uma vez pra baixar os produtos.</div>`; return; }
+    const draft = _ctLerDraft();
+    const filtro = ($('contagemBusca').value||'').trim().toLowerCase();
+    const grupos = {}; const ordem = [];
+    (cat||[]).forEach(p => {
+      if(filtro && !(`${p.produto} ${p.categoria}`).toLowerCase().includes(filtro)) return;
+      const c = String(p.categoria||'Outros').trim() || 'Outros';
+      if(!grupos[c]){ grupos[c] = []; ordem.push(c); }
+      grupos[c].push(p);
+    });
+    ordem.sort((a,b) => a.localeCompare(b));
+    if(ordem.length === 0){
+      box.innerHTML = `<div class="empty-state" style="padding:24px;">Nenhum produto${filtro?' pra "'+escapeHtml(filtro)+'"':''}.</div>`;
+      _ctWire(); return;
+    }
+    let html = '';
+    ordem.forEach(c => {
+      html += `<div class="cat-grupo-tit">${escapeHtml(c)}</div>`;
+      grupos[c].sort((x,y) => (x.produto||'').localeCompare(y.produto||''));
+      grupos[c].forEach(p => {
+        const partes = (p.partes && p.partes.length) ? p.partes : [{nome:'—'}];
+        html += `<div class="ct-bloco">
+          <div class="ct-head">
+            <div class="ct-nome">${escapeHtml(p.produto)}</div>
+            <div class="ct-sub">SAP ${escapeHtml(String(p.sap_produto||'—'))} · Kit ${escapeHtml(String(p.total_kit!=null?p.total_kit:'—'))}</div>
+          </div>
+          <div class="ct-partes">
+            ${partes.map(pt => {
+              const parte = pt.nome || '—';
+              const key = p.produto + '|' + parte;
+              const lotes = (draft.itens[key] && draft.itens[key].length) ? draft.itens[key] : [{}];
+              return `<div class="ct-parte" data-key="${escapeHtml(key)}">
+                <div class="ct-parte-tag">${escapeHtml(parte)}</div>
+                <div class="ct-lotes">
+                  ${lotes.map(_ctLoteHtml).join('')}
+                  <button class="ct-add">+ lote</button>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      });
+    });
+    box.innerHTML = html;
+    _ctWire();
+  }
+  function _ctSync(){
+    const draft = _ctLerDraft();
+    const itens = {};
+    document.querySelectorAll('#contagemBody .ct-parte').forEach(pDiv => {
+      const key = pDiv.dataset.key;
+      const arr = [];
+      pDiv.querySelectorAll('.ct-lote').forEach(lDiv => {
+        const validade = lDiv.querySelector('.ct-val').value;
+        const q = lDiv.querySelector('.ct-qtd').value;
+        const lote = lDiv.querySelector('.ct-lot').value;
+        if(validade || q || lote) arr.push({ validade, quantidade: q, lote });
+      });
+      if(arr.length) itens[key] = arr;
+    });
+    draft.itens = itens;
+    _ctGravarDraft(draft);
+  }
+  function _ctWire(){
+    if(window._ctWired) return;
+    window._ctWired = true;
+    const body = $('contagemBody');
+    body.addEventListener('change', (e) => {
+      if(e.target.matches('.ct-val, .ct-qtd, .ct-lot')) _ctSync();
+    });
+    body.addEventListener('click', (e) => {
+      const add = e.target.closest('.ct-add');
+      if(add){ add.insertAdjacentHTML('beforebegin', _ctLoteHtml({})); return; }
+      const del = e.target.closest('.ct-del');
+      if(del){
+        const lotesBox = del.closest('.ct-lotes');
+        if(lotesBox.querySelectorAll('.ct-lote').length > 1){ del.closest('.ct-lote').remove(); }
+        else { del.closest('.ct-lote').querySelectorAll('input').forEach(i => i.value=''); }
+        _ctSync();
+      }
+    });
+    $('contagemBusca').addEventListener('input', () => {
+      clearTimeout(window._ctBuscaT);
+      window._ctBuscaT = setTimeout(renderContagem, 250);
+    });
+    $('btnLimparContagem').addEventListener('click', () => {
+      if(!confirm('Limpar toda a contagem atual? O rascunho será apagado.')) return;
+      try { localStorage.removeItem(CONTAGEM_DRAFT_KEY); } catch(e){}
+      toast('Contagem limpa');
+      renderContagem();
+    });
+    $('btnFinalizarContagem').addEventListener('click', finalizarContagem);
+  }
+  async function finalizarContagem(){
+    _ctSync();
+    const draft = _ctLerDraft();
+    const lotes = [];
+    Object.keys(draft.itens).forEach(key => {
+      const sep = key.lastIndexOf('|');
+      const produto = key.slice(0, sep);
+      const parte = key.slice(sep+1);
+      draft.itens[key].forEach(l => {
+        const q = Number(l.quantidade);
+        if(!isNaN(q) && q > 0){
+          lotes.push({ produto, parte: (parte === '—' ? '' : parte), validade: l.validade||'', quantidade: q, lote: l.lote||'' });
+        }
+      });
+    });
+    if(lotes.length === 0){ toast('Nada preenchido ainda'); return; }
+    const cat = await store.load('catalogo');
+    const cmap = {}; (cat||[]).forEach(p => cmap[String(p.produto).trim()] = p);
+    const lotesEnr = lotes.map(l => {
+      const p = cmap[l.produto.trim()] || {};
+      return Object.assign({}, l, { total_kit_produto: (p.total_kit!=null?p.total_kit:null), sap_produto: p.sap_produto||'', categoria: p.categoria||'Outros' });
+    });
+    const atualizar = confirm(`Contagem: ${lotesEnr.length} lote(s) preenchido(s).\n\nDeseja ATUALIZAR os valores do estoque geral com esta contagem?\n\nOK = substitui o inventário pela contagem\nCancelar = só gera o documento, mantém o estoque atual`);
+    if(atualizar){
+      try {
+        await store.save('inventario', lotesEnr, 'Contagem: atualização de estoque');
+        toast('✓ Estoque atualizado pela contagem');
+      } catch(e){ toast('Erro ao atualizar: ' + e.message); return; }
+    }
+    await gerarDocumentoContagem(lotesEnr);
+    setTimeout(() => {
+      if(confirm('Documento gerado. Limpar o rascunho para começar uma nova contagem do zero?')){
+        try { localStorage.removeItem(CONTAGEM_DRAFT_KEY); } catch(e){}
+        renderContagem();
+      }
+    }, 600);
+  }
+  function exportarContagemCSV(lotes){
+    const cab = ['produto','parte','validade','quantidade','lote','sap_produto','total_kit'];
+    const linhas = [cab.join(';')];
+    lotes.forEach(l => {
+      linhas.push([l.produto, l.parte, l.validade, l.quantidade, l.lote, l.sap_produto||'', (l.total_kit_produto!=null?l.total_kit_produto:'')]
+        .map(v => `"${String(v==null?'':v).replace(/"/g,'""')}"`).join(';'));
+    });
+    const blob = new Blob(['\ufeff' + linhas.join('\r\n')], { type:'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'contagem_inventario_' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('✓ Documento gerado (CSV)');
+  }
+  // ============ GERADOR .XLSX IDÊNTICO AO INVENTÁRIO ============
+  function _carregarExcelJS(){
+    return new Promise((res, rej) => {
+      if(window.ExcelJS) return res(window.ExcelJS);
+      const sc = document.createElement('script');
+      sc.src = './exceljs.min.js';
+      sc.onload = () => window.ExcelJS ? res(window.ExcelJS) : rej(new Error('ExcelJS não inicializou'));
+      sc.onerror = () => rej(new Error('exceljs.min.js não encontrado na pasta conferencia'));
+      document.head.appendChild(sc);
+    });
+  }
+  function _argbValidade(v){
+    const d = new Date(String(v||'').slice(0,10));
+    if(isNaN(d.getTime())) return null;
+    const dias = Math.round((d - new Date())/86400000);
+    if(dias <= 30) return 'FFE2231A';
+    if(dias <= 60) return 'FFD98E04';
+    return 'FF1F8A4C';
+  }
+  function _dataXLSX(v){
+    const d = new Date(String(v||'').slice(0,10));
+    return isNaN(d.getTime()) ? String(v||'') : d;
+  }
+  async function construirWorkbookContagem(ExcelJS, lotes){
+    const BORDA = { top:{style:'thin',color:{argb:'FFBFBFBF'}}, left:{style:'thin',color:{argb:'FFBFBFBF'}}, bottom:{style:'thin',color:{argb:'FFBFBFBF'}}, right:{style:'thin',color:{argb:'FFBFBFBF'}} };
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Inventário');
+    for(let c=1;c<=46;c++) ws.getColumn(c).width = 13;
+    const cats = {};
+    lotes.forEach(l => {
+      const cat = l.categoria||'Outros', prod = l.produto;
+      cats[cat] = cats[cat] || {};
+      cats[cat][prod] = cats[cat][prod] || { sap:l.sap_produto, kit:l.total_kit_produto, partes:{} };
+      const p = l.parte || '—';
+      (cats[cat][prod].partes[p] = cats[cat][prod].partes[p] || []).push({ validade:l.validade, qtd:l.quantidade, lote:l.lote });
+    });
+    let row = 1;
+    const tit = ws.getCell(row,2); tit.value = 'CONTAGEM DE INVENTÁRIO — ' + new Date().toLocaleDateString('pt-BR'); tit.font = { bold:true, size:14 };
+    row += 2;
+    const BPB = 4, LB = 5;
+    Object.keys(cats).sort().forEach(cat => {
+      const cc = ws.getCell(row,2); cc.value = cat.toUpperCase(); cc.font = { bold:true, size:12, color:{argb:'FFE2231A'} };
+      row += 1;
+      const prods = Object.keys(cats[cat]).sort();
+      for(let i=0;i<prods.length;i+=BPB){
+        const banda = prods.slice(i,i+BPB);
+        let maxL = 0;
+        const infos = banda.map((prod,bi) => {
+          const info = cats[cat][prod], colBase = 2 + bi*LB, linhas = [];
+          Object.keys(info.partes).forEach(parte => {
+            const lots = info.partes[parte].slice().sort((a,b) => String(a.validade).localeCompare(String(b.validade)));
+            lots.forEach((lt,idx) => linhas.push({ parte: idx===0?parte:'', validade:lt.validade, qtd:lt.qtd, lote:lt.lote }));
+          });
+          maxL = Math.max(maxL, linhas.length);
+          return { prod, info, colBase, linhas };
+        });
+        infos.forEach(b => {
+          const c = b.colBase;
+          ws.mergeCells(row, c, row, c+3);
+          const nc = ws.getCell(row,c); nc.value = b.prod; nc.font = { bold:true }; nc.fill = { type:'pattern', pattern:'solid', fgColor:{argb:'FF00CC99'} }; nc.alignment = { horizontal:'center' };
+          ws.getCell(row+1,c+1).value = 'Material SAP ECC:'; ws.getCell(row+1,c+2).value = b.info.sap||'';
+          ws.getCell(row+2,c+1).value = 'Total de Kit:'; ws.getCell(row+2,c+2).value = (b.info.kit!=null?b.info.kit:'');
+          const hr = row+3;
+          ['PARTE','VENCIMENTO','QUANTIDADE','LOTE'].forEach((h,k) => { const hc = ws.getCell(hr,c+k); hc.value = h; hc.font = { bold:true, size:9 }; hc.alignment = { horizontal:'center' }; hc.border = BORDA; hc.fill = { type:'pattern', pattern:'solid', fgColor:{argb:'FFF2F2F2'} }; });
+          b.linhas.forEach((ln,ri) => {
+            const rr = hr+1+ri;
+            const pc = ws.getCell(rr,c); pc.value = ln.parte||''; pc.font = { bold:true };
+            const vc = ws.getCell(rr,c+1); vc.value = _dataXLSX(ln.validade); if(vc.value instanceof Date) vc.numFmt = 'dd/mm/yyyy'; const col = _argbValidade(ln.validade); if(col) vc.font = { color:{argb:col} };
+            ws.getCell(rr,c+2).value = (Number(ln.qtd) || ln.qtd);
+            ws.getCell(rr,c+3).value = ln.lote||'';
+            [c,c+1,c+2,c+3].forEach(x => { ws.getCell(rr,x).border = BORDA; ws.getCell(rr,x).alignment = { horizontal:'center' }; });
+          });
+        });
+        row += 3 + 1 + maxL + 2;
+      }
+      row += 1;
+    });
+    return wb;
+  }
+  async function gerarDocumentoContagem(lotes){
+    let ExcelJS;
+    try { ExcelJS = await _carregarExcelJS(); }
+    catch(e){ toast('Excel indisponível — gerando CSV'); exportarContagemCSV(lotes); return; }
+    try {
+      const wb = await construirWorkbookContagem(ExcelJS, lotes);
+      const buf = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Inventario_Contagem_' + new Date().toISOString().slice(0,10) + '.xlsx';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      toast('✓ Documento .xlsx gerado');
+    } catch(e){ toast('Erro no Excel — gerando CSV: ' + e.message); exportarContagemCSV(lotes); }
+  }
+  // ============ AVISO DE SOLICITAÇÕES PENDENTES ============
+  function _dirLabel(d){ return String(d) === 'f2_para_f1' ? 'F2 → F1' : 'F1 → F2'; }
+  async function verificarSolicitacoesPendentes(){
+    let solics = [];
+    try { solics = await store.load('solicitacoes'); } catch(e){ return; }
+    const pend = (solics||[]).filter(x => String(x.status||'').toLowerCase() === 'pendente');
+    if(pend.length === 0) return;
+    mostrarModalSolic(pend);
+  }
+  function mostrarModalSolic(pend){
+    let host = document.getElementById('modalSolicHost');
+    if(!host){ host = document.createElement('div'); host.id = 'modalSolicHost'; document.body.appendChild(host); }
+    const itens = pend.slice(0,8).map(x => `
+      <div class="ms-item">
+        <div class="ms-item-top">
+          <span class="ms-prod">${escapeHtml(x.produto||'—')}</span>
+          <span class="ms-dir">${_dirLabel(x.direcao)}</span>
+        </div>
+        <div class="ms-meta">${x.quantidade?`<b>${escapeHtml(String(x.quantidade))}</b> kits · `:''}${x.parte?'Parte '+escapeHtml(String(x.parte))+' · ':''}por ${escapeHtml(x.solicitante||'—')}${x.timestamp?' · '+escapeHtml(String(x.timestamp)):''}</div>
+        ${x.observacao?`<div class="ms-obs">"${escapeHtml(String(x.observacao))}"</div>`:''}
+      </div>`).join('');
+    const extra = pend.length > 8 ? `<div class="ms-extra">+ ${pend.length-8} outras solicitações</div>` : '';
+    host.innerHTML = `
+      <div class="modal-ov show" id="modalSolic">
+        <div class="ms-card">
+          <div class="ms-header">
+            <div class="ms-brand"><span class="ms-bottle"></span> FEMSA</div>
+            <div class="ms-title">Solicitações pendentes</div>
+            <div class="ms-count">${pend.length}</div>
+          </div>
+          <div class="ms-body">
+            <p class="ms-lead">Há pedidos aguardando atendimento entre a Fábrica 1 e a Fábrica 2.</p>
+            ${itens}${extra}
+          </div>
+          <div class="ms-acoes">
+            <button class="cancel" onclick="fecharModalSolic()">Depois</button>
+            <button class="ok" onclick="irParaSolicitacoes()">Ver solicitações →</button>
+          </div>
+        </div>
+      </div>`;
+  }
+  window.fecharModalSolic = function(){ const m = document.getElementById('modalSolic'); if(m) m.classList.remove('show'); };
+  window.irParaSolicitacoes = function(){ fecharModalSolic(); showScreen('screen-solic'); if(typeof renderSolicitacoes === 'function') renderSolicitacoes(); };
   $('cfgInvBusca').addEventListener('input', () => {
     clearTimeout(window._cfgInvT);
     window._cfgInvT = setTimeout(renderCfgInventario, 200);
