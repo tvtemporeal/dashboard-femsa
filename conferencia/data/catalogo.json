@@ -1,1 +1,1397 @@
-{"catalogo":[]}
+{
+  "catalogo": [
+    {
+      "categoria": "Dell Vale",
+      "tipo": "concentrado",
+      "produto": "DV Frut. Limão",
+      "formula": "LE/D/V - 0848.50",
+      "sap_produto": "30117517",
+      "total_kit": 15,
+      "partes": [
+        {
+          "nome": "1,1B",
+          "sap_parte": "30117517",
+          "validade": ""
+        },
+        {
+          "nome": "1D,3",
+          "sap_parte": "30117517",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30117517",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30117517",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Dell Vale",
+      "tipo": "concentrado",
+      "produto": "DV Frut. Laranja",
+      "formula": "OR/A/B- 1929.00",
+      "sap_produto": "30118736",
+      "total_kit": 10,
+      "partes": [
+        {
+          "nome": "1B,3",
+          "sap_parte": "30118736",
+          "validade": ""
+        },
+        {
+          "nome": "1M",
+          "sap_parte": "30118736",
+          "validade": ""
+        },
+        {
+          "nome": "1C",
+          "sap_parte": "30118736",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118736",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118736",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Dell Vale",
+      "tipo": "concentrado",
+      "produto": "DV Frut. Frutas Cítricas",
+      "formula": "CI/A/B-218.00",
+      "sap_produto": "30116601",
+      "total_kit": 18,
+      "partes": [
+        {
+          "nome": "1B,1H",
+          "sap_parte": "30116601",
+          "validade": ""
+        },
+        {
+          "nome": "1,1C,3",
+          "sap_parte": "30116601",
+          "validade": ""
+        },
+        {
+          "nome": "1F",
+          "sap_parte": "30116601",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30116601",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116601",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Dell Vale",
+      "tipo": "concentrado",
+      "produto": "DV Frut. Uva",
+      "formula": "GR/A/B-437.00",
+      "sap_produto": "30118542",
+      "total_kit": 12,
+      "partes": [
+        {
+          "nome": "1G,3",
+          "sap_parte": "30118542",
+          "validade": ""
+        },
+        {
+          "nome": "1C,1D",
+          "sap_parte": "30118542",
+          "validade": ""
+        },
+        {
+          "nome": "1I",
+          "sap_parte": "30118542",
+          "validade": ""
+        },
+        {
+          "nome": "1H",
+          "sap_parte": "30118542",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118542",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118542",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Fanta Uva",
+      "formula": "GR/B-385.00",
+      "sap_produto": "30118984",
+      "total_kit": 70,
+      "partes": [
+        {
+          "nome": "1G",
+          "sap_parte": "30118984",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30118984",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118984",
+          "validade": ""
+        },
+        {
+          "nome": "1B,3",
+          "sap_parte": "30118666",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30118666",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118666",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Fanta Laranja",
+      "formula": "OR-1982.00",
+      "sap_produto": "30118341",
+      "total_kit": 113,
+      "partes": [
+        {
+          "nome": "1,1B",
+          "sap_parte": "30118341",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118341",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Guaraná Kuat",
+      "formula": "GU/B73.00",
+      "sap_produto": "30118344",
+      "total_kit": 179,
+      "partes": [
+        {
+          "nome": "1,1G",
+          "sap_parte": "30118344",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118344",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Fanta Guaraná",
+      "formula": "GU/B71.00",
+      "sap_produto": "30115239",
+      "total_kit": 138,
+      "partes": [
+        {
+          "nome": "1,1B",
+          "sap_parte": "30115239",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30115239",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Fanta Maracujá",
+      "formula": "PF-113.00",
+      "sap_produto": "30118738",
+      "total_kit": 5,
+      "partes": [
+        {
+          "nome": "1B,1D,1F",
+          "sap_parte": "30118738",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118738",
+          "validade": ""
+        },
+        {
+          "nome": "2D",
+          "sap_parte": "30118738",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Coca Coca Zero",
+      "formula": "DS-2110.88",
+      "sap_produto": "",
+      "total_kit": 1,
+      "partes": []
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Sprite Original",
+      "formula": "SP - 1565.01",
+      "sap_produto": "30116161",
+      "total_kit": 72,
+      "partes": [
+        {
+          "nome": "1B",
+          "sap_parte": "30116161",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30116161",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116161",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Sprite Sem Açúcar",
+      "formula": "SP/D - 0215.50",
+      "sap_produto": "30116451",
+      "total_kit": 86,
+      "partes": [
+        {
+          "nome": "1B,3A,3B",
+          "sap_parte": "30116451",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30116451",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116451",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Sprite Fresh",
+      "formula": "SP/D-1570.50",
+      "sap_produto": "30118343",
+      "total_kit": 59,
+      "partes": [
+        {
+          "nome": "P1,1E,1G,3A",
+          "sap_parte": "30118343",
+          "validade": ""
+        },
+        {
+          "nome": "2D",
+          "sap_parte": "30118343",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118343",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118343",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Coca  Cola Menos Açúcar IBC",
+      "formula": "CC/B-1.00",
+      "sap_produto": "30113011",
+      "total_kit": 1,
+      "partes": [
+        {
+          "nome": "3",
+          "sap_parte": "30113011",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30113011",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30113011",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Coca Cola Orginal 1770799",
+      "formula": "",
+      "sap_produto": "",
+      "total_kit": 7,
+      "partes": [
+        {
+          "nome": "1",
+          "sap_parte": "",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Refrigerantes",
+      "tipo": "concentrado",
+      "produto": "Coca Cola Orginal 1758107",
+      "formula": "",
+      "sap_produto": "",
+      "total_kit": 1,
+      "partes": []
+    },
+    {
+      "categoria": "Chás",
+      "tipo": "concentrado",
+      "produto": "Ice Tea Pêssego",
+      "formula": "TE/PE/B-32.20",
+      "sap_produto": "30112480",
+      "total_kit": 6,
+      "partes": [
+        {
+          "nome": "1T",
+          "sap_parte": "30112480",
+          "validade": ""
+        },
+        {
+          "nome": "1L",
+          "sap_parte": "30112480",
+          "validade": ""
+        },
+        {
+          "nome": "1D",
+          "sap_parte": "30112480",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30112480",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30112480",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Chás",
+      "tipo": "concentrado",
+      "produto": "Ice Tea Pêssego Zero",
+      "formula": "TE/PE/D-35.52",
+      "sap_produto": "30112473",
+      "total_kit": 1,
+      "partes": [
+        {
+          "nome": "1T",
+          "sap_parte": "30112473",
+          "validade": ""
+        },
+        {
+          "nome": "1L",
+          "sap_parte": "30112473",
+          "validade": ""
+        },
+        {
+          "nome": "1D",
+          "sap_parte": "30112473",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30112473",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30112473",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Chás",
+      "tipo": "concentrado",
+      "produto": "Ice tea Limão",
+      "formula": "TE/LE/B-98.30",
+      "sap_produto": "",
+      "total_kit": 1,
+      "partes": [
+        {
+          "nome": "1L",
+          "sap_parte": "",
+          "validade": ""
+        },
+        {
+          "nome": "1T",
+          "sap_parte": "",
+          "validade": ""
+        },
+        {
+          "nome": "1D",
+          "sap_parte": "",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "",
+          "validade": ""
+        },
+        {
+          "nome": "2B",
+          "sap_parte": "",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Chás",
+      "tipo": "concentrado",
+      "produto": "Ice tea Limão Zero",
+      "formula": "TE/LE/D-283.50",
+      "sap_produto": "30110780",
+      "total_kit": 4,
+      "partes": [
+        {
+          "nome": "1L",
+          "sap_parte": "30110780",
+          "validade": ""
+        },
+        {
+          "nome": "1T",
+          "sap_parte": "30110780",
+          "validade": ""
+        },
+        {
+          "nome": "1D",
+          "sap_parte": "30110780",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30110780",
+          "validade": ""
+        },
+        {
+          "nome": "2B",
+          "sap_parte": "30110780",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30110780",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Chás",
+      "tipo": "concentrado",
+      "produto": "Chá Verde Limão",
+      "formula": "TE/LE/D-1.60",
+      "sap_produto": "30110814",
+      "total_kit": 1,
+      "partes": [
+        {
+          "nome": "1F,3",
+          "sap_parte": "30110814",
+          "validade": ""
+        },
+        {
+          "nome": "1B",
+          "sap_parte": "30110814",
+          "validade": ""
+        },
+        {
+          "nome": "1T",
+          "sap_parte": "30110814",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30110814",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30110814",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Chás",
+      "tipo": "concentrado",
+      "produto": "Chá Lichia",
+      "formula": "TE/LY/D - 8.50",
+      "sap_produto": "30115746",
+      "total_kit": 1,
+      "partes": [
+        {
+          "nome": "1G",
+          "sap_parte": "30115746",
+          "validade": ""
+        },
+        {
+          "nome": "1T",
+          "sap_parte": "30115746",
+          "validade": ""
+        },
+        {
+          "nome": "1A",
+          "sap_parte": "30115746",
+          "validade": ""
+        },
+        {
+          "nome": "3,3A",
+          "sap_parte": "30115746",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30115746",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Laranja",
+      "formula": "OR/V-1924.00",
+      "sap_produto": "30116589",
+      "total_kit": 20,
+      "partes": [
+        {
+          "nome": "1,1D,3",
+          "sap_parte": "30116589",
+          "validade": ""
+        },
+        {
+          "nome": "3A",
+          "sap_parte": "30116589",
+          "validade": ""
+        },
+        {
+          "nome": "1E",
+          "sap_parte": "30116589",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30116589",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30116589",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116589",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Abacaxi",
+      "formula": "PA/V-1567.00",
+      "sap_produto": "30116587",
+      "total_kit": 3.5,
+      "partes": [
+        {
+          "nome": "1,1D",
+          "sap_parte": "30116587",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30116587",
+          "validade": ""
+        },
+        {
+          "nome": "3B",
+          "sap_parte": "30116587",
+          "validade": ""
+        },
+        {
+          "nome": "3A",
+          "sap_parte": "30116587",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30116587",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116587",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Maracujá",
+      "formula": "PF/V-0117.00",
+      "sap_produto": "30116590",
+      "total_kit": 0.5,
+      "partes": [
+        {
+          "nome": "1,1D,3B",
+          "sap_parte": "30116590",
+          "validade": ""
+        },
+        {
+          "nome": "1E",
+          "sap_parte": "30116590",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30116590",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30116590",
+          "validade": ""
+        },
+        {
+          "nome": "3A",
+          "sap_parte": "30116590",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30116590",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116590",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Morango",
+      "formula": "ST-323.00",
+      "sap_produto": "30117022",
+      "total_kit": 5.75,
+      "partes": [
+        {
+          "nome": "1,1D",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "3",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "1E",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "1C/2A",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "3B",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30117022",
+          "validade": ""
+        },
+        {
+          "nome": "1,1D",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "3",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "1E",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "1C/2A",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "3B",
+          "sap_parte": "30118779",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118779",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Uva",
+      "formula": "GR-0274.30",
+      "sap_produto": "30117023",
+      "total_kit": 7.5,
+      "partes": [
+        {
+          "nome": "1,1D,1E",
+          "sap_parte": "30117023",
+          "validade": ""
+        },
+        {
+          "nome": "3A",
+          "sap_parte": "30117023",
+          "validade": ""
+        },
+        {
+          "nome": "3B",
+          "sap_parte": "30117023",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30117023",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30117023",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30117023",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Maçã",
+      "formula": "AP/V-0802.20",
+      "sap_produto": "30116932",
+      "total_kit": 12,
+      "partes": [
+        {
+          "nome": "1,1D,3B",
+          "sap_parte": "30116932",
+          "validade": ""
+        },
+        {
+          "nome": "1E,3A",
+          "sap_parte": "30116932",
+          "validade": ""
+        },
+        {
+          "nome": "1C",
+          "sap_parte": "30116932",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30116932",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30116932",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116932",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Citrus",
+      "formula": "CI/V-0220.00",
+      "sap_produto": "30116588",
+      "total_kit": 46,
+      "partes": [
+        {
+          "nome": "1,1D,3B",
+          "sap_parte": "30116588",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30116588",
+          "validade": ""
+        },
+        {
+          "nome": "3A",
+          "sap_parte": "30116588",
+          "validade": ""
+        },
+        {
+          "nome": "1E",
+          "sap_parte": "30116588",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30116588",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30116588",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30116588",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Kapo",
+      "tipo": "concentrado",
+      "produto": "Kapo Melancia",
+      "formula": "ME/V-0108.00",
+      "sap_produto": "30118667",
+      "total_kit": 1,
+      "partes": [
+        {
+          "nome": "1",
+          "sap_parte": "30118667",
+          "validade": ""
+        },
+        {
+          "nome": "1D",
+          "sap_parte": "30118667",
+          "validade": ""
+        },
+        {
+          "nome": "1F,3B",
+          "sap_parte": "30118667",
+          "validade": ""
+        },
+        {
+          "nome": "1E,3",
+          "sap_parte": "30118667",
+          "validade": ""
+        },
+        {
+          "nome": "2E",
+          "sap_parte": "30118667",
+          "validade": ""
+        },
+        {
+          "nome": "2F",
+          "sap_parte": "30118667",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118667",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Uva",
+      "formula": "GR/B/Q/V - 218.22",
+      "sap_produto": "30118664",
+      "total_kit": 40,
+      "partes": [
+        {
+          "nome": "1F,1M,1N,3",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "1B",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "2B",
+          "sap_parte": "30118664",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Frutas Tropicais",
+      "formula": "FP/Q/V -567.00",
+      "sap_produto": "30118664",
+      "total_kit": 76,
+      "partes": [
+        {
+          "nome": "1,1G",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "1C,1D,1F",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "2B",
+          "sap_parte": "30118664",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118664",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Montain Blast",
+      "formula": "FP/B/Q/V-794.00",
+      "sap_produto": "30118662",
+      "total_kit": 75,
+      "partes": [
+        {
+          "nome": "1F,1M,1N,3",
+          "sap_parte": "30118662",
+          "validade": ""
+        },
+        {
+          "nome": "1B",
+          "sap_parte": "30118662",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30118662",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30118662",
+          "validade": ""
+        },
+        {
+          "nome": "2B",
+          "sap_parte": "30118662",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Tangerina",
+      "formula": "MA/Q/V/B-170.00",
+      "sap_produto": "30118663",
+      "total_kit": 3,
+      "partes": [
+        {
+          "nome": "1F,1G,1K",
+          "sap_parte": "30118663",
+          "validade": ""
+        },
+        {
+          "nome": "1L",
+          "sap_parte": "30118663",
+          "validade": ""
+        },
+        {
+          "nome": "1B,3",
+          "sap_parte": "30118663",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118663",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118663",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Limão",
+      "formula": "LE/B/Q/V - 546.11",
+      "sap_produto": "30118661",
+      "total_kit": 6,
+      "partes": [
+        {
+          "nome": "1F,1K,3",
+          "sap_parte": "30118661",
+          "validade": ""
+        },
+        {
+          "nome": "1",
+          "sap_parte": "30118661",
+          "validade": ""
+        },
+        {
+          "nome": "1B",
+          "sap_parte": "30118661",
+          "validade": ""
+        },
+        {
+          "nome": "1G,1L",
+          "sap_parte": "30118661",
+          "validade": ""
+        },
+        {
+          "nome": "2A",
+          "sap_parte": "30118661",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118661",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Montain Blast Zero",
+      "formula": "FP/D/Q/V-876.50",
+      "sap_produto": "30118601",
+      "total_kit": 50,
+      "partes": [
+        {
+          "nome": "1,1A",
+          "sap_parte": "30118601",
+          "validade": ""
+        },
+        {
+          "nome": "1B,1D",
+          "sap_parte": "30118601",
+          "validade": ""
+        },
+        {
+          "nome": "1E,1F,1J",
+          "sap_parte": "30118601",
+          "validade": ""
+        },
+        {
+          "nome": "2C",
+          "sap_parte": "30118601",
+          "validade": ""
+        },
+        {
+          "nome": "2B",
+          "sap_parte": "30118601",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118601",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Powerade",
+      "tipo": "concentrado",
+      "produto": "Powerade Laranja",
+      "formula": "OR/B/Q/V - 1197.50",
+      "sap_produto": "30118665",
+      "total_kit": 10,
+      "partes": [
+        {
+          "nome": "1N",
+          "sap_parte": "30118665",
+          "validade": ""
+        },
+        {
+          "nome": "1F",
+          "sap_parte": "30118665",
+          "validade": ""
+        },
+        {
+          "nome": "1D",
+          "sap_parte": "30118665",
+          "validade": ""
+        },
+        {
+          "nome": "1G,1L",
+          "sap_parte": "30118665",
+          "validade": ""
+        },
+        {
+          "nome": "2",
+          "sap_parte": "30118665",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Crystal Sparkling",
+      "tipo": "concentrado",
+      "produto": "Sparkling Crystal Limão",
+      "formula": "WA/LI/M-12.00",
+      "sap_produto": "30107455",
+      "total_kit": 98,
+      "partes": [
+        {
+          "nome": "2",
+          "sap_parte": "30107455",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Crystal Sparkling",
+      "tipo": "concentrado",
+      "produto": "Sparkling Frutas Vermelhas",
+      "formula": "WA/BK/M-3.00",
+      "sap_produto": "30107454",
+      "total_kit": 75,
+      "partes": [
+        {
+          "nome": "2",
+          "sap_parte": "30107454",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Crystal Sparkling",
+      "tipo": "concentrado",
+      "produto": "Sparkling Tang Cap. Limão",
+      "formula": "WA/MA/M-2.00",
+      "sap_produto": "30112716",
+      "total_kit": 96,
+      "partes": [
+        {
+          "nome": "2",
+          "sap_parte": "30112716",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Crystal Sparkling",
+      "tipo": "concentrado",
+      "produto": "Sparkling Melancia",
+      "formula": "WA/ME/M-5.00",
+      "sap_produto": "30115475",
+      "total_kit": 39,
+      "partes": [
+        {
+          "nome": "2",
+          "sap_parte": "30115475",
+          "validade": ""
+        }
+      ]
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Suco de Laranja",
+      "formula": "",
+      "sap_produto": "30102501",
+      "total_kit": 66.84,
+      "partes": []
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Suco de Limão",
+      "formula": "",
+      "sap_produto": "30100634",
+      "total_kit": 17.42,
+      "partes": []
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Suco de Maçã",
+      "formula": "",
+      "sap_produto": "30102818",
+      "total_kit": 23.45,
+      "partes": []
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Suco de Uva",
+      "formula": "",
+      "sap_produto": "30101054",
+      "total_kit": 82.78,
+      "partes": []
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Maracujá",
+      "formula": "",
+      "sap_produto": "301121513",
+      "total_kit": 25,
+      "partes": []
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Suco de Morango",
+      "formula": "",
+      "sap_produto": "30101063",
+      "total_kit": 6.21,
+      "partes": []
+    },
+    {
+      "categoria": "Sucos",
+      "tipo": "suco",
+      "produto": "Suco base Kapo",
+      "formula": "",
+      "sap_produto": "30101061",
+      "total_kit": 107.1,
+      "partes": []
+    }
+  ],
+  "atualizado_em": "2026-07-03T01:47:48.945Z",
+  "atualizado_por": "Administrador"
+}
