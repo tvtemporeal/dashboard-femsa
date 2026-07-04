@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atualizando app FEMSA…</title>
+  <style>
+    html,body{margin:0;height:100%;background:#16140F;color:#F4EFE6;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+    .wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
+    .bottle{width:26px;height:44px;background:#E2231A;border-radius:6px 6px 10px 10px;margin-bottom:18px;}
+    h1{font-size:20px;margin:0 0 8px;}
+    p{font-size:14px;color:#8A8478;margin:4px 0;}
+    .spin{margin-top:20px;width:34px;height:34px;border:3px solid rgba(244,239,230,.2);
+      border-top-color:#E2231A;border-radius:50%;animation:r 1s linear infinite;}
+    @keyframes r{to{transform:rotate(360deg)}}
+    #erro{color:#E2231A;font-size:13px;margin-top:16px;display:none;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bottle"></div>
+    <h1>Atualizando o aplicativo…</h1>
+    <p>Limpando a versão antiga. Não feche esta tela.</p>
+    <p style="font-size:12px;">Seu login e token são mantidos.</p>
+    <div class="spin"></div>
+    <div id="erro">Não consegui limpar automaticamente. Toque para abrir o app mesmo assim.</div>
+  </div>
+  <script>
+    (async function () {
+      try {
+        // 1) Remove todos os service workers registrados neste site
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const r of regs) { try { await r.unregister(); } catch (e) {} }
+        }
+        // 2) Apaga todos os caches do PWA (mas NÃO mexe no localStorage/token)
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          for (const k of keys) { try { await caches.delete(k); } catch (e) {} }
+        }
+      } catch (e) {
+        document.getElementById('erro').style.display = 'block';
+      }
+      // 3) Abre o app já na versão nova (com cache-buster pra garantir)
+      setTimeout(function () {
+        location.replace('./index.html?atualizado=' + Date.now());
+      }, 900);
+    })();
+
+    // Se algo travar, clicar leva pro app
+    document.body.addEventListener('click', function () {
+      location.replace('./index.html?atualizado=' + Date.now());
+    });
+  </script>
+</body>
+</html>
