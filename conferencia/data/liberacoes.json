@@ -15,6 +15,22 @@
       "ct": "Vxnm0hjrOKAXgAgmdUrLPbs1ieQwejJMhxd1qfn729n8bgd7PwTAm2BApD34+Ok7SVARhpKmQr9M8gbGp9va4eDaSeGUr9bWa/Y73PhlrCLZLKwfGpDEgGfExXcWLMFqPll1qnICCOMHlhOzPA==",
       "aprovadoEm": "2026-07-04T17:54:07.814Z",
       "aprovadoPor": "Administrador"
+    },
+    {
+      "fp": "MTNLQXLEX0",
+      "label": "Eduardo",
+      "efemPub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "W4XPR9zaXD0Q3iCAdaqpiIJmdTnQubmoejgiiLvibI4",
+        "y": "VoXQ2Q9Kj4qED3WrxFKwlrFXDJUEr2etU78rx49v68o"
+      },
+      "iv": "i718XI95qHXHaKwJ",
+      "ct": "kFMgU2DWn0YOtBScAiNJOERdW1BsC4fH4SuD/YouIsatzIuaef1qVLewqojhV4/19u+arX1Xq9H/NAn0XouMz33ieDq0pePSgzQg/HN2NcI3ETtof+XOTsHrPKE0LjzlDyBwKk1w0L6nszw32A==",
+      "aprovadoEm": "2026-07-04T18:19:35.276Z",
+      "aprovadoPor": "Administrador"
     }
   ]
 }
