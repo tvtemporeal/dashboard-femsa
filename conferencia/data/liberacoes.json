@@ -1,0 +1,20 @@
+{
+  "liberacoes": [
+    {
+      "fp": "S6XRMTNVPQ",
+      "label": "Gabriel",
+      "efemPub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "tP2LMHv2qH5yVYJ2SctOy06aZLLUAJMRiShWEqEWTpY",
+        "y": "23kF-Q8b6nHxrxr6zK_P2zJmFJSPcRYHUyxPYtmNWPM"
+      },
+      "iv": "EKJjbE8ODULH6/6L",
+      "ct": "Vxnm0hjrOKAXgAgmdUrLPbs1ieQwejJMhxd1qfn729n8bgd7PwTAm2BApD34+Ok7SVARhpKmQr9M8gbGp9va4eDaSeGUr9bWa/Y73PhlrCLZLKwfGpDEgGfExXcWLMFqPll1qnICCOMHlhOzPA==",
+      "aprovadoEm": "2026-07-04T17:54:07.814Z",
+      "aprovadoPor": "Administrador"
+    }
+  ]
+}
