@@ -6560,7 +6560,12 @@ function aplicarPermissoesConfig(){
   async function verificarSolicitacoesPendentes(){
     let solics = [];
     try { solics = await store.load('solicitacoes'); } catch(e){ return; }
-    const pend = (solics||[]).filter(x => String(x.status||'').toLowerCase() === 'pendente');
+    // Remove pedidos corrompidos (sem produto). Se houver token, limpa de vez no arquivo.
+    const validos = (solics||[]).filter(x => x && x.produto && String(x.produto).trim());
+    if(validos.length !== (solics||[]).length && _getToken()){
+      try { await store.save('solicitacoes', validos, 'Limpeza de pedidos vazios'); } catch(e){}
+    }
+    const pend = validos.filter(x => String(x.status||'').toLowerCase() === 'pendente');
     if(pend.length === 0) return;
     mostrarModalSolic(pend);
   }
