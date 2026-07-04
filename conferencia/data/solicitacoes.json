@@ -14,18 +14,8 @@
       "atendido_em": "",
       "direcao": "f1_para_f2",
       "registradoEm": "2026-07-01T09:42:30.635Z"
-    },
-    {
-      "id": "S1783135883220",
-      "criadoEm": "2026-07-04T03:31:23.220Z",
-      "status": "pendente"
-    },
-    {
-      "id": "S1783136257656",
-      "criadoEm": "2026-07-04T03:37:37.656Z",
-      "status": "pendente"
     }
   ],
-  "atualizado_em": "2026-07-04T03:37:37.656Z",
-  "atualizado_por": "Thiago Monteiro Pereira"
+  "atualizado_em": "2026-07-04T16:25:06.461Z",
+  "atualizado_por": "Administrador"
 }
