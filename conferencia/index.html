@@ -1060,6 +1060,10 @@
   .ml-campo select:focus{ outline:none; border-color:var(--vermelho); }
   .modal-card.wide{ max-width:460px; }
   .modal-card .scroll{ max-height:70vh; overflow-y:auto; }
+  .ms-mini{ flex:1; background:var(--carvao); border:1px solid var(--linha); color:var(--osso); padding:9px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; }
+  .lib-secao{ background:var(--carvao); border:1px solid var(--linha); border-radius:12px; padding:14px; margin-bottom:12px; }
+  .lib-tit{ font-size:13px; font-weight:800; margin-bottom:6px; }
+  .lib-sub{ font-size:12px; color:var(--cinza); margin:0 0 10px; }
   .mu-admin{ display:flex; align-items:center; gap:9px; font-size:14px; margin:2px 0 14px; cursor:pointer; }
   .mu-admin input{ width:20px; height:20px; accent-color:var(--vermelho); }
   .sp-parte{ margin-bottom:8px; }
@@ -1976,6 +1980,12 @@
         <button data-cfg="inventario">Inventário</button>
         <button data-cfg="log">Logs</button>
         <button data-cfg="backup">Backup/Migrar</button>
+        <button data-cfg="liberacoes">Liberações</button>
+      </div>
+
+      <div id="cfg-liberacoes" class="cfg-pane" style="display:none;">
+        <div class="drawer-label" style="margin-bottom:10px;">Liberação de dispositivos</div>
+        <div id="libConteudo"></div>
       </div>
 
       <div id="cfg-usuarios" class="cfg-pane">
@@ -2621,6 +2631,253 @@
   function _getToken(){ return localStorage.getItem('gh_token') || ''; }
   function _setToken(t){ localStorage.setItem('gh_token', t); }
 
+  // ================= LIBERAÇÃO DE DISPOSITIVOS (cripto) =================
+  const _enc = new TextEncoder(); const _dec = new TextDecoder();
+  function _ab2b64(buf){ let s=''; const b=new Uint8Array(buf); for(let i=0;i<b.length;i++) s+=String.fromCharCode(b[i]); return btoa(s); }
+  function _b642ab(str){ return Uint8Array.from(atob(str), c=>c.charCodeAt(0)); }
+  async function _lerJsonRepo(nome){
+    try { const r = await fetch(_ghRawUrl(nome) + (nome.includes('?')?'':'') , { cache:'no-store' }); if(!r.ok) return null; return await r.json(); }
+    catch(e){ return null; }
+  }
+  // ---- Cofre do admin (token cifrado por senha-mestra) ----
+  async function _derivePw(senha, salt){
+    const base = await crypto.subtle.importKey('raw', _enc.encode(senha), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name:'PBKDF2', salt, iterations:250000, hash:'SHA-256' }, base, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']);
+  }
+  async function libCriarCofre(token, senhaMestra){
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await _derivePw(senhaMestra, salt);
+    const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, _enc.encode(token));
+    await ghWrite('cofre.json', { salt:_ab2b64(salt), iv:_ab2b64(iv), ct:_ab2b64(ct) }, 'Cofre admin');
+  }
+  async function libAbrirCofre(senhaMestra){
+    const cofre = await _lerJsonRepo('cofre.json');
+    if(!cofre) throw new Error('Cofre não configurado');
+    const key = await _derivePw(senhaMestra, _b642ab(cofre.salt));
+    const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:_b642ab(cofre.iv) }, key, _b642ab(cofre.ct));
+    return _dec.decode(pt);
+  }
+  // ---- Par de chaves do dispositivo (ECDH) ----
+  async function _meuPar(){
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('femsa_dev_keys')); } catch(e){}
+    if(saved && saved.pub && saved.priv) return saved;
+    const kp = await crypto.subtle.generateKey({ name:'ECDH', namedCurve:'P-256' }, true, ['deriveKey']);
+    const pub = await crypto.subtle.exportKey('jwk', kp.publicKey);
+    const priv = await crypto.subtle.exportKey('jwk', kp.privateKey);
+    const fp = await _fingerprint(pub);
+    const obj = { pub, priv, fp };
+    localStorage.setItem('femsa_dev_keys', JSON.stringify(obj));
+    return obj;
+  }
+  async function _fingerprint(pubJwk){
+    const h = await crypto.subtle.digest('SHA-256', _enc.encode(JSON.stringify(pubJwk)));
+    return _ab2b64(h).replace(/[^A-Za-z0-9]/g,'').slice(0,10).toUpperCase();
+  }
+  async function _importPub(jwk){ return crypto.subtle.importKey('jwk', jwk, { name:'ECDH', namedCurve:'P-256' }, false, []); }
+  async function _importPriv(jwk){ return crypto.subtle.importKey('jwk', jwk, { name:'ECDH', namedCurve:'P-256' }, false, ['deriveKey']); }
+  // Admin cifra o token para o pubkey do operador
+  async function _cifrarPara(token, operadorPubJwk){
+    const efem = await crypto.subtle.generateKey({ name:'ECDH', namedCurve:'P-256' }, true, ['deriveKey']);
+    const aesKey = await crypto.subtle.deriveKey({ name:'ECDH', public: await _importPub(operadorPubJwk) }, efem.privateKey, { name:'AES-GCM', length:256 }, false, ['encrypt']);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, aesKey, _enc.encode(token));
+    return { efemPub: await crypto.subtle.exportKey('jwk', efem.publicKey), iv:_ab2b64(iv), ct:_ab2b64(ct) };
+  }
+  async function _decifrarNoDisp(pacote){
+    const par = await _meuPar();
+    const aesKey = await crypto.subtle.deriveKey({ name:'ECDH', public: await _importPub(pacote.efemPub) }, await _importPriv(par.priv), { name:'AES-GCM', length:256 }, false, ['decrypt']);
+    const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv:_b642ab(pacote.iv) }, aesKey, _b642ab(pacote.ct));
+    return _dec.decode(pt);
+  }
+  // Código que o operador mostra/envia (base64 do pubkey)
+  async function libMeuCodigo(){
+    const par = await _meuPar();
+    return { fp: par.fp, codigo: _ab2b64(_enc.encode(JSON.stringify(par.pub))) };
+  }
+  // Admin: aprovar um código
+  async function libAprovar(codigo, label){
+    const token = _getToken();
+    if(!token) throw new Error('Seu acesso precisa do token/senha-mestra primeiro.');
+    let pub;
+    try { pub = JSON.parse(_dec.decode(_b642ab(codigo.trim()))); } catch(e){ throw new Error('Código inválido'); }
+    const fp = await _fingerprint(pub);
+    const pacote = await _cifrarPara(token, pub);
+    const data = (await _lerJsonRepo('liberacoes.json')) || { liberacoes: [] };
+    const lista = data.liberacoes || [];
+    const idx = lista.findIndex(x => x.fp === fp);
+    const entrada = { fp, label: label || ('Aparelho '+fp), efemPub: pacote.efemPub, iv: pacote.iv, ct: pacote.ct, aprovadoEm: new Date().toISOString(), aprovadoPor: (usuarioAtual&&usuarioAtual.nome)||'admin' };
+    if(idx>=0) lista[idx] = entrada; else lista.push(entrada);
+    await ghWrite('liberacoes.json', { liberacoes: lista }, 'Libera '+fp);
+    return fp;
+  }
+  async function libListar(){ const d = await _lerJsonRepo('liberacoes.json'); return (d && d.liberacoes) || []; }
+  async function libExcluir(fp){
+    const d = (await _lerJsonRepo('liberacoes.json')) || { liberacoes: [] };
+    const lista = (d.liberacoes||[]).filter(x => x.fp !== fp);
+    await ghWrite('liberacoes.json', { liberacoes: lista }, 'Revoga '+fp);
+  }
+  // Operador: verifica se já foi aprovado
+  async function libVerificarAprovacao(silencioso){
+    const par = await _meuPar();
+    const lista = await libListar();
+    const meu = lista.find(x => x.fp === par.fp);
+    if(!meu){ return false; }
+    try {
+      const token = await _decifrarNoDisp(meu);
+      if(token && token.length > 10){ _setToken(token); return true; }
+    } catch(e){ if(!silencioso) toast('Falha ao aplicar liberação: '+e.message); }
+    return false;
+  }
+  // Chamado no login: decide o que mostrar quando não há token
+  async function verificarLiberacaoDispositivo(){
+    if(_getToken()){
+      // se operador tem token mas foi revogado, tira o acesso
+      const ehAdmin = usuarioAtual && (String(usuarioAtual.br)==='5758236' || usuarioAtual.isAdmin);
+      if(!ehAdmin){
+        const par = await _meuPar(); const lista = await libListar();
+        if(lista.length && !lista.find(x=>x.fp===par.fp)){ localStorage.removeItem('gh_token'); }
+        else return;
+      } else return;
+    }
+    const ehAdmin = usuarioAtual && (String(usuarioAtual.br)==='5758236' || usuarioAtual.isAdmin);
+    const cofre = await _lerJsonRepo('cofre.json');
+    if(ehAdmin){
+      if(cofre) mostrarModalDestravar();
+      return; // admin sem cofre: usa Configurar token manual (Backup)
+    }
+    // operador: tenta auto-aprovação; se não, mostra tela de liberação
+    const ok = await libVerificarAprovacao(true);
+    if(ok){ toast('✓ Dispositivo liberado'); return; }
+    mostrarModalLiberacao();
+  }
+  // ---- Modais ----
+  function mostrarModalDestravar(){
+    let host = document.getElementById('modalDestravarHost') || (()=>{ const d=document.createElement('div'); d.id='modalDestravarHost'; document.body.appendChild(d); return d; })();
+    host.innerHTML = `
+      <div class="modal-ov show" id="modalDestravar">
+        <div class="modal-card">
+          <h3>🔒 Destravar acesso admin</h3>
+          <p style="font-size:12.5px;color:var(--cinza);margin:0 0 12px;">Digite sua senha-mestra para liberar as gravações neste aparelho.</p>
+          <div class="ml-campo"><label>Senha-mestra</label><input id="mdSenha" type="password" autocomplete="off"></div>
+          <div class="modal-acoes">
+            <button class="cancel" onclick="document.getElementById('modalDestravar').classList.remove('show')">Depois</button>
+            <button class="ok" id="mdBtn" onclick="_destravarAdmin()">Destravar</button>
+          </div>
+        </div>
+      </div>`;
+    setTimeout(()=>{ const el=$('mdSenha'); if(el) el.focus(); },60);
+  }
+  window._destravarAdmin = async function(){
+    const senha = $('mdSenha').value;
+    if(!senha){ toast('Digite a senha-mestra'); return; }
+    const btn=$('mdBtn'); btn.disabled=true; btn.textContent='Abrindo...';
+    try { const token = await libAbrirCofre(senha); _setToken(token); toast('✓ Acesso liberado'); document.getElementById('modalDestravar').classList.remove('show'); }
+    catch(e){ toast('Senha-mestra incorreta'); }
+    finally { btn.disabled=false; btn.textContent='Destravar'; }
+  };
+  let _libPollTimer = null;
+  async function mostrarModalLiberacao(){
+    const { fp, codigo } = await libMeuCodigo();
+    let host = document.getElementById('modalLiberacaoHost') || (()=>{ const d=document.createElement('div'); d.id='modalLiberacaoHost'; document.body.appendChild(d); return d; })();
+    const assunto = encodeURIComponent('Liberação de acesso - App Estoque FEMSA');
+    const corpo = encodeURIComponent('Solicito liberação de acesso.\n\nOperador: '+((usuarioAtual&&usuarioAtual.nome)||'')+'\nAparelho (código '+fp+'):\n\n'+codigo+'\n');
+    host.innerHTML = `
+      <div class="modal-ov show" id="modalLiberacao">
+        <div class="ms-card">
+          <div class="ms-header"><div class="ms-brand"><span class="ms-bottle"></span> FEMSA</div><div class="ms-title">Aguardando liberação</div></div>
+          <div class="ms-body">
+            <p class="ms-lead">Este aparelho ainda não está liberado para gravar. Envie o código abaixo ao administrador. Assim que ele aprovar, o acesso é ativado sozinho.</p>
+            <div style="font-size:10px;letter-spacing:1px;color:var(--cinza);text-transform:uppercase;margin-bottom:4px;">Código do aparelho</div>
+            <div style="font-weight:900;font-size:20px;letter-spacing:2px;color:var(--ambar);margin-bottom:10px;">${fp}</div>
+            <textarea id="libCodigo" readonly rows="4" style="width:100%;background:var(--preto);border:1px solid var(--linha);border-radius:9px;color:var(--osso);font-size:11px;padding:10px;font-family:monospace;">${escapeHtml(codigo)}</textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="ms-mini" onclick="_libCopiar()">Copiar código</button>
+              <a class="ms-mini" style="text-decoration:none;text-align:center;" href="mailto:joao.pedroj@kof.com?subject=${assunto}&body=${corpo}">Enviar por e-mail</a>
+            </div>
+            <div id="libStatus" style="font-size:12px;color:var(--cinza);margin-top:12px;text-align:center;">Verificando aprovação automaticamente…</div>
+          </div>
+          <div class="ms-acoes">
+            <button class="cancel" onclick="_libFechar()">Usar só leitura</button>
+            <button class="ok" onclick="_libVerificarAgora()">Já fui aprovado</button>
+          </div>
+        </div>
+      </div>`;
+    if(_libPollTimer) clearInterval(_libPollTimer);
+    _libPollTimer = setInterval(async () => {
+      const ok = await libVerificarAprovacao(true);
+      if(ok){ clearInterval(_libPollTimer); const st=$('libStatus'); if(st) st.textContent='✓ Liberado! recarregando…'; toast('✓ Dispositivo liberado'); setTimeout(()=>location.reload(), 1200); }
+    }, 8000);
+  }
+  window._libCopiar = function(){ const t=$('libCodigo'); t.select(); document.execCommand('copy'); toast('Código copiado'); };
+  window._libFechar = function(){ if(_libPollTimer) clearInterval(_libPollTimer); const m=document.getElementById('modalLiberacao'); if(m) m.classList.remove('show'); };
+  window._libVerificarAgora = async function(){
+    const ok = await libVerificarAprovacao(false);
+    if(ok){ toast('✓ Liberado!'); setTimeout(()=>location.reload(), 800); }
+    else toast('Ainda não aprovado. Aguarde o administrador.');
+  };
+  async function renderLiberacoes(){
+    const box = $('libConteudo');
+    box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    const temToken = !!_getToken();
+    const cofre = await _lerJsonRepo('cofre.json');
+    const lista = await libListar();
+    let html = '';
+    // Cofre / senha-mestra
+    html += `<div class="lib-secao">
+      <div class="lib-tit">Cofre do administrador</div>
+      <p class="lib-sub">${cofre ? '✅ Senha-mestra configurada. Você pode destravar em qualquer aparelho com seu login.' : '⚠ Ainda sem senha-mestra. Configure para aprovar de qualquer lugar.'}</p>
+      ${temToken ? `<button class="btn btn-outline" id="libBtnCofre" style="font-size:12px;padding:6px 12px;">${cofre?'Trocar senha-mestra':'Definir senha-mestra'}</button>`
+                 : `<p class="lib-sub" style="color:var(--ambar);">Configure o token em Backup/Migrar antes de definir a senha-mestra.</p>`}
+    </div>`;
+    // Aprovar dispositivo
+    html += `<div class="lib-secao">
+      <div class="lib-tit">Aprovar um aparelho</div>
+      <p class="lib-sub">Cole o código que o operador enviou por e-mail.</p>
+      <input id="libLabel" class="cfg-filtro-input" placeholder="Nome do aparelho (ex: Turno 1 - Notebook)" style="width:100%;margin-bottom:8px;">
+      <textarea id="libCodigoIn" rows="4" placeholder="Cole aqui o código do aparelho..." style="width:100%;background:var(--preto);border:1px solid var(--linha);border-radius:9px;color:var(--osso);font-size:11px;padding:10px;font-family:monospace;"></textarea>
+      <button class="btn btn-primary" id="libBtnAprovar" style="width:100%;margin-top:8px;">✅ Aprovar aparelho</button>
+    </div>`;
+    // Lista de aprovados
+    html += `<div class="lib-secao"><div class="lib-tit">Aparelhos liberados (${lista.length})</div>`;
+    if(!lista.length) html += `<p class="lib-sub">Nenhum aparelho liberado ainda.</p>`;
+    else html += lista.map(x => `
+      <div class="cfg-item">
+        <div class="cfg-item-info">
+          <div class="cfg-item-nome">${escapeHtml(x.label||('Aparelho '+x.fp))}</div>
+          <div class="cfg-item-meta">Código ${escapeHtml(x.fp)} · liberado ${escapeHtml(String(x.aprovadoEm||'').slice(0,10))}</div>
+        </div>
+        <div class="cfg-item-acoes">
+          <button class="btn-mini danger" onclick="_libExcluirAcesso('${x.fp}')" title="Excluir acesso">🗑️</button>
+        </div>
+      </div>`).join('');
+    html += `</div>`;
+    box.innerHTML = html;
+    const bc = $('libBtnCofre');
+    if(bc) bc.addEventListener('click', async () => {
+      const senha = prompt('Defina a SENHA-MESTRA (forte, diferente do 291201). Ela protege o token e destrava o admin em qualquer aparelho:');
+      if(!senha) return;
+      if(senha.length < 6){ toast('Senha muito curta'); return; }
+      try { await libCriarCofre(_getToken(), senha); toast('✓ Senha-mestra salva'); renderLiberacoes(); }
+      catch(e){ toast('Erro: '+e.message); }
+    });
+    $('libBtnAprovar').addEventListener('click', async () => {
+      const codigo = $('libCodigoIn').value.trim();
+      const label = $('libLabel').value.trim();
+      if(!codigo){ toast('Cole o código do aparelho'); return; }
+      const btn=$('libBtnAprovar'); btn.disabled=true; btn.textContent='Aprovando...';
+      try { const fp = await libAprovar(codigo, label); toast('✓ Aparelho '+fp+' liberado'); renderLiberacoes(); }
+      catch(e){ toast('Erro: '+e.message); }
+      finally { btn.disabled=false; btn.textContent='✅ Aprovar aparelho'; }
+    });
+  }
+  window._libExcluirAcesso = async function(fp){
+    if(!confirm('Excluir o acesso do aparelho '+fp+'? Na próxima vez que ele conectar, perde o acesso.')) return;
+    try { await libExcluir(fp); toast('✓ Acesso removido'); renderLiberacoes(); }
+    catch(e){ toast('Erro: '+e.message); }
+  };
+
   // Cache local de arquivos (evita GET repetido pra cada operação)
   const _ghCache = new Map(); // filename -> {content, sha, ts}
   const _ghCacheTTL = 3000; // 3s — leituras próximas usam cache
@@ -3077,6 +3334,7 @@
     aplicarTextosPorTipo();
     showScreen('screen-scan');
     verificarSolicitacoesPendentes();
+    verificarLiberacaoDispositivo();
   }
 
   function aplicarTextosPorTipo(){
@@ -5652,7 +5910,7 @@
 
 function aplicarPermissoesConfig(){
     const soDono = usuarioAtual && String(usuarioAtual.br) === '5758236';
-    document.querySelectorAll('#cfgTabs [data-cfg="log"], #cfgTabs [data-cfg="backup"]').forEach(b => {
+    document.querySelectorAll('#cfgTabs [data-cfg="log"], #cfgTabs [data-cfg="backup"], #cfgTabs [data-cfg="liberacoes"]').forEach(b => {
       b.style.display = soDono ? '' : 'none';
     });
     if(!soDono){
@@ -5773,6 +6031,7 @@ function aplicarPermissoesConfig(){
       if(alvo === 'catalogo') renderCfgCatalogo();
       if(alvo === 'inventario') renderCfgInventario();
       if(alvo === 'log') renderCfgLog();
+      if(alvo === 'liberacoes') renderLiberacoes();
     });
   });
 
