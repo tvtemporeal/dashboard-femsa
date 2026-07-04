@@ -49,8 +49,58 @@
       "total_kit_produto": 1,
       "sap_produto": "30115746",
       "categoria": "Chás"
+    },
+    {
+      "produto": "Chá Verde Limão",
+      "parte": "1F,3",
+      "validade": "2026-07-10",
+      "quantidade": 5,
+      "lote": "20242015",
+      "total_kit_produto": 1,
+      "sap_produto": "30110814",
+      "categoria": "Chás"
+    },
+    {
+      "produto": "Chá Verde Limão",
+      "parte": "1B",
+      "validade": "2027-06-10",
+      "quantidade": 5,
+      "lote": "",
+      "total_kit_produto": 1,
+      "sap_produto": "30110814",
+      "categoria": "Chás"
+    },
+    {
+      "produto": "Chá Verde Limão",
+      "parte": "1T",
+      "validade": "2027-06-10",
+      "quantidade": 5,
+      "lote": "",
+      "total_kit_produto": 1,
+      "sap_produto": "30110814",
+      "categoria": "Chás"
+    },
+    {
+      "produto": "Chá Verde Limão",
+      "parte": "2A",
+      "validade": "2027-06-10",
+      "quantidade": 5,
+      "lote": "",
+      "total_kit_produto": 1,
+      "sap_produto": "30110814",
+      "categoria": "Chás"
+    },
+    {
+      "produto": "Chá Verde Limão",
+      "parte": "2",
+      "validade": "2027-06-10",
+      "quantidade": 5,
+      "lote": "",
+      "total_kit_produto": 1,
+      "sap_produto": "30110814",
+      "categoria": "Chás"
     }
   ],
-  "atualizado_em": "2026-07-04T03:42:16.908Z",
+  "atualizado_em": "2026-07-04T03:46:02.429Z",
   "atualizado_por": "Thiago Monteiro Pereira"
 }
