@@ -29,13 +29,6 @@
       "criadoEm": "2026-06-26T03:38:39.393Z"
     },
     {
-      "br": "br03011098",
-      "nome": "Thiago Monteiro",
-      "senhaHash": "bebd4f8b81c4fafc2ac35df6875c612e5a4d295a1b92ac2ebe0279762be6f609",
-      "isAdmin": true,
-      "criadoEm": "2026-06-28T15:49:07.585Z"
-    },
-    {
       "br": "3153305",
       "nome": "Jerry Adriano Zanatta",
       "senhaHash": "221ff1806e49d94dd864aea9b4290de7af6ee7788fe176556f92af974c2db4dc",
@@ -50,6 +43,6 @@
       "criadoEm": "2026-07-01T02:36:32.351Z"
     }
   ],
-  "atualizado_em": "2026-07-04T03:28:45.423Z",
+  "atualizado_em": "2026-07-04T03:28:53.081Z",
   "atualizado_por": "Administrador"
 }
