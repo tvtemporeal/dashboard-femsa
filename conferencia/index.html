@@ -1060,6 +1060,16 @@
   .ml-campo select:focus{ outline:none; border-color:var(--vermelho); }
   .modal-card.wide{ max-width:460px; }
   .modal-card .scroll{ max-height:70vh; overflow-y:auto; }
+  .mu-admin{ display:flex; align-items:center; gap:9px; font-size:14px; margin:2px 0 14px; cursor:pointer; }
+  .mu-admin input{ width:20px; height:20px; accent-color:var(--vermelho); }
+  .sp-parte{ margin-bottom:8px; }
+  .sp-parte-tag{ font-size:11px; font-weight:800; color:var(--ambar); margin-bottom:4px; }
+  .sp-row{ display:flex; gap:8px; }
+  .sp-row input{ flex:1; min-width:0; background:var(--carvao); border:1px solid var(--linha); border-radius:8px; padding:9px 10px; color:var(--osso); font-size:13px; }
+  .sp-row input:focus{ outline:none; border-color:var(--vermelho); }
+  .sp-row .sp-qtd{ flex:0 0 80px; text-align:center; }
+  .sc-partes{ display:flex; flex-wrap:wrap; gap:5px; margin:6px 0; }
+  .sc-parte-chip{ font-size:10.5px; background:var(--carvao); border:1px solid var(--linha); border-radius:20px; padding:3px 9px; color:var(--osso); }
   /* Contagem */
   .ct-bloco{ background:var(--carvao); border:1px solid var(--linha); border-radius:12px; margin-bottom:12px; overflow:hidden; }
   .ct-head{ padding:9px 12px; background:linear-gradient(90deg, rgba(226,35,26,0.14), transparent); border-bottom:1px solid var(--linha); }
@@ -1969,7 +1979,7 @@
       </div>
 
       <div id="cfg-usuarios" class="cfg-pane">
-        <div class="drawer-label" style="margin-bottom:10px;">Usuários cadastrados</div>
+        <div class="drawer-label" style="margin-bottom:10px;">Usuários cadastrados <button class="btn btn-outline" id="btnCfgAddUser" style="float:right; font-size:12px; padding:4px 12px;">+ Adicionar usuário</button></div>
         <div id="configUserList"></div>
       </div>
 
@@ -1998,6 +2008,19 @@
         <div id="cfgLogList"></div>
       </div>
 
+      <div class="modal-ov" id="modalUser">
+        <div class="modal-card">
+          <h3>Novo usuário</h3>
+          <div class="ml-campo"><label>BR</label><input id="muBr" inputmode="numeric" placeholder="ex: 5758236" autocomplete="off"></div>
+          <div class="ml-campo"><label>Nome completo</label><input id="muNome" placeholder="Nome do operador" autocomplete="off"></div>
+          <div class="ml-campo"><label>Senha inicial</label><input id="muSenha" type="text" placeholder="senha que o operador vai usar" autocomplete="off"></div>
+          <label class="mu-admin"><input id="muAdmin" type="checkbox"> Tornar administrador</label>
+          <div class="modal-acoes">
+            <button class="cancel" onclick="fecharModalUser()">Cancelar</button>
+            <button class="ok" id="muSalvar" onclick="salvarModalUser()">✅ Criar acesso</button>
+          </div>
+        </div>
+      </div>
       <div class="modal-ov" id="modalProd">
         <div class="modal-card wide">
           <h3 id="mpTitulo">Editar produto</h3>
@@ -2179,6 +2202,11 @@
           <div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>
           <span class="ps-arrow">▾</span>
         </button>
+
+        <div id="solicPartesWrap" style="display:none; margin-bottom:14px;">
+          <label class="field-label">Partes e validades (opcional)</label>
+          <div id="solicPartesBox"></div>
+        </div>
 
         <label class="field-label">Quantidade (kits)</label>
         <input type="number" id="solicQtd" inputmode="numeric" placeholder="0">
@@ -3147,7 +3175,12 @@
       try{
         res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
       }catch(eApi){
-        toast('Erro de rede ao cadastrar: ' + (eApi.message || 'verifique sua internet'));
+        const _m = eApi.message || '';
+        if(_m.includes('Token')){
+          toast('Seu acesso ainda não foi criado. Peça ao administrador para cadastrar seu BR em Configurações → Usuários.');
+        } else {
+          toast('Erro de rede ao cadastrar: ' + (_m || 'verifique sua internet'));
+        }
         return;
       }
 
@@ -3559,6 +3592,23 @@
     }
   }
 
+  function _renderSolicPartes(prod){
+    const wrap = $('solicPartesWrap'); const box = $('solicPartesBox');
+    if(!wrap || !box) return;
+    const partes = (prod && prod.partes && prod.partes.length) ? prod.partes : [];
+    if(!partes.length){ wrap.style.display='none'; box.innerHTML=''; return; }
+    box.innerHTML = partes.map(pt => {
+      const nome = pt.nome || '—';
+      return `<div class="sp-parte" data-parte="${escapeHtml(nome)}">
+        <div class="sp-parte-tag">Parte ${escapeHtml(nome)}</div>
+        <div class="sp-row">
+          <input class="sp-val" type="date" title="validade" style="color-scheme:dark;">
+          <input class="sp-qtd" type="number" min="0" step="1" placeholder="qtd" title="quantidade">
+        </div>
+      </div>`;
+    }).join('');
+    wrap.style.display='block';
+  }
   function atribuirProdutoCompleto(produtoInfo){
     if(seletorLinhaId === '__solic__'){
       solicProdutoSel = {
@@ -3573,6 +3623,7 @@
           <div class="ps-formula">${escapeHtml(produtoInfo.formula||'')} ${produtoInfo.sap_produto ? '· SAP ' + escapeHtml(produtoInfo.sap_produto) : ''}</div>
         </div>`;
       $('solicProdutoLabel').outerHTML = html;
+      _renderSolicPartes(produtoInfo);
       fecharSeletorProduto();
       return;
     }
@@ -4568,21 +4619,30 @@
     $('btnEnviarSolicitacao').textContent = 'Enviando...';
     try{
       const timestamp = new Date().toLocaleString('pt-BR');
+      const partesSel = [...document.querySelectorAll('#solicPartesBox .sp-parte')].map(d => ({
+        nome: d.dataset.parte,
+        validade: d.querySelector('.sp-val').value,
+        quantidade: Number(d.querySelector('.sp-qtd').value) || 0
+      })).filter(p => p.validade || p.quantidade);
       const res = await apiPost({
         acao: 'adicionarSolicitacao',
-        timestamp,
-        solicitante: usuarioAtual ? usuarioAtual.nome : '—',
-        produto: solicProdutoSel.nome,
-        formula: solicProdutoSel.formula,
-        parte: '',
-        quantidade: qtd,
-        observacao: obs,
-        direcao: solicNovoDirecao
+        solicitacao: {
+          timestamp,
+          solicitante: usuarioAtual ? usuarioAtual.nome : '—',
+          produto: solicProdutoSel.nome,
+          formula: solicProdutoSel.formula,
+          parte: '',
+          partes: partesSel,
+          quantidade: qtd,
+          observacao: obs,
+          direcao: solicNovoDirecao
+        }
       });
       if(!res.ok){ toast('Erro: ' + res.erro); return; }
       toast('Pedido enviado!');
       solicProdutoSel = null;
       $('solicProdutoLabel').outerHTML = '<div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>';
+      if($('solicPartesWrap')){ $('solicPartesWrap').style.display='none'; $('solicPartesBox').innerHTML=''; }
       $('solicQtd').value = '';
       $('solicObs').value = '';
       document.querySelectorAll('#screen-solic [data-solic-aba]').forEach(b => b.classList.toggle('active', b.dataset.solicAba === 'lista'));
@@ -4609,7 +4669,7 @@
 
   function renderSolicLista(){
     const container = $('solicLista');
-    let dados = solicCache.slice().reverse();
+    let dados = solicCache.slice().reverse().filter(s => s && s.produto && String(s.produto).trim());
     // Filtra direção
     dados = dados.filter(s => (s.direcao || 'f1_para_f2') === solicFiltroDirecao);
     if(solicFiltroStatus !== 'todos'){
@@ -4640,6 +4700,7 @@
           <div class="sc-qtd">${escapeHtml(String(s.quantidade||0))} <small style="font-size:11px;font-weight:400;">kits</small></div>
         </div>
         <div class="sc-formula">${escapeHtml(s.formula || '')}</div>
+        ${(s.partes && s.partes.length) ? '<div class="sc-partes">'+s.partes.map(p => '<span class="sc-parte-chip">'+escapeHtml(p.nome||'')+(p.validade?' · '+escapeHtml(String(p.validade)):'')+(p.quantidade?' · '+escapeHtml(String(p.quantidade)):'')+'</span>').join('')+'</div>' : ''}
         ${obsHtml}
         <div class="sc-meta">Por <b>${escapeHtml(s.solicitante||'—')}</b> · ${escapeHtml(s.timestamp||'')}</div>
         <div class="sc-acoes">${acaoHtml}</div>
@@ -5640,7 +5701,8 @@ function aplicarPermissoesConfig(){
     const u = await store.load('usuarios');
     const atual = String(u[idx].isAdmin) === 'TRUE' || u[idx].isAdmin === true;
     u[idx].isAdmin = !atual;
-    await store.save('usuarios', u, `Admin ${u[idx].nome}: ${!atual}`);
+    try { await store.save('usuarios', u, `Admin ${u[idx].nome}: ${!atual}`); }
+    catch(e){ toast('Não deu pra salvar: ' + e.message); return; }
     cacheUsuarios = null;
     toast('✓ Atualizado');
     renderConfiguracoes();
@@ -5650,7 +5712,8 @@ function aplicarPermissoesConfig(){
     const nome = u[idx].nome, br = u[idx].br;
     if(!confirm(`Resetar cadastro de ${nome}? O BR ${br} vai pedir primeiro acesso novamente.`)) return;
     u.splice(idx, 1);
-    await store.save('usuarios', u, `Reset cadastro ${nome}`);
+    try { await store.save('usuarios', u, `Reset cadastro ${nome}`); }
+    catch(e){ toast('Não deu pra salvar: ' + e.message); return; }
     cacheUsuarios = null;
     toast('✓ Cadastro resetado');
     renderConfiguracoes();
@@ -5660,10 +5723,38 @@ function aplicarPermissoesConfig(){
     const nome = u[idx].nome;
     if(!confirm(`Excluir ${nome} definitivamente?`)) return;
     u.splice(idx, 1);
-    await store.save('usuarios', u, `Remove usuário ${nome}`);
+    try { await store.save('usuarios', u, `Remove usuário ${nome}`); }
+    catch(e){ toast('Não deu pra salvar: ' + e.message); return; }
     cacheUsuarios = null;
     toast('✓ Excluído');
     renderConfiguracoes();
+  };
+  window.fecharModalUser = function(){ $('modalUser').classList.remove('show'); };
+  window.abrirModalUser = function(){
+    $('muBr').value=''; $('muNome').value=''; $('muSenha').value=''; $('muAdmin').checked=false;
+    $('modalUser').classList.add('show');
+    setTimeout(()=>$('muBr').focus(),50);
+  };
+  window.salvarModalUser = async function(){
+    const br = $('muBr').value.trim();
+    const nome = $('muNome').value.trim();
+    const senha = $('muSenha').value;
+    const isAdmin = $('muAdmin').checked;
+    if(!br || !nome || !senha){ toast('Preencha BR, nome e senha'); return; }
+    const users = await store.load('usuarios');
+    if((users||[]).some(u => String(u.br||'').trim() === br)){ toast('Esse BR já existe'); return; }
+    const senhaHash = await sha256(senha);
+    if(!senhaHash || senhaHash.length < 32){ toast('Erro ao processar a senha'); return; }
+    users.push({ br, nome, senhaHash, isAdmin, criadoEm: new Date().toISOString() });
+    const btn = $('muSalvar'); btn.disabled=true; btn.textContent='Criando...';
+    try {
+      await store.save('usuarios', users, `Cria usuário ${nome}`);
+      cacheUsuarios = null;
+      toast('✓ Acesso criado');
+      fecharModalUser();
+      renderConfiguracoes();
+    } catch(e){ toast('Não deu pra salvar: ' + e.message); }
+    finally { btn.disabled=false; btn.textContent='✅ Criar acesso'; }
   };
     $('btnVoltarInicioConfig').addEventListener('click', () => {
     iniciarTabelaManual();
@@ -5790,6 +5881,8 @@ function aplicarPermissoesConfig(){
     renderCfgCatalogo();
   };
   $('btnCfgAddProduto').addEventListener('click', () => abrirModalProduto(null));
+  $('btnCfgAddUser').addEventListener('click', () => abrirModalUser());
+  document.addEventListener('click', (e) => { if(e.target && e.target.id === 'modalUser') fecharModalUser(); });
   document.addEventListener('click', (e) => {
     if(e.target && e.target.id === 'modalProd') fecharModalProd();
   });
