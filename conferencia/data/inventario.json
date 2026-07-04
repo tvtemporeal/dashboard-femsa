@@ -99,8 +99,38 @@
       "total_kit_produto": 1,
       "sap_produto": "30110814",
       "categoria": "Chás"
+    },
+    {
+      "produto": "Sparkling Crystal Limão",
+      "parte": "2",
+      "validade": "2026-08-06",
+      "quantidade": 10,
+      "lote": "",
+      "total_kit_produto": 98,
+      "sap_produto": "30107455",
+      "categoria": "Crystal Sparkling"
+    },
+    {
+      "produto": "Sparkling Frutas Vermelhas",
+      "parte": "2",
+      "validade": "2026-07-05",
+      "quantidade": 5,
+      "lote": "",
+      "total_kit_produto": 75,
+      "sap_produto": "30107454",
+      "categoria": "Crystal Sparkling"
+    },
+    {
+      "produto": "Sparkling Melancia",
+      "parte": "2",
+      "validade": "2027-07-04",
+      "quantidade": 10,
+      "lote": "",
+      "total_kit_produto": 39,
+      "sap_produto": "30115475",
+      "categoria": "Crystal Sparkling"
     }
   ],
-  "atualizado_em": "2026-07-04T03:46:02.429Z",
+  "atualizado_em": "2026-07-04T03:47:40.375Z",
   "atualizado_por": "Thiago Monteiro Pereira"
 }
