@@ -41,8 +41,15 @@
       "senhaHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
       "isAdmin": false,
       "criadoEm": "2026-07-04T16:19:05.730Z"
+    },
+    {
+      "br": "5750653",
+      "nome": "Eduardo",
+      "senhaHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "isAdmin": false,
+      "criadoEm": "2026-07-04T17:56:20.560Z"
     }
   ],
-  "atualizado_em": "2026-07-04T16:19:05.731Z",
+  "atualizado_em": "2026-07-04T17:56:20.560Z",
   "atualizado_por": "Administrador"
 }
