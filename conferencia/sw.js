@@ -3,7 +3,7 @@
 // - index.html / navegação: NETWORK-FIRST (sempre pega a versão nova online; usa cache só offline)
 // - libs e demais assets: cache-first com revalidação em segundo plano
 // - dados (api.github/raw): sempre rede (não cacheia aqui; o app já controla)
-const CACHE_NOME = 'femsa-estoque-v4';
+const CACHE_NOME = 'femsa-estoque-v5';
 const ASSETS_CACHE = [
   './',
   './index.html',
