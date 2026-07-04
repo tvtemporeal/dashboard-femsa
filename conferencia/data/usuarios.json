@@ -15,13 +15,6 @@
       "criadoEm": "2026-06-23T04:23:54.684Z"
     },
     {
-      "br": "5005879",
-      "nome": "Gabriel Santos Ferreira da Silva",
-      "senhaHash": "79db25ecbecb383d38b2808874555f7c3bf5df6d805b26db48e2a5526705cb6a",
-      "isAdmin": false,
-      "criadoEm": "2026-06-26T01:45:59.902Z"
-    },
-    {
       "br": "5146710",
       "nome": "Larissa Fernanda dos Santos",
       "senhaHash": "d86e905e628b93ced5df3b11c77717704fae101a03fe708d815b12e78da62f1f",
@@ -43,6 +36,6 @@
       "criadoEm": "2026-07-01T02:36:32.351Z"
     }
   ],
-  "atualizado_em": "2026-07-04T03:28:53.081Z",
+  "atualizado_em": "2026-07-04T16:18:10.602Z",
   "atualizado_por": "Administrador"
 }
