@@ -9,13 +9,13 @@
       "parte": "",
       "quantidade": 3,
       "observacao": "Próximo preparo.",
-      "status": "pendente",
-      "atendido_por": "",
-      "atendido_em": "",
+      "status": "atendido",
+      "atendido_por": "Administrador",
+      "atendido_em": "05/07/2026, 00:12:49",
       "direcao": "f1_para_f2",
       "registradoEm": "2026-07-01T09:42:30.635Z"
     }
   ],
-  "atualizado_em": "2026-07-04T16:25:06.461Z",
+  "atualizado_em": "2026-07-05T03:12:49.521Z",
   "atualizado_por": "Administrador"
 }
