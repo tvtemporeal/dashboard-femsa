@@ -32,7 +32,7 @@
       "br": "5805879",
       "nome": "Gabriel",
       "senhaHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-      "isAdmin": false,
+      "isAdmin": true,
       "criadoEm": "2026-07-04T16:19:05.730Z"
     },
     {
@@ -43,6 +43,6 @@
       "criadoEm": "2026-07-04T17:56:20.560Z"
     }
   ],
-  "atualizado_em": "2026-07-05T02:58:58.490Z",
+  "atualizado_em": "2026-07-05T03:40:49.514Z",
   "atualizado_por": "Administrador"
 }
