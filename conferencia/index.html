@@ -1074,6 +1074,9 @@
   .sp-row .sp-qtd{ flex:0 0 80px; text-align:center; }
   .sc-partes{ display:flex; flex-wrap:wrap; gap:5px; margin:6px 0; }
   .sc-parte-chip{ font-size:10.5px; background:var(--carvao); border:1px solid var(--linha); border-radius:20px; padding:3px 9px; color:var(--osso); }
+  .sp-row select.sp-val{ flex:1; min-width:0; background:var(--carvao); border:1px solid var(--linha); border-radius:8px; padding:9px 10px; color:var(--osso); font-size:13px; }
+  .sp-row select.sp-val:focus{ outline:none; border-color:var(--vermelho); }
+  .sp-vazio{ font-size:9px; font-weight:700; color:var(--ambar); background:rgba(217,142,4,0.14); padding:2px 7px; border-radius:20px; margin-left:6px; }
   /* Contagem */
   .ct-bloco{ background:var(--carvao); border:1px solid var(--linha); border-radius:12px; margin-bottom:12px; overflow:hidden; }
   .ct-head{ padding:9px 12px; background:linear-gradient(90deg, rgba(226,35,26,0.14), transparent); border-bottom:1px solid var(--linha); }
@@ -2692,22 +2695,35 @@
     return _dec.decode(pt);
   }
   // Código que o operador mostra/envia (base64 do pubkey)
-  async function libMeuCodigo(){
+  async function libMeuCodigo(reg){
     const par = await _meuPar();
-    return { fp: par.fp, codigo: _ab2b64(_enc.encode(JSON.stringify(par.pub))) };
+    const payload = { pub: par.pub };
+    if(reg && reg.br){ payload.reg = reg; }
+    return { fp: par.fp, codigo: _ab2b64(_enc.encode(JSON.stringify(payload))) };
   }
   // Admin: aprovar um código
   async function libAprovar(codigo, label){
     const token = _getToken();
     if(!token) throw new Error('Seu acesso precisa do token/senha-mestra primeiro.');
-    let pub;
-    try { pub = JSON.parse(_dec.decode(_b642ab(codigo.trim()))); } catch(e){ throw new Error('Código inválido'); }
+    let parsed;
+    try { parsed = JSON.parse(_dec.decode(_b642ab(codigo.trim()))); } catch(e){ throw new Error('Código inválido'); }
+    const pub = parsed.pub || parsed;
+    const reg = parsed.reg || null;
     const fp = await _fingerprint(pub);
+    // Se veio cadastro junto, cria a conta com a senha que o operador escolheu
+    if(reg && reg.br && reg.senhaHash){
+      const users = await store.load('usuarios');
+      if(!(users||[]).some(u => String(u.br||'').trim() === String(reg.br).trim())){
+        users.push({ br: String(reg.br).trim(), nome: reg.nome||'', senhaHash: reg.senhaHash, isAdmin:false, criadoEm:new Date().toISOString() });
+        await store.save('usuarios', users, `Cria usuário ${reg.nome||reg.br}`);
+        cacheUsuarios = null;
+      }
+    }
     const pacote = await _cifrarPara(token, pub);
     const data = (await _lerJsonRepo('liberacoes.json')) || { liberacoes: [] };
     const lista = data.liberacoes || [];
     const idx = lista.findIndex(x => x.fp === fp);
-    const entrada = { fp, label: label || ('Aparelho '+fp), efemPub: pacote.efemPub, iv: pacote.iv, ct: pacote.ct, aprovadoEm: new Date().toISOString(), aprovadoPor: (usuarioAtual&&usuarioAtual.nome)||'admin' };
+    const entrada = { fp, label: label || (reg&&reg.nome ? reg.nome : ('Aparelho '+fp)), reg: reg?{br:reg.br,nome:reg.nome}:null, efemPub: pacote.efemPub, iv: pacote.iv, ct: pacote.ct, aprovadoEm: new Date().toISOString(), aprovadoPor: (usuarioAtual&&usuarioAtual.nome)||'admin' };
     if(idx>=0) lista[idx] = entrada; else lista.push(entrada);
     await ghWrite('liberacoes.json', { liberacoes: lista }, 'Libera '+fp);
     return fp;
@@ -2778,8 +2794,8 @@
     finally { btn.disabled=false; btn.textContent='Destravar'; }
   };
   let _libPollTimer = null;
-  async function mostrarModalLiberacao(){
-    const { fp, codigo } = await libMeuCodigo();
+  async function mostrarModalLiberacao(reg){
+    const { fp, codigo } = await libMeuCodigo(reg);
     let host = document.getElementById('modalLiberacaoHost') || (()=>{ const d=document.createElement('div'); d.id='modalLiberacaoHost'; document.body.appendChild(d); return d; })();
     const assunto = encodeURIComponent('Liberação de acesso - App Estoque FEMSA');
     const corpo = encodeURIComponent('Solicito liberação de acesso.\n\nOperador: '+((usuarioAtual&&usuarioAtual.nome)||'')+'\nAparelho (código '+fp+'):\n\n'+codigo+'\n');
@@ -3430,15 +3446,20 @@
       }
 
       let res;
-      try{
-        res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
-      }catch(eApi){
-        const _m = eApi.message || '';
-        if(_m.includes('Token')){
-          toast('Seu acesso ainda não foi criado. Peça ao administrador para cadastrar seu BR em Configurações → Usuários.');
-        } else {
-          toast('Erro de rede ao cadastrar: ' + (_m || 'verifique sua internet'));
+      if(_getToken()){
+        try{
+          res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
+        }catch(eApi){
+          res = { ok:false, erro: eApi.message || 'erro' };
         }
+      } else {
+        // Aparelho ainda não liberado: envia o cadastro (com a senha do operador) + pedido de liberação pro admin
+        const reg = { br: brEmPrimeiroAcesso, nome, senhaHash };
+        try { localStorage.setItem('femsa_pending_reg', JSON.stringify(reg)); } catch(e){}
+        toast('Cadastro enviado! Aguardando liberação do administrador.');
+        mostrarModalLiberacao(reg);
+        $('btnCadastrarAcesso').disabled = false;
+        $('btnCadastrarAcesso').textContent = 'Cadastrar e entrar';
         return;
       }
 
@@ -3850,22 +3871,39 @@
     }
   }
 
-  function _renderSolicPartes(prod){
+  async function _renderSolicPartes(prod){
     const wrap = $('solicPartesWrap'); const box = $('solicPartesBox');
     if(!wrap || !box) return;
     const partes = (prod && prod.partes && prod.partes.length) ? prod.partes : [];
     if(!partes.length){ wrap.style.display='none'; box.innerHTML=''; return; }
+    wrap.style.display='block';
+    box.innerHTML = '<div class="analyzing"><div class="spinner"></div></div>';
+    let inv = [];
+    try { inv = await store.load('inventario'); } catch(e){ inv = []; }
+    function lotesFEFO(parteNome){
+      return (inv||[]).filter(l => String(l.produto).trim() === String(prod.produto).trim()
+          && String(l.parte).trim() === String(parteNome).trim()
+          && Number(l.quantidade) > 0)
+        .sort((a,b) => String(a.validade||'').localeCompare(String(b.validade||'')));
+    }
     box.innerHTML = partes.map(pt => {
       const nome = pt.nome || '—';
+      const lotes = lotesFEFO(nome);
+      let campo;
+      if(lotes.length){
+        const opts = lotes.map((l,i) => `<option value="${escapeHtml(String(l.validade||'').slice(0,10))}"${i===0?' selected':''}>${formatarDataBR(l.validade)} · disp ${l.quantidade}${l.lote?' · lote '+escapeHtml(String(l.lote)):''}</option>`).join('');
+        campo = `<select class="sp-val" data-fonte="estoque">${opts}</select>`;
+      } else {
+        campo = `<input class="sp-val" data-fonte="manual" type="date" title="validade (sem estoque)" style="color-scheme:dark;">`;
+      }
       return `<div class="sp-parte" data-parte="${escapeHtml(nome)}">
-        <div class="sp-parte-tag">Parte ${escapeHtml(nome)}</div>
+        <div class="sp-parte-tag">Parte ${escapeHtml(nome)}${lotes.length ? '' : ' <span class="sp-vazio">sem estoque — validade manual</span>'}</div>
         <div class="sp-row">
-          <input class="sp-val" type="date" title="validade" style="color-scheme:dark;">
+          ${campo}
           <input class="sp-qtd" type="number" min="0" step="1" placeholder="qtd" title="quantidade">
         </div>
       </div>`;
     }).join('');
-    wrap.style.display='block';
   }
   function atribuirProdutoCompleto(produtoInfo){
     if(seletorLinhaId === '__solic__'){
@@ -4880,7 +4918,8 @@
       const partesSel = [...document.querySelectorAll('#solicPartesBox .sp-parte')].map(d => ({
         nome: d.dataset.parte,
         validade: d.querySelector('.sp-val').value,
-        quantidade: Number(d.querySelector('.sp-qtd').value) || 0
+        quantidade: Number(d.querySelector('.sp-qtd').value) || 0,
+        fonte: d.querySelector('.sp-val').dataset.fonte || ''
       })).filter(p => p.validade || p.quantidade);
       const res = await apiPost({
         acao: 'adicionarSolicitacao',
