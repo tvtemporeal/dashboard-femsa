@@ -129,8 +129,43 @@
       "total_kit_produto": 39,
       "sap_produto": "30115475",
       "categoria": "Crystal Sparkling"
+    },
+    {
+      "produto": "DV Frut. Laranja",
+      "parte": "1B,3",
+      "validade": "2026-07-05",
+      "quantidade": 3,
+      "lote": ""
+    },
+    {
+      "produto": "DV Frut. Laranja",
+      "parte": "1M",
+      "validade": "2026-07-05",
+      "quantidade": 3,
+      "lote": ""
+    },
+    {
+      "produto": "DV Frut. Laranja",
+      "parte": "1C",
+      "validade": "2026-07-05",
+      "quantidade": 3,
+      "lote": ""
+    },
+    {
+      "produto": "DV Frut. Laranja",
+      "parte": "2A",
+      "validade": "2026-07-05",
+      "quantidade": 3,
+      "lote": ""
+    },
+    {
+      "produto": "DV Frut. Laranja",
+      "parte": "2",
+      "validade": "2026-07-05",
+      "quantidade": 3,
+      "lote": ""
     }
   ],
-  "atualizado_em": "2026-07-04T03:47:40.375Z",
-  "atualizado_por": "Thiago Monteiro Pereira"
+  "atualizado_em": "2026-07-05T03:12:52.910Z",
+  "atualizado_por": "Administrador"
 }
