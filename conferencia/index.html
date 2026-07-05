@@ -6688,7 +6688,7 @@ function aplicarPermissoesConfig(){
   $('btnCancelarToken').addEventListener('click', () => {
     $('tokenBox').style.display = 'none';
   });
-  $('btnSalvarToken').addEventListener('click', () => {
+  $('btnSalvarToken').addEventListener('click', async () => {
     const t = $('tokenInput').value.trim();
     if(!t.startsWith('github_pat_') && !t.startsWith('ghp_')){
       if(!confirm('Isso não parece um token do GitHub. Salvar mesmo assim?')) return;
@@ -6696,6 +6696,14 @@ function aplicarPermissoesConfig(){
     _setToken(t);
     toast('✓ Token salvo');
     $('tokenBox').style.display = 'none';
+    // Se já existe cofre (senha-mestra), atualiza com o token novo pra propagar aos outros aparelhos
+    try {
+      const cofre = await _lerJsonRepo('cofre.json');
+      if(cofre){
+        const senha = prompt('Você já tem senha-mestra. Digite-a para atualizar o cofre com ESTE token novo (assim seus outros aparelhos pegam o token atualizado automaticamente):');
+        if(senha){ await libCriarCofre(t, senha); toast('✓ Cofre atualizado com o novo token'); }
+      }
+    } catch(e){}
   });
 
   $('btnBackupBaixar').addEventListener('click', async () => {
