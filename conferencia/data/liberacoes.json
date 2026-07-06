@@ -72,13 +72,14 @@
         "ext": true,
         "key_ops": [],
         "kty": "EC",
-        "x": "0mhipCi4v2rE7N7yDA3sTIKaRCilw6wpUQFRfhwLcCQ",
-        "y": "DLjuDdzrddQKXs8svwzoxhvbkqyym0dy_gq_2RsZtWk"
+        "x": "Y0ZYEWIUj8ocvxc-05nFQzExzx6Fmv7xG3ZUKmbSE5s",
+        "y": "sKRDCuDltQabvgir4bzBkqok5Ij0HEQWVtVtNRISncY"
       },
-      "iv": "1Pf07ub54RMpckGg",
-      "ct": "5WTrAwRQ+OTfXE/J4iI7VIWdG7iWaDF0TEObw3LcORxU1qcylbJMUsyCczRJ6vIPXgfpTZMpf+FYbxmsgQZUAhElNGGq5HXaqVkzanGv5Fr3yEhkgq4hV/lhwZbUgwsdD7DV8xU7ncEpGeBpVA==",
+      "iv": "Vr51zy6Z4OhC06Zd",
+      "ct": "rhll3eypqIijFxehZRiD/qbydF1jNyJQ8UCW8iEUdGrKy5SCSEFN6QpZSbJ4142VlWbtNWfuZwBvl13N/pCqMTnb23FTLOQv34fLwexmVQRJSoGy8/rg1YC4Lotf7+jf+mzB2VQAy5sy5v2w5g==",
       "aprovadoEm": "2026-07-06T13:23:58.392Z",
-      "aprovadoPor": "Administrador"
+      "aprovadoPor": "Administrador",
+      "tokenAtualizadoEm": "2026-07-06T13:29:09.011Z"
     }
   ]
 }
