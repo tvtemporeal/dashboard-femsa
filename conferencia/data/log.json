@@ -4164,8 +4164,25 @@
       "fabrica": "2",
       "justificativa_fefo": "Recebido via solicitação sol_1782898950635",
       "registradoEm": "2026-07-05T03:12:49.521Z"
+    },
+    {
+      "tipo": "entrada",
+      "operador": "Administrador",
+      "timestamp": "06/07/2026, 01:34:43",
+      "produto": "Sparkling Crystal Limão",
+      "formula": "WA/LI/M-12.00",
+      "parte": "2",
+      "lote": "WA/LI/M-12.00",
+      "validade": "2026-07-06",
+      "quantidade_esperada": 45,
+      "quantidade_guardada": 45,
+      "unidade": "unid.",
+      "status": "ok",
+      "fabrica": "2",
+      "justificativa_fefo": "",
+      "registradoEm": "2026-07-06T04:34:43.239Z"
     }
   ],
-  "atualizado_em": "2026-07-05T03:12:50.872Z",
+  "atualizado_em": "2026-07-06T04:34:43.243Z",
   "atualizado_por": "Administrador"
 }
