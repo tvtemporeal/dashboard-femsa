@@ -51,6 +51,34 @@
       "ct": "5puQJkVA2o1nVJ9mzqIHHYZffW7bKoWZCalHliokw8BLCDwvLqih9+z61SeYURJhYugNS7JancG0dfW0cAxJQ2Idb5dPXnefppPJT9rjRSXqc2V854VTiisbjtHGBMYatMPB6izG90p8dkx9wA==",
       "aprovadoEm": "2026-07-06T06:07:29.084Z",
       "aprovadoPor": "Administrador"
+    },
+    {
+      "fp": "GN6FF6WXCW",
+      "label": "joao vitor",
+      "reg": {
+        "br": "5638366",
+        "nome": "João Vitor Odizio"
+      },
+      "pub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "h6_ODGUANImtF9mM1yPbc2B7V5qivOwXepiP_pjXS3A",
+        "y": "OBxcQbK70OmjSQ7DjfMkkncRElFOxS_SpZfkgkrGObE"
+      },
+      "efemPub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "0mhipCi4v2rE7N7yDA3sTIKaRCilw6wpUQFRfhwLcCQ",
+        "y": "DLjuDdzrddQKXs8svwzoxhvbkqyym0dy_gq_2RsZtWk"
+      },
+      "iv": "1Pf07ub54RMpckGg",
+      "ct": "5WTrAwRQ+OTfXE/J4iI7VIWdG7iWaDF0TEObw3LcORxU1qcylbJMUsyCczRJ6vIPXgfpTZMpf+FYbxmsgQZUAhElNGGq5HXaqVkzanGv5Fr3yEhkgq4hV/lhwZbUgwsdD7DV8xU7ncEpGeBpVA==",
+      "aprovadoEm": "2026-07-06T13:23:58.392Z",
+      "aprovadoPor": "Administrador"
     }
   ]
 }
