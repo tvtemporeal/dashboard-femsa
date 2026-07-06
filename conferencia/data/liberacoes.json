@@ -31,6 +31,26 @@
       "ct": "kFMgU2DWn0YOtBScAiNJOERdW1BsC4fH4SuD/YouIsatzIuaef1qVLewqojhV4/19u+arX1Xq9H/NAn0XouMz33ieDq0pePSgzQg/HN2NcI3ETtof+XOTsHrPKE0LjzlDyBwKk1w0L6nszw32A==",
       "aprovadoEm": "2026-07-04T18:19:35.276Z",
       "aprovadoPor": "Administrador"
+    },
+    {
+      "fp": "K7B2ATZNMD",
+      "label": "teste",
+      "reg": {
+        "br": "123457",
+        "nome": "t3"
+      },
+      "efemPub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "37h5GBv8g6gzUrpP6NmpfkpMBmZRUj_98YV5lKtPY70",
+        "y": "YowbdCYAeX12xAnIvC05x078Oy2Lts6eBPgO-_Sg1jM"
+      },
+      "iv": "pnafoP7vfmNgreXH",
+      "ct": "34lVf0UpBXiuhFR2cCA6eHD+Ntisizv4i/fZEYiiCSf+gk3k+Fr+9fjc9bRFaCRaOpc5dR4NXswBxBnFMJFmZVB0BEphuVi9ikZaOxPrZGI7HWP/BR4j5xEGK/VV9/HBQuprMOlaKIFBk/Djfg==",
+      "aprovadoEm": "2026-07-06T03:48:25.960Z",
+      "aprovadoPor": "Administrador"
     }
   ]
 }
