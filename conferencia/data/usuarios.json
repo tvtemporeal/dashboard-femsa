@@ -41,8 +41,15 @@
       "senhaHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
       "isAdmin": false,
       "criadoEm": "2026-07-04T17:56:20.560Z"
+    },
+    {
+      "br": "123457",
+      "nome": "t3",
+      "senhaHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "isAdmin": false,
+      "criadoEm": "2026-07-06T03:48:24.150Z"
     }
   ],
-  "atualizado_em": "2026-07-05T03:40:53.489Z",
+  "atualizado_em": "2026-07-06T03:48:24.495Z",
   "atualizado_por": "Administrador"
 }
