@@ -31,26 +31,6 @@
       "ct": "kFMgU2DWn0YOtBScAiNJOERdW1BsC4fH4SuD/YouIsatzIuaef1qVLewqojhV4/19u+arX1Xq9H/NAn0XouMz33ieDq0pePSgzQg/HN2NcI3ETtof+XOTsHrPKE0LjzlDyBwKk1w0L6nszw32A==",
       "aprovadoEm": "2026-07-04T18:19:35.276Z",
       "aprovadoPor": "Administrador"
-    },
-    {
-      "fp": "NQPSLM9PLN",
-      "label": "test",
-      "reg": {
-        "br": "123456",
-        "nome": "Teste"
-      },
-      "efemPub": {
-        "crv": "P-256",
-        "ext": true,
-        "key_ops": [],
-        "kty": "EC",
-        "x": "k9xaV2-Ssk36v_3T3fb9_U0PmYhmsedhbarj9_C_x3k",
-        "y": "347TiIR93NqKDkS8DcBqusGHfBW0isxhwMEFIJdvHek"
-      },
-      "iv": "Q9yFI9mfqYgkj7QU",
-      "ct": "WUAv6h218sTHfRZfyF25swglrn2KeiP7lZRAhGg4TVmaE3f+44CSARx1eX9eLxmXe6CuNpz7HVe0jPTO7aICAocEzLU2QHJ9CgTIc1eBpqcMuhr28QtmDTfJ3SRpZTDmYSCm7tnKJyvj98C3Mw==",
-      "aprovadoEm": "2026-07-06T03:52:09.039Z",
-      "aprovadoPor": "Administrador"
     }
   ]
 }
