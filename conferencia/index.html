@@ -2102,8 +2102,10 @@
           <input type="password" id="tokenInput" style="width:100%; padding:10px; background:#000; color:var(--osso); border:1px solid var(--linha); border-radius:8px; font-family:monospace;" placeholder="github_pat_...">
           <div class="stack" style="margin-top:10px;">
             <button class="btn btn-primary" id="btnSalvarToken">✅ Salvar token</button>
+            <button class="btn btn-outline" id="btnTestarToken">🔍 Testar token</button>
             <button class="btn btn-ghost" id="btnCancelarToken">Cancelar</button>
           </div>
+          <div id="tokenStatus" style="font-size:12.5px; margin-top:10px; color:var(--cinza); word-break:break-word;"></div>
         </div>
         <div id="migrarBox" style="display:none; margin-top:16px; padding:14px; background:var(--carvao); border-radius:10px; border:1px solid var(--linha);">
           <p style="font-size:13px; margin-bottom:10px;">Cole aqui o JSON obtido de <code style="background:#000; padding:2px 6px; border-radius:4px;">?acao=exportarTudo</code>:</p>
@@ -2723,7 +2725,7 @@
     const data = (await _lerJsonRepo('liberacoes.json')) || { liberacoes: [] };
     const lista = data.liberacoes || [];
     const idx = lista.findIndex(x => x.fp === fp);
-    const entrada = { fp, label: label || (reg&&reg.nome ? reg.nome : ('Aparelho '+fp)), reg: reg?{br:reg.br,nome:reg.nome}:null, efemPub: pacote.efemPub, iv: pacote.iv, ct: pacote.ct, aprovadoEm: new Date().toISOString(), aprovadoPor: (usuarioAtual&&usuarioAtual.nome)||'admin' };
+    const entrada = { fp, label: label || (reg&&reg.nome ? reg.nome : ('Aparelho '+fp)), reg: reg?{br:reg.br,nome:reg.nome}:null, pub: pub, efemPub: pacote.efemPub, iv: pacote.iv, ct: pacote.ct, aprovadoEm: new Date().toISOString(), aprovadoPor: (usuarioAtual&&usuarioAtual.nome)||'admin' };
     if(idx>=0) lista[idx] = entrada; else lista.push(entrada);
     await ghWrite('liberacoes.json', { liberacoes: lista }, 'Libera '+fp);
     return fp;
@@ -2733,6 +2735,22 @@
     const d = (await _lerJsonRepo('liberacoes.json')) || { liberacoes: [] };
     const lista = (d.liberacoes||[]).filter(x => x.fp !== fp);
     await ghWrite('liberacoes.json', { liberacoes: lista }, 'Revoga '+fp);
+  }
+  async function libReenviarTodos(){
+    const token = _getToken();
+    if(!token) throw new Error('Configure o token primeiro (Backup/Migrar).');
+    const d = (await _lerJsonRepo('liberacoes.json')) || { liberacoes: [] };
+    const lista = d.liberacoes || [];
+    let n = 0, semPub = 0;
+    for(const e of lista){
+      if(e.pub){
+        const pac = await _cifrarPara(token, e.pub);
+        e.efemPub = pac.efemPub; e.iv = pac.iv; e.ct = pac.ct; e.tokenAtualizadoEm = new Date().toISOString();
+        n++;
+      } else { semPub++; }
+    }
+    await ghWrite('liberacoes.json', { liberacoes: lista }, 'Reenvia token a todos');
+    return { n, semPub };
   }
   // Operador: verifica se já foi aprovado
   async function libVerificarAprovacao(silencioso){
@@ -2753,7 +2771,9 @@
       const ehAdmin = usuarioAtual && (String(usuarioAtual.br)==='5758236' || usuarioAtual.isAdmin);
       if(!ehAdmin){
         const par = await _meuPar(); const lista = await libListar();
-        if(lista.length && !lista.find(x=>x.fp===par.fp)){ localStorage.removeItem('gh_token'); }
+        const meu = lista.find(x=>x.fp===par.fp);
+        if(lista.length && !meu){ localStorage.removeItem('gh_token'); }
+        else if(meu){ try { const tk = await _decifrarNoDisp(meu); if(tk && tk.length>10) _setToken(tk); } catch(e){} return; }
         else return;
       } else return;
     }
@@ -2844,7 +2864,9 @@
     html += `<div class="lib-secao">
       <div class="lib-tit">Cofre do administrador</div>
       <p class="lib-sub">${cofre ? '✅ Senha-mestra configurada. Você pode destravar em qualquer aparelho com seu login.' : '⚠ Ainda sem senha-mestra. Configure para aprovar de qualquer lugar.'}</p>
-      ${temToken ? `<button class="btn btn-outline" id="libBtnCofre" style="font-size:12px;padding:6px 12px;">${cofre?'Trocar senha-mestra':'Definir senha-mestra'}</button>`
+      ${temToken ? `<button class="btn btn-outline" id="libBtnCofre" style="font-size:12px;padding:6px 12px;">${cofre?'Trocar senha-mestra':'Definir senha-mestra'}</button>
+                    <button class="btn btn-outline" id="libBtnReenviar" style="font-size:12px;padding:6px 12px;margin-left:8px;">🔄 Reenviar token a todos</button>
+                    <p class="lib-sub" style="margin-top:8px;">Use "Reenviar" depois de trocar o token, pra todos os aparelhos já liberados pegarem o token novo.</p>`
                  : `<p class="lib-sub" style="color:var(--ambar);">Configure o token em Backup/Migrar antes de definir a senha-mestra.</p>`}
     </div>`;
     // Aprovar dispositivo
@@ -2870,6 +2892,14 @@
       </div>`).join('');
     html += `</div>`;
     box.innerHTML = html;
+    const br2 = $('libBtnReenviar');
+    if(br2) br2.addEventListener('click', async () => {
+      if(!confirm('Reenviar o token atual (cifrado) a TODOS os aparelhos já liberados? Eles pegam o novo token ao abrir o app.')) return;
+      br2.disabled = true; br2.textContent = 'Reenviando...';
+      try { const r = await libReenviarTodos(); toast('✓ Token reenviado a ' + r.n + ' aparelho(s)' + (r.semPub?(' · '+r.semPub+' antigos precisam re-aprovar'):'')); }
+      catch(e){ toast('Erro: ' + e.message); }
+      finally { br2.disabled = false; br2.textContent = '🔄 Reenviar token a todos'; }
+    });
     const bc = $('libBtnCofre');
     if(bc) bc.addEventListener('click', async () => {
       const senha = prompt('Defina a SENHA-MESTRA (forte, diferente do 291201). Ela protege o token e destrava o admin em qualquer aparelho:');
@@ -4930,8 +4960,19 @@
           direcao: solicNovoDirecao
         }
       });
-      if(!res.ok){ toast('Erro: ' + res.erro); return; }
+      if(!res.ok){
+        const er = String(res.erro || '');
+        if(er.includes('401') || er.toLowerCase().includes('token')){
+          toast('Falha ao salvar: acesso sem permissão (token vencido). Avise o administrador.');
+        } else { toast('Erro ao enviar: ' + er); }
+        return;
+      }
       toast('Pedido enviado!');
+      // Mostra a lista já na DIREÇÃO e status do pedido recém-criado (senão parece que sumiu)
+      solicFiltroDirecao = solicNovoDirecao;
+      solicFiltroStatus = 'pendente';
+      document.querySelectorAll('#screen-solic [data-solic-dir]').forEach(b => b.classList.toggle('active', b.dataset.solicDir === solicFiltroDirecao));
+      document.querySelectorAll('#screen-solic [data-solic-filtro]').forEach(b => b.classList.toggle('active', b.dataset.solicFiltro === solicFiltroStatus));
       solicProdutoSel = null;
       $('solicProdutoLabel').outerHTML = '<div class="ps-placeholder" id="solicProdutoLabel">Toque para escolher o produto</div>';
       if($('solicPartesWrap')){ $('solicPartesWrap').style.display='none'; $('solicPartesBox').innerHTML=''; }
@@ -4942,7 +4983,12 @@
       $('solicNovoWrap').style.display = 'none';
       await renderSolicitacoes();
     }catch(e){
-      toast('Erro de rede: ' + (e.message || ''));
+      const m = String(e.message || '');
+      if(m.includes('401') || m.toLowerCase().includes('token')){
+        toast('Falha ao salvar: acesso sem permissão (token vencido). Avise o administrador.');
+      } else {
+        toast('Erro de rede ao enviar: ' + (m || 'verifique a internet'));
+      }
     }finally{
       $('btnEnviarSolicitacao').disabled = false;
       $('btnEnviarSolicitacao').textContent = 'Enviar pedido';
@@ -6679,6 +6725,33 @@ function aplicarPermissoesConfig(){
   $('btnConfigToken').addEventListener('click', () => {
     $('tokenBox').style.display = 'block';
     $('tokenInput').value = _getToken();
+  });
+  $('btnTestarToken').addEventListener('click', async () => {
+    const t = ($('tokenInput').value.trim()) || _getToken();
+    const st = $('tokenStatus');
+    if(!t){ st.textContent = 'Cole um token primeiro.'; st.style.color = 'var(--ambar)'; return; }
+    st.textContent = 'Testando...'; st.style.color = 'var(--cinza)';
+    try {
+      const r = await fetch(_ghApiUrl('usuarios.json') + '?ref=' + GH_BRANCH + '&t=' + Date.now(), {
+        headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json' }
+      });
+      if(r.ok){
+        st.textContent = '✓ Token VÁLIDO — pode salvar e atualizar o cofre.';
+        st.style.color = 'var(--verde)';
+      } else {
+        let msg = '';
+        try { const j = await r.json(); msg = j.message || ''; } catch(e){}
+        let dica = '';
+        if(r.status === 401) dica = ' → token errado, incompleto ou revogado. Gere um novo.';
+        else if(r.status === 403) dica = ' → falta a permissão Contents: Read and write neste repositório.';
+        else if(r.status === 404) dica = ' → o token não tem acesso a ESTE repositório (dashboard-femsa).';
+        st.textContent = '✗ HTTP ' + r.status + (msg ? ' — ' + msg : '') + dica;
+        st.style.color = 'var(--vermelho)';
+      }
+    } catch(e){
+      st.textContent = 'Erro de rede: ' + (e.message || 'sem conexão');
+      st.style.color = 'var(--vermelho)';
+    }
   });
   $('btnCancelarToken').addEventListener('click', () => {
     $('tokenBox').style.display = 'none';
