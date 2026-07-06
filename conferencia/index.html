@@ -3445,23 +3445,18 @@
         return;
       }
 
-      let res;
-      if(_getToken()){
-        try{
-          res = await apiPost({ acao:'criarUsuario', br: brEmPrimeiroAcesso, nome, senhaHash, isAdmin: false });
-        }catch(eApi){
-          res = { ok:false, erro: eApi.message || 'erro' };
-        }
-      } else {
-        // Aparelho ainda não liberado: envia o cadastro (com a senha do operador) + pedido de liberação pro admin
-        const reg = { br: brEmPrimeiroAcesso, nome, senhaHash };
-        try { localStorage.setItem('femsa_pending_reg', JSON.stringify(reg)); } catch(e){}
-        toast('Cadastro enviado! Aguardando liberação do administrador.');
-        mostrarModalLiberacao(reg);
-        $('btnCadastrarAcesso').disabled = false;
-        $('btnCadastrarAcesso').textContent = 'Cadastrar e entrar';
-        return;
-      }
+      // PRIMEIRO ACESSO SEMPRE VIA LIBERAÇÃO:
+      // nunca tenta gravar direto (evita 401 de token velho/inválido no aparelho do operador).
+      // Cria a pendência com a senha que o operador escolheu e mostra o código.
+      // Quando o admin aprova, a conta é criada com essa senha e o aparelho é liberado.
+      const reg = { br: brEmPrimeiroAcesso, nome, senhaHash };
+      try { localStorage.setItem('femsa_pending_reg', JSON.stringify(reg)); } catch(e){}
+      toast('Cadastro enviado! Aguardando liberação do administrador.');
+      mostrarModalLiberacao(reg);
+      $('btnCadastrarAcesso').disabled = false;
+      $('btnCadastrarAcesso').textContent = 'Cadastrar e entrar';
+      return;
+      let res = { ok:true };
 
       if(!res || !res.ok){
         const erroReal = res ? res.erro : 'sem resposta do servidor';
