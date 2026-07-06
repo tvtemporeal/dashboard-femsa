@@ -164,8 +164,15 @@
       "validade": "2026-07-05",
       "quantidade": 3,
       "lote": ""
+    },
+    {
+      "produto": "Sparkling Crystal Limão",
+      "parte": "2",
+      "validade": "2026-07-06",
+      "quantidade": 45,
+      "lote": "WA/LI/M-12.00"
     }
   ],
-  "atualizado_em": "2026-07-05T03:12:52.910Z",
+  "atualizado_em": "2026-07-06T04:34:45.370Z",
   "atualizado_por": "Administrador"
 }
