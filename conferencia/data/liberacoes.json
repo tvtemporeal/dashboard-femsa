@@ -1,22 +1,6 @@
 {
   "liberacoes": [
     {
-      "fp": "S6XRMTNVPQ",
-      "label": "Gabriel",
-      "efemPub": {
-        "crv": "P-256",
-        "ext": true,
-        "key_ops": [],
-        "kty": "EC",
-        "x": "tP2LMHv2qH5yVYJ2SctOy06aZLLUAJMRiShWEqEWTpY",
-        "y": "23kF-Q8b6nHxrxr6zK_P2zJmFJSPcRYHUyxPYtmNWPM"
-      },
-      "iv": "EKJjbE8ODULH6/6L",
-      "ct": "Vxnm0hjrOKAXgAgmdUrLPbs1ieQwejJMhxd1qfn729n8bgd7PwTAm2BApD34+Ok7SVARhpKmQr9M8gbGp9va4eDaSeGUr9bWa/Y73PhlrCLZLKwfGpDEgGfExXcWLMFqPll1qnICCOMHlhOzPA==",
-      "aprovadoEm": "2026-07-04T17:54:07.814Z",
-      "aprovadoPor": "Administrador"
-    },
-    {
       "fp": "MTNLQXLEX0",
       "label": "Eduardo",
       "efemPub": {
@@ -30,6 +14,26 @@
       "iv": "i718XI95qHXHaKwJ",
       "ct": "kFMgU2DWn0YOtBScAiNJOERdW1BsC4fH4SuD/YouIsatzIuaef1qVLewqojhV4/19u+arX1Xq9H/NAn0XouMz33ieDq0pePSgzQg/HN2NcI3ETtof+XOTsHrPKE0LjzlDyBwKk1w0L6nszw32A==",
       "aprovadoEm": "2026-07-04T18:19:35.276Z",
+      "aprovadoPor": "Administrador"
+    },
+    {
+      "fp": "0D9CN72PNS",
+      "label": "Thiago",
+      "reg": {
+        "br": "3011098",
+        "nome": "Thiago Monteiro Pereira"
+      },
+      "efemPub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "OYK55kI5hHyh1PJa8_Gx8TuTlMM4kwzR0T9og0A1uGI",
+        "y": "n0qbvN4R7LHtvr4zCO1T8qK-g35-kdOKAGZocgQHqTQ"
+      },
+      "iv": "RPd327HEDF7KtmT1",
+      "ct": "5puQJkVA2o1nVJ9mzqIHHYZffW7bKoWZCalHliokw8BLCDwvLqih9+z61SeYURJhYugNS7JancG0dfW0cAxJQ2Idb5dPXnefppPJT9rjRSXqc2V854VTiisbjtHGBMYatMPB6izG90p8dkx9wA==",
+      "aprovadoEm": "2026-07-06T06:07:29.084Z",
       "aprovadoPor": "Administrador"
     },
     {
