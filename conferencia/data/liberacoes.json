@@ -17,6 +17,22 @@
       "aprovadoPor": "Administrador"
     },
     {
+      "fp": "MTNLQXLEX0",
+      "label": "Eduardo",
+      "efemPub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "W4XPR9zaXD0Q3iCAdaqpiIJmdTnQubmoejgiiLvibI4",
+        "y": "VoXQ2Q9Kj4qED3WrxFKwlrFXDJUEr2etU78rx49v68o"
+      },
+      "iv": "i718XI95qHXHaKwJ",
+      "ct": "kFMgU2DWn0YOtBScAiNJOERdW1BsC4fH4SuD/YouIsatzIuaef1qVLewqojhV4/19u+arX1Xq9H/NAn0XouMz33ieDq0pePSgzQg/HN2NcI3ETtof+XOTsHrPKE0LjzlDyBwKk1w0L6nszw32A==",
+      "aprovadoEm": "2026-07-04T18:19:35.276Z",
+      "aprovadoPor": "Administrador"
+    },
+    {
       "fp": "0D9CN72PNS",
       "label": "Thiago",
       "reg": {
@@ -35,35 +51,6 @@
       "ct": "5puQJkVA2o1nVJ9mzqIHHYZffW7bKoWZCalHliokw8BLCDwvLqih9+z61SeYURJhYugNS7JancG0dfW0cAxJQ2Idb5dPXnefppPJT9rjRSXqc2V854VTiisbjtHGBMYatMPB6izG90p8dkx9wA==",
       "aprovadoEm": "2026-07-06T06:07:29.084Z",
       "aprovadoPor": "Administrador"
-    },
-    {
-      "fp": "GN6FF6WXCW",
-      "label": "joao vitor",
-      "reg": {
-        "br": "5638366",
-        "nome": "João Vitor Odizio"
-      },
-      "pub": {
-        "crv": "P-256",
-        "ext": true,
-        "key_ops": [],
-        "kty": "EC",
-        "x": "h6_ODGUANImtF9mM1yPbc2B7V5qivOwXepiP_pjXS3A",
-        "y": "OBxcQbK70OmjSQ7DjfMkkncRElFOxS_SpZfkgkrGObE"
-      },
-      "efemPub": {
-        "crv": "P-256",
-        "ext": true,
-        "key_ops": [],
-        "kty": "EC",
-        "x": "Y0ZYEWIUj8ocvxc-05nFQzExzx6Fmv7xG3ZUKmbSE5s",
-        "y": "sKRDCuDltQabvgir4bzBkqok5Ij0HEQWVtVtNRISncY"
-      },
-      "iv": "Vr51zy6Z4OhC06Zd",
-      "ct": "rhll3eypqIijFxehZRiD/qbydF1jNyJQ8UCW8iEUdGrKy5SCSEFN6QpZSbJ4142VlWbtNWfuZwBvl13N/pCqMTnb23FTLOQv34fLwexmVQRJSoGy8/rg1YC4Lotf7+jf+mzB2VQAy5sy5v2w5g==",
-      "aprovadoEm": "2026-07-06T13:23:58.392Z",
-      "aprovadoPor": "Administrador",
-      "tokenAtualizadoEm": "2026-07-06T13:29:09.011Z"
     }
   ]
 }
