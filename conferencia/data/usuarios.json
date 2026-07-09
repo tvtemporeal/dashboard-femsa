@@ -6,15 +6,8 @@
       "senhaHash": "(gerado automaticamente pelo app)",
       "isAdmin": true,
       "criadoEm": "2026-06-21T00:00:00.000Z"
-    },
-    {
-      "br": "5759938",
-      "nome": "Gusttavo",
-      "senhaHash": "1a07445d8dc4a4af05888d37539e19e4925681f51f324f7427d1bc8029aaf24d",
-      "isAdmin": true,
-      "criadoEm": "2026-06-23T04:23:54.684Z"
     }
   ],
-  "atualizado_em": "2026-07-09T03:58:11.042Z",
+  "atualizado_em": "2026-07-09T03:58:13.986Z",
   "atualizado_por": "Administrador"
 }
