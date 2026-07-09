@@ -8,18 +8,18 @@
       "criadoEm": "2026-06-21T00:00:00.000Z"
     },
     {
+      "br": "5759938",
+      "nome": "Gusttavo",
+      "senhaHash": "1a07445d8dc4a4af05888d37539e19e4925681f51f324f7427d1bc8029aaf24d",
+      "isAdmin": true,
+      "criadoEm": "2026-06-23T04:23:54.684Z"
+    },
+    {
       "br": "5146710",
       "nome": "Larissa Fernanda dos Santos",
       "senhaHash": "d86e905e628b93ced5df3b11c77717704fae101a03fe708d815b12e78da62f1f",
       "isAdmin": false,
       "criadoEm": "2026-06-26T03:38:39.393Z"
-    },
-    {
-      "br": "3153305",
-      "nome": "Jerry Adriano Zanatta",
-      "senhaHash": "221ff1806e49d94dd864aea9b4290de7af6ee7788fe176556f92af974c2db4dc",
-      "isAdmin": true,
-      "criadoEm": "2026-06-29T01:34:09.479Z"
     },
     {
       "br": "5805879",
@@ -57,6 +57,6 @@
       "criadoEm": "2026-07-06T13:23:56.793Z"
     }
   ],
-  "atualizado_em": "2026-07-09T03:57:57.294Z",
+  "atualizado_em": "2026-07-09T03:57:59.506Z",
   "atualizado_por": "Administrador"
 }
