@@ -33,24 +33,33 @@
       "aprovadoPor": "Administrador"
     },
     {
-      "fp": "0D9CN72PNS",
-      "label": "Thiago",
+      "fp": "GN6FF6WXCW",
+      "label": "joao vitor",
       "reg": {
-        "br": "3011098",
-        "nome": "Thiago Monteiro Pereira"
+        "br": "5638366",
+        "nome": "João Vitor Odizio"
+      },
+      "pub": {
+        "crv": "P-256",
+        "ext": true,
+        "key_ops": [],
+        "kty": "EC",
+        "x": "h6_ODGUANImtF9mM1yPbc2B7V5qivOwXepiP_pjXS3A",
+        "y": "OBxcQbK70OmjSQ7DjfMkkncRElFOxS_SpZfkgkrGObE"
       },
       "efemPub": {
         "crv": "P-256",
         "ext": true,
         "key_ops": [],
         "kty": "EC",
-        "x": "OYK55kI5hHyh1PJa8_Gx8TuTlMM4kwzR0T9og0A1uGI",
-        "y": "n0qbvN4R7LHtvr4zCO1T8qK-g35-kdOKAGZocgQHqTQ"
+        "x": "Y0ZYEWIUj8ocvxc-05nFQzExzx6Fmv7xG3ZUKmbSE5s",
+        "y": "sKRDCuDltQabvgir4bzBkqok5Ij0HEQWVtVtNRISncY"
       },
-      "iv": "RPd327HEDF7KtmT1",
-      "ct": "5puQJkVA2o1nVJ9mzqIHHYZffW7bKoWZCalHliokw8BLCDwvLqih9+z61SeYURJhYugNS7JancG0dfW0cAxJQ2Idb5dPXnefppPJT9rjRSXqc2V854VTiisbjtHGBMYatMPB6izG90p8dkx9wA==",
-      "aprovadoEm": "2026-07-06T06:07:29.084Z",
-      "aprovadoPor": "Administrador"
+      "iv": "Vr51zy6Z4OhC06Zd",
+      "ct": "rhll3eypqIijFxehZRiD/qbydF1jNyJQ8UCW8iEUdGrKy5SCSEFN6QpZSbJ4142VlWbtNWfuZwBvl13N/pCqMTnb23FTLOQv34fLwexmVQRJSoGy8/rg1YC4Lotf7+jf+mzB2VQAy5sy5v2w5g==",
+      "aprovadoEm": "2026-07-06T13:23:58.392Z",
+      "aprovadoPor": "Administrador",
+      "tokenAtualizadoEm": "2026-07-06T13:29:09.011Z"
     }
   ]
 }
