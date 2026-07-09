@@ -13,15 +13,8 @@
       "senhaHash": "1a07445d8dc4a4af05888d37539e19e4925681f51f324f7427d1bc8029aaf24d",
       "isAdmin": true,
       "criadoEm": "2026-06-23T04:23:54.684Z"
-    },
-    {
-      "br": "5638366",
-      "nome": "João Vitor Odizio",
-      "senhaHash": "e22bc27ce9001cb1a889e50e6536d3e69bd105908448c3fc592c0dbf2d3f76a8",
-      "isAdmin": false,
-      "criadoEm": "2026-07-06T13:23:56.793Z"
     }
   ],
-  "atualizado_em": "2026-07-09T03:58:09.282Z",
+  "atualizado_em": "2026-07-09T03:58:11.042Z",
   "atualizado_por": "Administrador"
 }
